@@ -17,7 +17,7 @@ package com.econage.core.db.mybatis.plugins.pagination.dialects;
 
 
 import com.econage.core.db.mybatis.plugins.pagination.PaginationContext;
-import org.apache.commons.lang3.StringUtils;
+import com.econage.core.db.mybatis.util.MybatisStringUtils;
 
 /**
  * <p>
@@ -32,7 +32,7 @@ public class MySqlDialect implements IDialect {
     public String buildPaginationSql(PaginationContext paginationContext) {
         StringBuilder sqlBuilder = new StringBuilder(paginationContext.getOriginalSql());
         String orderStr = paginationContext.getOrderColumn();
-        if(StringUtils.isNotEmpty(orderStr)){
+        if(MybatisStringUtils.isNotEmpty(orderStr)){
             sqlBuilder.append(" order by ").append(orderStr);
         }
         sqlBuilder.append(" limit ").append(paginationContext.getOffset()).append(",").append(paginationContext.getLimit());

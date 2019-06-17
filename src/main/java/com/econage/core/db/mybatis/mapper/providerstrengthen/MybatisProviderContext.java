@@ -21,7 +21,6 @@ import com.econage.core.db.mybatis.util.MybatisSqlUtils;
 import com.econage.core.db.mybatis.util.MybatisStringUtils;
 import com.econage.core.db.mybatis.wherelogic.MybatisWhereLogicHelper;
 import com.google.common.collect.Maps;
-import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
@@ -137,7 +136,7 @@ public final class MybatisProviderContext implements Cloneable {
           Collection<?> typeParams
   ){
     return MybatisSqlUtils.formatCollection2ParameterMappings(
-            StringUtils.EMPTY,StringUtils.EMPTY,itemName,
+            MybatisStringUtils.EMPTY,MybatisStringUtils.EMPTY,itemName,
             typeParams,
             additionalParam
     );

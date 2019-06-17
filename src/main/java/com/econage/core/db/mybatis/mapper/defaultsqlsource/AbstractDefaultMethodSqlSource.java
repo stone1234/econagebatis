@@ -25,18 +25,18 @@ import com.econage.core.db.mybatis.entity.TableFieldInfo;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import org.apache.ibatis.builder.SqlSourceBuilder;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.mapping.SqlSource;
 import org.apache.ibatis.parsing.PropertyParser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.Map;
 
 public abstract class AbstractDefaultMethodSqlSource implements SqlSource {
-    private static final Logger logger = LoggerFactory.getLogger(AbstractDefaultMethodSqlSource.class);
+    private static final Log logger = LogFactory.getLog(AbstractDefaultMethodSqlSource.class);
 
     private final MybatisConfiguration configuration;
     private final SqlSourceBuilder sqlSourceParser;

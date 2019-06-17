@@ -19,7 +19,6 @@ import com.econage.core.db.mybatis.enums.FieldStrategy;
 import com.econage.core.db.mybatis.annotations.TableField;
 import com.econage.core.db.mybatis.adaptation.MybatisGlobalAssistant;
 import com.econage.core.db.mybatis.util.MybatisStringUtils;
-import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Field;
 
@@ -49,7 +48,7 @@ public class TableFieldInfo {
         tableFieldInfo.setProperty(fieldInfo.getName());
         tableFieldInfo.setPropertyType(fieldInfo.getType());
 
-        if(StringUtils.isNotEmpty(tableFieldAnnotation.el())){
+        if(MybatisStringUtils.isNotEmpty(tableFieldAnnotation.el())){
             tableFieldInfo.setEl(tableFieldAnnotation.el());
         }else{
             tableFieldInfo.setEl(tableFieldInfo.getProperty());

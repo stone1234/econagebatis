@@ -16,23 +16,15 @@ public abstract class AbstractByWhereMethodSqlSource extends AbstractDefaultMeth
     }
 
     /*
-    * 控制是否填充false语句到空逻辑
+    * 如果谓语语句为空，则返回1=1
     * */
     protected String parseWhereLogicJoinSQL(Object parameterObject, Map<String,Object> additionalParameter){
 
         List<String> wherePart = MybatisWhereLogicHelper.parseWhereLogic(getGlobalAssistant(),parameterObject,additionalParameter);
-        //如果解析where部分后，没有任何条件，则执行空sql
-        if(fillFalseSQL2EmptyWhereLogic()&& MybatisCollectionUtils.isEmpty(wherePart)){
-            wherePart.add(MybatisSqlUtils.STATIC_FALSE_WHERE_SQL);
+        if(MybatisCollectionUtils.isEmpty(wherePart)){
+            wherePart.add(MybatisSqlUtils.STATIC_TRUE_WHERE_SQL);
         }
 
         return MybatisSqlUtils.wherePartJoin(wherePart);
-    }
-
-    /*
-    * 如果解析where逻辑是空的，是否填充静态false语句到逻辑中
-    * */
-    protected boolean fillFalseSQL2EmptyWhereLogic(){
-        return true;
     }
 }

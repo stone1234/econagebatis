@@ -17,11 +17,11 @@ package com.econage.core.db.mybatis.entity;
 
 import com.econage.core.db.mybatis.annotations.KeySequence;
 import com.econage.core.db.mybatis.enums.IdType;
+import com.econage.core.db.mybatis.util.MybatisStringUtils;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -235,14 +235,14 @@ public class TableInfo {
         if(fkField!=null){
             return fkField.getProperty();
         }
-        return StringUtils.EMPTY;
+        return MybatisStringUtils.EMPTY;
     }
 
     public String getFkColumn(){
         if(fkField!=null){
             return fkField.getColumn();
         }
-        return StringUtils.EMPTY;
+        return MybatisStringUtils.EMPTY;
     }
 
     public TableFieldInfo getTreeParentLinkField() {
@@ -257,14 +257,14 @@ public class TableInfo {
         if(treeParentLinkField!=null){
             return treeParentLinkField.getProperty();
         }
-        return StringUtils.EMPTY;
+        return MybatisStringUtils.EMPTY;
     }
 
     public String getTreeParentLinkColumn(){
         if(treeParentLinkField!=null){
             return treeParentLinkField.getColumn();
         }
-        return StringUtils.EMPTY;
+        return MybatisStringUtils.EMPTY;
     }
 
     public TableFieldInfo getTreeSiblingOrderField() {
@@ -279,13 +279,13 @@ public class TableInfo {
         if(treeSiblingOrderField!=null){
             return treeSiblingOrderField.getProperty();
         }
-        return StringUtils.EMPTY;
+        return MybatisStringUtils.EMPTY;
     }
 
     public String getTreeSiblingOrderColumn(){
         if(treeSiblingOrderField!=null){
             return treeSiblingOrderField.getColumn();
         }
-        return StringUtils.EMPTY;
+        return MybatisStringUtils.EMPTY;
     }
 }
