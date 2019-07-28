@@ -126,7 +126,7 @@ public final class MybatisProviderContext implements Cloneable {
     return MybatisWhereLogicHelper.parseWhereLogic(
             configuration.getGlobalAssistant(),
             whereLogic,
-            additionalParam
+            getAdditionalParam()
     );
 
   }
@@ -138,7 +138,7 @@ public final class MybatisProviderContext implements Cloneable {
     return MybatisSqlUtils.formatCollection2ParameterMappings(
             MybatisStringUtils.EMPTY,MybatisStringUtils.EMPTY,itemName,
             typeParams,
-            additionalParam
+            getAdditionalParam()
     );
   }
 

@@ -86,6 +86,7 @@ public class MybatisWhereLogicHelper {
                 return;
             }
 
+            //如果字段是原型
             if (whereLogicFieldInfo.isPrimitiveType()) {
                 //原型0值判断需要特殊处理
                 if (whereLogicFieldInfo.isUsePrimitiveZero()) {
@@ -98,6 +99,9 @@ public class MybatisWhereLogicHelper {
                 return;
             }
 
+            /*
+            * 如果字段类型是集合或者数组
+            * */
             if(whereLogicFieldInfo.isCollectionType()||whereLogicFieldInfo.isArrayType()){
 
                 Collection<?> collectionVal ;
@@ -118,6 +122,14 @@ public class MybatisWhereLogicHelper {
                         MybatisStringUtils.WHERE_LOGIC_COLLECTION_REPLACE,
                         collectionReplaceHolder
                 ));
+                return;
+            }
+
+            /*
+            * 如果字段是数字，则判断是否为空
+            * */
+            if(CharSequence.class.isAssignableFrom(whereLogicFieldInfo.getType())
+             &&StringUtils.isEmpty((CharSequence)propertyVal)){
                 return;
             }
 
