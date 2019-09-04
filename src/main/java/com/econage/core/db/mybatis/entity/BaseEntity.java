@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 /*
 * 对entity类，强制要求带有4个跟踪字段，并由框架自动处理
 * */
-public abstract class BaseEntity implements Serializable,Cloneable {
+public abstract class BaseEntity implements BasicEntity {
     private LocalDateTime createDate;
     private String createUser;
     private LocalDateTime modDate;

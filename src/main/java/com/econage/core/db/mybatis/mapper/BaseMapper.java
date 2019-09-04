@@ -15,7 +15,7 @@
  */
 package com.econage.core.db.mybatis.mapper;
 
-import com.econage.core.db.mybatis.entity.BaseEntity;
+import com.econage.core.db.mybatis.entity.BasicEntity;
 import com.econage.core.db.mybatis.plugins.pagination.Pagination;
 import org.apache.ibatis.annotations.Param;
 
@@ -26,7 +26,7 @@ import java.util.List;
 /**
  * Mapper 继承该接口后，无需编写 mapper.xml 文件，即可获得CRUD功能
  */
-public interface BaseMapper<T extends BaseEntity> {
+public interface BaseMapper<T extends BasicEntity> {
     /**
      * 插入一条记录
      *
