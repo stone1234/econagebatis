@@ -13,7 +13,7 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.econage.core.db.mybatis.mapper.providerstrengthen;
+package com.econage.core.db.mybatis.mapper.provider;
 
 import com.econage.core.db.mybatis.adaptation.MybatisConfiguration;
 import com.econage.core.db.mybatis.entity.TableInfo;
@@ -26,7 +26,6 @@ import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.SqlSource;
 import org.apache.ibatis.reflection.ParamNameResolver;
 import org.apache.ibatis.scripting.LanguageDriver;
-import org.apache.ibatis.session.Configuration;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;

@@ -13,13 +13,13 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.econage.core.db.mybatis.mapper.defaultsqlsource.basic;
+package com.econage.core.db.mybatis.mapper.sqlsource.basic;
 
 import com.econage.core.db.mybatis.entity.TableInfo;
 import com.econage.core.db.mybatis.enums.IdType;
 import com.econage.core.db.mybatis.enums.SqlMethod;
-import com.econage.core.db.mybatis.mapper.defaultsqlsource.AbstractDefaultMethodSqlSource;
-import com.econage.core.db.mybatis.mapper.defaultsqlsource.SqlProviderBinding;
+import com.econage.core.db.mybatis.mapper.sqlsource.AbstractDefaultMethodSqlSource;
+import com.econage.core.db.mybatis.mapper.sqlsource.SqlProviderBinding;
 import com.econage.core.db.mybatis.util.MybatisStringUtils;
 import com.econage.core.db.mybatis.uid.dbincrementer.IKeyGenerator;
 import com.econage.core.db.mybatis.util.MybatisSqlUtils;
@@ -141,12 +141,11 @@ public class DefaultInsertMethodSqlSource extends AbstractDefaultMethodSqlSource
             String property = versionField.getProperty();
             Class<?> propertyType = entityMetaObject.getGetterType(property);
             Object propertyVal = entityMetaObject.getValue(versionField.getProperty());
+            if(!MybatisStringUtils.isCharSequence(propertyType)){
+                throw new MybatisException("version property type error,expected:CharSequence,actual["+property+"]!");
+            }
             if(propertyVal==null){
-                throw new MybatisException("version is null,field:["+property+"]!");
-            }else if(MybatisStringUtils.isCharSequence(propertyType)){
-                if(MybatisStringUtils.isEmpty((String)propertyVal)){
-                    throw new MybatisException("version is null or empty,field:["+property+"]!");
-                }
+                entityMetaObject.setValue(versionField.getProperty(),IdWorker.getIdStr());
             }
         }
 

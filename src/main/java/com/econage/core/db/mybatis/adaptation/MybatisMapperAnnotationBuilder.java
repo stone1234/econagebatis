@@ -16,7 +16,7 @@
 package com.econage.core.db.mybatis.adaptation;
 
 import com.econage.core.db.mybatis.entity.TableInfo;
-import com.econage.core.db.mybatis.mapper.providerstrengthen.MybatisProviderSqlSource;
+import com.econage.core.db.mybatis.mapper.provider.MybatisProviderSqlSource;
 import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.annotations.ResultMap;
 import org.apache.ibatis.annotations.Options.FlushCachePolicy;
@@ -28,7 +28,6 @@ import org.apache.ibatis.builder.IncompleteElementException;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.builder.annotation.MapperAnnotationBuilder;
 import org.apache.ibatis.builder.annotation.MethodResolver;
-import org.apache.ibatis.builder.annotation.ProviderSqlSource;
 import org.apache.ibatis.builder.xml.XMLMapperBuilder;
 import org.apache.ibatis.cursor.Cursor;
 import org.apache.ibatis.executor.keygen.Jdbc3KeyGenerator;
@@ -40,7 +39,6 @@ import org.apache.ibatis.mapping.*;
 import org.apache.ibatis.parsing.PropertyParser;
 import org.apache.ibatis.reflection.TypeParameterResolver;
 import org.apache.ibatis.scripting.LanguageDriver;
-import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.type.JdbcType;

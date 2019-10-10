@@ -15,14 +15,17 @@
  */
 package com.econage.core.db.mybatis.adaptation;
 
+import com.econage.core.db.mybatis.adaptation.dyna.DynaBeanExecutor;
+import com.econage.core.db.mybatis.adaptation.dyna.DynaBeanResultSetHandler;
 import org.apache.ibatis.binding.MapperRegistry;
 import org.apache.ibatis.executor.*;
+import org.apache.ibatis.executor.parameter.ParameterHandler;
+import org.apache.ibatis.executor.resultset.ResultSetHandler;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
+import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.session.Configuration;
-import org.apache.ibatis.session.ExecutorType;
-import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.*;
 import org.apache.ibatis.transaction.Transaction;
 
 
@@ -101,7 +104,6 @@ public class MybatisConfiguration extends Configuration {
         this.globalAssistant = globalAssistant;
     }
 
-
     /*
     todo 增加二级缓存,暂时禁用所有二级缓存
     if (globalAssistant.getMybatisCacheAssistant()!=null) {
@@ -119,10 +121,33 @@ public class MybatisConfiguration extends Configuration {
         } else {
             executor = new SimpleExecutor(this, transaction);
         }
+
+        if(globalAssistant.isDynaBeanEnabled()){
+            executor = new DynaBeanExecutor(globalAssistant, executor);
+        }
+
         /*if (cacheEnabled) {
             executor = new CachingExecutor(executor);
         }*/
         executor = (Executor) interceptorChain.pluginAll(executor);
         return executor;
     }
+
+    @Override
+    public ResultSetHandler newResultSetHandler(
+            Executor executor, MappedStatement mappedStatement, RowBounds rowBounds, ParameterHandler parameterHandler,
+            ResultHandler resultHandler, BoundSql boundSql
+    ){
+        if(globalAssistant.isDynaBeanEnabled()){
+            ResultSetHandler resultSetHandler = new DynaBeanResultSetHandler(
+                    globalAssistant,
+                    executor, mappedStatement, parameterHandler, resultHandler, boundSql, rowBounds
+            );
+            resultSetHandler = (ResultSetHandler) interceptorChain.pluginAll(resultSetHandler);
+            return resultSetHandler;
+        }else{
+            return super.newResultSetHandler(executor, mappedStatement, rowBounds, parameterHandler, resultHandler, boundSql);
+        }
+    }
+
 }

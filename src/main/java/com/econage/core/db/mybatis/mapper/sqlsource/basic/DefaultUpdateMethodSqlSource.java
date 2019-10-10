@@ -1,11 +1,30 @@
-package com.econage.core.db.mybatis.mapper.defaultsqlsource.bywhere;
+/**
+ *    Copyright 2017-2018 the original author or authors.
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
+package com.econage.core.db.mybatis.mapper.sqlsource.basic;
 
-import com.econage.core.db.mybatis.adaptation.MybatisConfiguration;
 import com.econage.core.db.mybatis.entity.TableFieldInfo;
 import com.econage.core.db.mybatis.entity.TableInfo;
 import com.econage.core.db.mybatis.enums.SqlMethod;
-import com.econage.core.db.mybatis.mapper.defaultsqlsource.SqlProviderBinding;
+import com.econage.core.db.mybatis.mapper.MapperConst;
+import com.econage.core.db.mybatis.mapper.sqlsource.AbstractDefaultMethodSqlSource;
+import com.econage.core.db.mybatis.mapper.sqlsource.SqlProviderBinding;
 import com.econage.core.db.mybatis.util.MybatisSqlUtils;
+import com.econage.core.db.mybatis.util.MybatisStringUtils;
+import com.econage.core.db.mybatis.MybatisException;
+import com.econage.core.db.mybatis.adaptation.MybatisConfiguration;
 import com.econage.core.db.mybatis.uuid.IdWorker;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -16,14 +35,14 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-public class DefaultUpdateByWhereMethodSqlSource extends AbstractByWhereMethodSqlSource {
+public class DefaultUpdateMethodSqlSource extends AbstractDefaultMethodSqlSource {
 
-    public static final String UPDATE_SQL_TPL = "UPDATE %s SET %s WHERE %s ";
+    public static final String UPDATE_SQL_TEMPLATE = "UPDATE %s SET %s WHERE %s=#{%s}";
 
     private final boolean selective;
     private final boolean partial;
 
-    public DefaultUpdateByWhereMethodSqlSource(
+    public DefaultUpdateMethodSqlSource(
             MybatisConfiguration configuration,
             TableInfo tableInfo,
             boolean selective, boolean partial
@@ -39,27 +58,36 @@ public class DefaultUpdateByWhereMethodSqlSource extends AbstractByWhereMethodSq
             throw new IllegalStateException("selective and partial both true!");
         }
         /*---------------------1，解析参数*/
-        Map<String, Object> params = (Map<String, Object>) parameterObject;
-        parameterObject = params.get("et");
-        Object whereLogic = params.get("wl");
-        Collection<String> validProperty = partial?((Collection<String>)params.get("pna")):null;
+        Collection<String> validProperty = null;
+        if(partial){
+            Map<String, Object> params = (Map<String, Object>) parameterObject;
+            parameterObject = params.get(MapperConst.ENTITY_PARAM_NAME);
+            validProperty = (Collection<String>)params.get(MapperConst.PROPERTY_NAME_ARRAY_PARAM_NAME);
+        }
         /*---------------------2，解析set部分，并尝试填充版本字段*/
         MetaObject entityMetaObject = getConfiguration().newMetaObject(parameterObject);
         Map<String,Object> additionalMap = Maps.newHashMap();
         List<String> setPart = sqlSet(entityMetaObject, validProperty, additionalMap);
 
-        String whereLogicSQL = parseWhereLogicJoinSQL(whereLogic,additionalMap);
 
         String updateSql = String.format(
-                UPDATE_SQL_TPL,
+                UPDATE_SQL_TEMPLATE,
                 tableInfo.getTableName(),
                 MybatisSqlUtils.commaJoin(setPart),
-                whereLogicSQL
+                tableInfo.getKeyColumn(),
+                tableInfo.getKeyProperty()
         );
+        if(partial){
+            additionalMap.put(tableInfo.getKeyProperty(), entityMetaObject.getValue(tableInfo.getKeyProperty()));
+        }
+        //谓语部分乐观锁处理
+        if(tableInfo.getVersionField()!=null){
+            TableFieldInfo versionField = tableInfo.getVersionField();
+            updateSql += " AND "+versionField.getColumn()+"=#{"+versionField.getEl()+"}";
+        }
 
         return SqlProviderBinding.of(updateSql,additionalMap);
     }
-
 
     private List<String> sqlSet(
             MetaObject entityMetaObject,
@@ -104,7 +132,7 @@ public class DefaultUpdateByWhereMethodSqlSource extends AbstractByWhereMethodSq
             if(putSet){
                 if(versionField!=null&&property.equals(versionField.getProperty())){
                     //如果插入列是乐观锁列
-                    appendNewVersion2Set(
+                    resolveVersionColumn(
                             entityMetaObject,
                             versionField,
                             sqlSetsPart,
@@ -113,14 +141,16 @@ public class DefaultUpdateByWhereMethodSqlSource extends AbstractByWhereMethodSq
                     versionResolved = true;
                 }else{
                     sqlSetsPart.add(fieldInfo.getColumn()+"=#{"+fieldInfo.getEl()+"}");
-                    //如果使用自动映射需要添加前缀（et），此处将数据提取，存入additionalParam，以便移动映射到sql中的参数中
-                    additionalParam.put(property,propertyVal);
+                    if(partial){
+                        //partial为true时，如果使用自动映射需要添加前缀，此处将数据提取，存入additionalParam
+                        additionalParam.put(property,propertyVal);
+                    }
                 }
             }
         }
 
         if(versionField!=null&&!versionResolved){
-            appendNewVersion2Set(
+            resolveVersionColumn(
                     entityMetaObject,
                     versionField,
                     sqlSetsPart,
@@ -131,10 +161,8 @@ public class DefaultUpdateByWhereMethodSqlSource extends AbstractByWhereMethodSq
         return sqlSetsPart;
     }
 
-
-
-    //填充version相关set部分，批量更新的时候，只更新版本号，但不在谓语条件中限定版本号
-    private void appendNewVersion2Set(
+    //填充version相关set部分，并更新entity信息
+    private void resolveVersionColumn(
             MetaObject entityMetaObject,
             TableFieldInfo versionField,
             List<String> sqlSetsPart,
@@ -142,24 +170,40 @@ public class DefaultUpdateByWhereMethodSqlSource extends AbstractByWhereMethodSq
     ){
         //set version-->new_version
         String property = versionField.getProperty(),
-                newVersionProperty = property+ MybatisSqlUtils.NEW_VERSION_STAMP_SUFFIX;
+               newVersionProperty = property+ MybatisSqlUtils.NEW_VERSION_STAMP_SUFFIX;
+        Class<?> propertyType = entityMetaObject.getGetterType(property);
+        Object propertyVal = entityMetaObject.getValue(property);
+
+        if(propertyVal==null){
+            throw new MybatisException("version is null,field:["+property+"]!");
+        }else if(MybatisStringUtils.isCharSequence(propertyType)){
+            if(MybatisStringUtils.isEmpty((String)propertyVal)){
+                throw new MybatisException("version is null or empty,field:["+property+"]!");
+            }
+        }
+
+        additionalParam.put(property,propertyVal);
 
         String newVersionStamp = IdWorker.getIdStr();
         sqlSetsPart.add(versionField.getColumn()+"=#{"+newVersionProperty+"}");
         additionalParam.put(newVersionProperty, newVersionStamp);
 
-        //实体类回填新版本号
         entityMetaObject.setValue(property,newVersionStamp);
     }
+
+
 
     @Override
     public String getMethodId() {
         if(partial){
-            return SqlMethod.UPDATE_BATCH_PARTIAL_COLUMN_BY_WHERE_LOGIC.getMethod();
+            return SqlMethod.UPDATE_PARTIAL_COLUMN_BY_ID.getMethod();
+            //return "updatePartialColumnById";
         }else if(selective){
-            return SqlMethod.UPDATE_BATCH_BY_WHERE_LOGIC.getMethod();
+            return SqlMethod.UPDATE_BY_ID.getMethod();
+            //return "updateById";
         }else{
-            return SqlMethod.UPDATE_BATCH_ALL_COLUMN_BY_WHERE_LOGIC.getMethod();
+            return SqlMethod.UPDATE_ALL_COLUMN_BY_ID.getMethod();
+            //return "updateAllColumnById";
         }
     }
 
@@ -167,4 +211,5 @@ public class DefaultUpdateByWhereMethodSqlSource extends AbstractByWhereMethodSq
     public SqlCommandType getSqlCommandType() {
         return SqlCommandType.UPDATE;
     }
+
 }

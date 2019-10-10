@@ -13,7 +13,7 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.econage.core.db.mybatis.mapper.defaultsqlsource;
+package com.econage.core.db.mybatis.mapper.sqlsource;
 
 import com.econage.core.db.mybatis.adaptation.MybatisGlobalAssistant;
 import com.econage.core.db.mybatis.entity.TableInfo;

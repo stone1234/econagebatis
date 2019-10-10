@@ -1,8 +1,8 @@
-package com.econage.core.db.mybatis.mapper.defaultsqlsource.bywhere;
+package com.econage.core.db.mybatis.mapper.sqlsource.bywhere;
 
 import com.econage.core.db.mybatis.adaptation.MybatisConfiguration;
 import com.econage.core.db.mybatis.entity.TableInfo;
-import com.econage.core.db.mybatis.mapper.defaultsqlsource.AbstractDefaultMethodSqlSource;
+import com.econage.core.db.mybatis.mapper.sqlsource.AbstractDefaultMethodSqlSource;
 import com.econage.core.db.mybatis.util.MybatisCollectionUtils;
 import com.econage.core.db.mybatis.util.MybatisSqlUtils;
 import com.econage.core.db.mybatis.wherelogic.MybatisWhereLogicHelper;

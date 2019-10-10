@@ -1,21 +1,7 @@
-/**
- *    Copyright 2017-2018 the original author or authors.
- *
- *    Licensed under the Apache License, Version 2.0 (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
- *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- *    Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
- */
-package com.econage.core.db.mybatis.mapper;
+package com.econage.core.db.mybatis.mapper.dyna;
 
-import com.econage.core.db.mybatis.entity.BasicEntity;
+import com.econage.core.db.mybatis.dyna.DynaBean;
+import com.econage.core.db.mybatis.dyna.DynaClass;
 import com.econage.core.db.mybatis.plugins.pagination.Pagination;
 import org.apache.ibatis.annotations.Param;
 
@@ -25,10 +11,7 @@ import java.util.List;
 
 import static com.econage.core.db.mybatis.mapper.MapperConst.*;
 
-/**
- * Mapper 继承该接口后，无需编写 mapper.xml 文件，即可获得CRUD功能
- */
-public interface BaseMapper<T extends BasicEntity> {
+public interface DynaBeanMapper {
 
     /**
      * 插入一条记录
@@ -36,7 +19,10 @@ public interface BaseMapper<T extends BasicEntity> {
      * @param entity 实体对象
      * @return int
      */
-    Integer insert(T entity);
+    Integer insert(
+            @Param(DYNA_CLASS_PARAM_NAME) DynaClass dynaClass,
+            @Param(DYNA_ENTITY_PARAM_NAME) DynaBean entity
+    );
 
     /**
      * <p>
@@ -46,7 +32,10 @@ public interface BaseMapper<T extends BasicEntity> {
      * @param entity 实体对象
      * @return int
      */
-    Integer insertAllColumn(T entity);
+    Integer insertAllColumn(
+            @Param(DYNA_CLASS_PARAM_NAME) DynaClass dynaClass,
+            @Param(DYNA_ENTITY_PARAM_NAME) DynaBean entity
+    );
 
     /**
      * <p>
@@ -56,7 +45,10 @@ public interface BaseMapper<T extends BasicEntity> {
      * @param id 主键ID
      * @return int
      */
-    Integer deleteById(Serializable id);
+    Integer deleteById(
+            @Param(DYNA_CLASS_PARAM_NAME) DynaClass dynaClass,
+            @Param(ID_PARAM_NAME) Serializable id
+    );
 
     /**
      * <p>
@@ -66,7 +58,10 @@ public interface BaseMapper<T extends BasicEntity> {
      * @param idList 主键ID列表
      * @return int
      */
-    Integer deleteByIds(Collection<? extends Serializable> idList);
+    Integer deleteByIds(
+            @Param(DYNA_CLASS_PARAM_NAME) DynaClass dynaClass,
+            @Param(ID_COLLECTION_PARAM_NAME) Collection<? extends Serializable> idList
+    );
 
     /**
      * <p>
@@ -76,7 +71,10 @@ public interface BaseMapper<T extends BasicEntity> {
      * @param fk 外键ID
      * @return int
      */
-    Integer deleteByFk(Serializable fk);
+    Integer deleteByFk(
+            @Param(DYNA_CLASS_PARAM_NAME) DynaClass dynaClass,
+            @Param(FK_PARAM_NAME) Serializable fk
+    );
 
     /**
      * <p>
@@ -86,7 +84,10 @@ public interface BaseMapper<T extends BasicEntity> {
      * @param whereLogic where逻辑
      * @return int
      */
-    Integer deleteByWhereLogic(Object whereLogic);
+    Integer deleteByWhereLogic(
+            @Param(DYNA_CLASS_PARAM_NAME) DynaClass dynaClass,
+            @Param(WHERE_LOGIC_PARAM_NAME) Object whereLogic
+    );
 
     /**
      * <p>
@@ -96,7 +97,10 @@ public interface BaseMapper<T extends BasicEntity> {
      * @param entity 实体对象
      * @return int
      */
-    Integer updateById(T entity);
+    Integer updateById(
+            @Param(DYNA_CLASS_PARAM_NAME) DynaClass dynaClass,
+            @Param(DYNA_ENTITY_PARAM_NAME) DynaBean entity
+    );
 
     /**
      * <p>
@@ -106,13 +110,17 @@ public interface BaseMapper<T extends BasicEntity> {
      * @param entity 实体对象
      * @return int
      */
-    Integer updateAllColumnById(T entity);
+    Integer updateAllColumnById(
+            @Param(DYNA_CLASS_PARAM_NAME) DynaClass dynaClass,
+            @Param(DYNA_ENTITY_PARAM_NAME) DynaBean entity
+    );
 
     /*
-    * 根据id更新特定列
-    * */
+     * 根据id更新特定列
+     * */
     Integer updatePartialColumnById(
-            @Param(ENTITY_PARAM_NAME) T entity,
+            @Param(DYNA_CLASS_PARAM_NAME) DynaClass dynaClass,
+            @Param(DYNA_ENTITY_PARAM_NAME) DynaBean entity,
             @Param(PROPERTY_NAME_ARRAY_PARAM_NAME) Collection<String> propertyNameArray
     );
 
@@ -128,7 +136,8 @@ public interface BaseMapper<T extends BasicEntity> {
      * @return int
      */
     Integer updateBatchByWhereLogic(
-            @Param(ENTITY_PARAM_NAME) T entity,
+            @Param(DYNA_CLASS_PARAM_NAME) DynaClass dynaClass,
+            @Param(DYNA_ENTITY_PARAM_NAME) DynaBean entity,
             @Param(WHERE_LOGIC_PARAM_NAME) Object whereLogic
     );
 
@@ -145,7 +154,8 @@ public interface BaseMapper<T extends BasicEntity> {
      * @return int
      */
     Integer updateBatchAllColumnByWhereLogic(
-            @Param(ENTITY_PARAM_NAME) T entity,
+            @Param(DYNA_CLASS_PARAM_NAME) DynaClass dynaClass,
+            @Param(DYNA_ENTITY_PARAM_NAME) DynaBean entity,
             @Param(WHERE_LOGIC_PARAM_NAME) Object whereLogic
     );
 
@@ -162,7 +172,8 @@ public interface BaseMapper<T extends BasicEntity> {
      * @return int
      * */
     Integer updateBatchPartialColumnByWhereLogic(
-            @Param(ENTITY_PARAM_NAME) T entity,
+            @Param(DYNA_CLASS_PARAM_NAME) DynaClass dynaClass,
+            @Param(DYNA_ENTITY_PARAM_NAME) DynaBean entity,
             @Param(PROPERTY_NAME_ARRAY_PARAM_NAME) Collection<String> propertyNameArray,
             @Param(WHERE_LOGIC_PARAM_NAME) Object whereLogic
     );
@@ -175,7 +186,10 @@ public interface BaseMapper<T extends BasicEntity> {
      * @param id 主键ID
      * @return T
      */
-    T selectById(Serializable id);
+    DynaBean selectById(
+            @Param(DYNA_CLASS_PARAM_NAME) DynaClass dynaClass,
+            @Param(ID_PARAM_NAME) Serializable id
+    );
 
     /**
      * <p>
@@ -185,31 +199,49 @@ public interface BaseMapper<T extends BasicEntity> {
      * @param idList 主键ID列表
      * @return List<T>
      */
-    List<T> selectListByIds(Collection<? extends Serializable> idList);
+    List<DynaBean> selectListByIds(
+            @Param(DYNA_CLASS_PARAM_NAME) DynaClass dynaClass,
+            @Param(ID_COLLECTION_PARAM_NAME) Collection<? extends Serializable> idList
+    );
 
     /*
-    * 按照主键分页显示，会自动侦测主键信息
-    * */
-    List<T> selectListByPage(Pagination pagination);
+     * 按照主键分页显示，会自动侦测主键信息
+     * */
+    List<DynaBean> selectListByPage(
+            @Param(DYNA_CLASS_PARAM_NAME) DynaClass dynaClass,
+            Pagination pagination
+    );
 
     /*
-    * 获取总数
-    * */
-    Integer selectCountAll();
+     * 获取总数
+     * */
+    Integer selectCountAll(
+            @Param(DYNA_CLASS_PARAM_NAME) DynaClass dynaClass
+    );
 
     /*
-    *  按照外键信息，显示
-    * */
-    List<T> selectListByFk(Collection<? extends Serializable> fkCollection,Pagination page);
+     *  按照外键信息，显示
+     * */
+    List<DynaBean> selectListByFk(
+            @Param(DYNA_CLASS_PARAM_NAME) DynaClass dynaClass,
+            @Param(FK_COLLECTION_PARAM_NAME) Collection<? extends Serializable> fkCollection,
+             Pagination pagination
+    );
 
     /*
-    * 通用查询方法，可以做分页查询
-    * */
-    List<T> selectListByWhereLogic(Object searForm, Pagination page);
+     * 通用查询方法，可以做分页查询
+     * */
+    List<DynaBean> selectListByWhereLogic(
+            @Param(DYNA_CLASS_PARAM_NAME) DynaClass dynaClass,
+            @Param(WHERE_LOGIC_PARAM_NAME) Object whereLogic,
+            Pagination page
+    );
 
     /*
-    * 通用计数方法
-    * */
-    Integer selectCountByWhereLogic(Object searForm);
-
+     * 通用计数方法
+     * */
+    Integer selectCountByWhereLogic(
+            @Param(DYNA_CLASS_PARAM_NAME) DynaClass dynaClass,
+            @Param(WHERE_LOGIC_PARAM_NAME) Object whereLogic
+    );
 }

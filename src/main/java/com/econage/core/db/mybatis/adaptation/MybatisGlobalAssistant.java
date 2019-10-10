@@ -15,9 +15,10 @@
  */
 package com.econage.core.db.mybatis.adaptation;
 
-import com.econage.core.db.mybatis.MybatisException;
 import com.econage.core.db.mybatis.MybatisPackageInfo;
+import com.econage.core.db.mybatis.dyna.DynaClass;
 import com.econage.core.db.mybatis.entity.MybatisTableInfoHelper;
+import com.econage.core.db.mybatis.mapper.dyna.DynaBeanMapper;
 import com.econage.core.db.mybatis.wherelogic.WhereLogicInfo;
 import com.econage.core.db.mybatis.entity.TableInfo;
 import com.econage.core.db.mybatis.enums.DBType;
@@ -29,14 +30,19 @@ import com.econage.core.db.mybatis.mapper.SqlInjector;
 import com.econage.core.db.mybatis.uid.dbincrementer.IKeyGenerator;
 import com.econage.core.db.mybatis.util.*;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Sets;
 import com.google.common.reflect.Reflection;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
+import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
+import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.mapping.ResultMap;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
@@ -82,9 +88,17 @@ public class MybatisGlobalAssistant implements Serializable {
     private final ConcurrentHashMap<Class<?>, WhereLogicInfo> whereLogicInfoMap = new ConcurrentHashMap<>(5000);
     private final Set<String> excludeWhereLogicType = new ConcurrentSkipListSet<>();
 
+    //如果忽略类的package扫描信息，则判断类是否是内置的组件
+    //在ioc环境中，容器会接管mapper的创建工作，不再需要packageNames辅助判断组件是否在合理范围内
+    private boolean ignoreScanPackages;
     private String[] packageNames;
 
     private boolean globalCacheEnabled;
+
+    private boolean dynaBeanEnabled;
+    private final ConcurrentHashMap<Executor, DynaClass> runtimeDynaClassMap = new ConcurrentHashMap<>(5000);
+
+    private Set<String> disabledPropertyInDefaultUpdateMethod = Sets.newHashSet("createDate","createUser");
 
     public MybatisGlobalAssistant(MybatisConfiguration configuration) {
         this.configuration = configuration;
@@ -196,6 +210,14 @@ public class MybatisGlobalAssistant implements Serializable {
         this.globalCacheEnabled = globalCacheEnabled;
     }
 
+    public boolean isDynaBeanEnabled() {
+        return dynaBeanEnabled;
+    }
+
+    public void setDynaBeanEnabled(boolean dynaBeanEnabled) {
+        this.dynaBeanEnabled = dynaBeanEnabled;
+    }
+
     /*
     * todo 分布式缓存方案
     * */
@@ -209,6 +231,25 @@ public class MybatisGlobalAssistant implements Serializable {
         this.mybatisCacheAssistant = mybatisCacheAssistant;
     }*/
     /*----------------------GETTER AND SETTER----------- */
+    //执行DynaBeanMapper相关方法时需要暂存DynaClass，以便结果集处理器使用
+    public void putExecutorDynaCls(Executor executorKey,DynaClass dynaClass){
+        runtimeDynaClassMap.put(executorKey,dynaClass);
+    }
+    public DynaClass getDynaClass(Executor executorKey){
+        return runtimeDynaClassMap.get(executorKey);
+    }
+
+    public void removeExecutorDynaCls(Executor executorKey){
+        runtimeDynaClassMap.remove(executorKey);
+    }
+
+    private static final String DYNA_BEAN_MAPPER_PACKAGE = DynaBeanMapper.class.getName();
+    public boolean isRunningInDynaBeanMapper(MappedStatement ms){
+        return ms.getId().startsWith(DYNA_BEAN_MAPPER_PACKAGE);
+    }
+    public boolean isRunningInDynaBeanMapper(ResultMap resultMap){
+        return resultMap.getId().startsWith(DYNA_BEAN_MAPPER_PACKAGE);
+    }
 
     public boolean isMapperCached(Class<?> mapper){
         if(!isMapperClass(mapper)){
@@ -230,7 +271,15 @@ public class MybatisGlobalAssistant implements Serializable {
         return false;
     }
 
+    public void ignoreScanPackage(){
+        this.ignoreScanPackages = true;
+    }
+
     public void setScanPackages(Class<?>... cls){
+        if(ignoreScanPackages){
+            return;
+        }
+
         if(ArrayUtils.isEmpty(cls)){
             throw new IllegalArgumentException("class is null or empty!");
         }
@@ -376,22 +425,32 @@ public class MybatisGlobalAssistant implements Serializable {
         return formatColumn(tableName);
     }
 
-    //部分列默认不参与更新，todo 改为可配置
     public boolean enableInDefaultUpdateMethod(String propertyName){
-        if("createDate".equals(propertyName)||
-           "createUser".equals(propertyName)){
+        if(disabledPropertyInDefaultUpdateMethod.contains(propertyName)){
             return false;
         }
         return true;
     }
 
+    public void addDisabledPropertyInDefaultUpdateMethod(Collection<String> properties){
+        if(properties!=null){
+            disabledPropertyInDefaultUpdateMethod.addAll(properties);
+        }
+    }
+
     //处于业务程序的类，都可以视为有效的model类
     private boolean isClassInScanPackage(Class<?> clazz){
+        String modelName = clazz.getName();
+
+        //如果忽略类的package扫描信息，则判断类是否是内置的组件
+        if(ignoreScanPackages){
+            return !modelName.startsWith(MYBATIS_BASE_PACKAGE);
+        }
+
         Preconditions.checkNotNull(clazz,"class is null!");
         if(packageNames==null){
             throw new IllegalStateException("not scan package!");
         }
-        String modelName = clazz.getName();
         for(String packageName:packageNames){
             //框架类，不参与扫描
             if(modelName.startsWith(packageName)

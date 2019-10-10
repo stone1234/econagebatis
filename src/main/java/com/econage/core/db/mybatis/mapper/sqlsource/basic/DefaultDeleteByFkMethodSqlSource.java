@@ -13,13 +13,13 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.econage.core.db.mybatis.mapper.defaultsqlsource.basic;
+package com.econage.core.db.mybatis.mapper.sqlsource.basic;
 
 import com.econage.core.db.mybatis.adaptation.MybatisConfiguration;
 import com.econage.core.db.mybatis.entity.TableInfo;
 import com.econage.core.db.mybatis.enums.SqlMethod;
-import com.econage.core.db.mybatis.mapper.defaultsqlsource.AbstractDefaultMethodSqlSource;
-import com.econage.core.db.mybatis.mapper.defaultsqlsource.SqlProviderBinding;
+import com.econage.core.db.mybatis.mapper.sqlsource.AbstractDefaultMethodSqlSource;
+import com.econage.core.db.mybatis.mapper.sqlsource.SqlProviderBinding;
 import org.apache.ibatis.mapping.SqlCommandType;
 
 /*

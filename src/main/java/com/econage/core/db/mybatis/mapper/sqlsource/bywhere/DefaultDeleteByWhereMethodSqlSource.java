@@ -1,9 +1,9 @@
-package com.econage.core.db.mybatis.mapper.defaultsqlsource.bywhere;
+package com.econage.core.db.mybatis.mapper.sqlsource.bywhere;
 
 import com.econage.core.db.mybatis.adaptation.MybatisConfiguration;
 import com.econage.core.db.mybatis.entity.TableInfo;
 import com.econage.core.db.mybatis.enums.SqlMethod;
-import com.econage.core.db.mybatis.mapper.defaultsqlsource.SqlProviderBinding;
+import com.econage.core.db.mybatis.mapper.sqlsource.SqlProviderBinding;
 import com.econage.core.db.mybatis.util.MybatisSqlUtils;
 import com.google.common.collect.Maps;
 import org.apache.ibatis.mapping.SqlCommandType;

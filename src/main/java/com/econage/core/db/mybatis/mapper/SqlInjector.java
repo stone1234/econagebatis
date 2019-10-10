@@ -16,11 +16,11 @@
 package com.econage.core.db.mybatis.mapper;
 
 import com.econage.core.db.mybatis.entity.TableInfo;
-import com.econage.core.db.mybatis.mapper.defaultsqlsource.basic.*;
-import com.econage.core.db.mybatis.mapper.defaultsqlsource.AbstractDefaultMethodSqlSource;
-import com.econage.core.db.mybatis.mapper.defaultsqlsource.bywhere.DefaultDeleteByWhereMethodSqlSource;
-import com.econage.core.db.mybatis.mapper.defaultsqlsource.bywhere.DefaultSelectByWhereMethodSqlSource;
-import com.econage.core.db.mybatis.mapper.defaultsqlsource.bywhere.DefaultUpdateByWhereMethodSqlSource;
+import com.econage.core.db.mybatis.mapper.sqlsource.basic.*;
+import com.econage.core.db.mybatis.mapper.sqlsource.AbstractDefaultMethodSqlSource;
+import com.econage.core.db.mybatis.mapper.sqlsource.bywhere.DefaultDeleteByWhereMethodSqlSource;
+import com.econage.core.db.mybatis.mapper.sqlsource.bywhere.DefaultSelectByWhereMethodSqlSource;
+import com.econage.core.db.mybatis.mapper.sqlsource.bywhere.DefaultUpdateByWhereMethodSqlSource;
 import com.econage.core.db.mybatis.util.MybatisStringUtils;
 import com.econage.core.db.mybatis.adaptation.MybatisGlobalAssistant;
 import com.google.common.base.Preconditions;

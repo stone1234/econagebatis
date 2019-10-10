@@ -13,70 +13,65 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.econage.core.db.mybatis.mapper.defaultsqlsource.basic;
+package com.econage.core.db.mybatis.mapper.sqlsource.bywhere;
 
-import com.econage.core.db.mybatis.MybatisException;
 import com.econage.core.db.mybatis.adaptation.MybatisConfiguration;
 import com.econage.core.db.mybatis.entity.TableInfo;
 import com.econage.core.db.mybatis.enums.SqlMethod;
-import com.econage.core.db.mybatis.mapper.defaultsqlsource.AbstractDefaultMethodSqlSource;
-import com.econage.core.db.mybatis.mapper.defaultsqlsource.SqlProviderBinding;
-import com.econage.core.db.mybatis.util.MybatisCollectionUtils;
+import com.econage.core.db.mybatis.mapper.sqlsource.SqlProviderBinding;
 import com.econage.core.db.mybatis.util.MybatisSqlUtils;
 import com.google.common.collect.Maps;
 import org.apache.ibatis.mapping.SqlCommandType;
 
-import java.util.Collection;
 import java.util.Map;
 
-public class DefaultSelectByFkMethodSqlSource extends AbstractDefaultMethodSqlSource {
+public class DefaultSelectByWhereMethodSqlSource extends AbstractByWhereMethodSqlSource {
 
-    public static final String SELECT_LIST_BY_FKS = "SELECT %s FROM %s WHERE %s ";
+    public static final String SELECT_LIST_BY_SEARCH_FORM = "SELECT %s FROM %s WHERE %s ";
 
-    //如果参数为空，则返回一个查不出任何结果的sql
     private final SqlProviderBinding emptyResultSQLBinding;
-    public DefaultSelectByFkMethodSqlSource(
+    private final boolean selectCount;
+    public DefaultSelectByWhereMethodSqlSource(
             MybatisConfiguration configuration,
-            TableInfo tableInfo
+            TableInfo tableInfo,
+            boolean selectCount
     ) {
         super(configuration, tableInfo);
         this.emptyResultSQLBinding = SqlProviderBinding.of(String.format(
-                SELECT_LIST_BY_FKS,
-                tableInfo.getSelectColumns(),
-                tableInfo.getTableName(),
+                SELECT_LIST_BY_SEARCH_FORM,
+                parseSelectPart(),
+                this.tableInfo.getTableName(),
                 MybatisSqlUtils.STATIC_FALSE_WHERE_SQL
         ));
+        this.selectCount = selectCount;
     }
 
     @Override
     protected SqlProviderBinding parseBinding(Object parameterObject) {
-        Collection<?> collectionParam =fetchCollectionTypeParameter(parameterObject);
-        if(MybatisCollectionUtils.isEmpty(collectionParam)){
+        if(parameterObject==null){
             return emptyResultSQLBinding;
-        }else if(tableInfo.getFkField()==null){
-            throw new MybatisException("Could not find fkField on table.Possibly no @TableFk in Entity.");
         }
 
         Map<String,Object> additionalParameter = Maps.newHashMap();
-        String fkTokens = MybatisSqlUtils.formatCollection2ParameterMappings(
-                tableInfo.getFkProperty(),
-                collectionParam,
-                additionalParameter
-        );
-
         String sql = String.format(
-                SELECT_LIST_BY_FKS,
-                tableInfo.getSelectColumns(),
+                SELECT_LIST_BY_SEARCH_FORM,
+                parseSelectPart(),
                 tableInfo.getTableName(),
-                tableInfo.getFkColumn() + " IN ("+fkTokens+")"
+                parseWhereLogicJoinSQL(parameterObject,additionalParameter)
         );
 
         return SqlProviderBinding.of(sql,additionalParameter);
     }
 
+    private String parseSelectPart(){
+        return selectCount?"COUNT(1)": tableInfo.getSelectColumns();
+    }
+
     @Override
     public String getMethodId() {
-        return SqlMethod.SELECT_LIST_BY_FK.getMethod();
+        return selectCount?
+                SqlMethod.SELECT_COUNT_BY_WHERE_LOGIC.getMethod():
+                SqlMethod.SELECT_LIST_BY_WHERE_LOGIC.getMethod();
     }
 
     @Override
