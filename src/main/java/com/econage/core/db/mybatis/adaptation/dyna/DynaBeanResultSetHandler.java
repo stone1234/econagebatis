@@ -414,11 +414,12 @@ public class DynaBeanResultSetHandler implements ResultSetHandler {
     if(globalAssistant.isRunningInDynaBeanMapper(resultMap)&&dynaBeanClass.isAssignableFrom(resultMap.getType())){
       DynaBean dynaBean = new DynaBean(dynaClass);
       for(DynaProperty dynaProperty :  dynaClass.getDynaProperties()){
-        TypeHandler<?> typeHandler = typeHandlerRegistry.getTypeHandler(dynaProperty.getType());
+        String columnName = dynaProperty.getName();
+        TypeHandler<?> typeHandler = typeHandlerRegistry.getTypeHandler(dynaProperty.getType(),rsw.getJdbcType(columnName));
         if(typeHandler!=null){
           dynaBean.set(
-                  dynaProperty.getName(),
-                  typeHandler.getResult(rsw.getResultSet(), dynaProperty.getName())
+                  columnName,
+                  typeHandler.getResult(rsw.getResultSet(), columnName)
           );
         }else{
           throw new PersistenceException("Unrecognized type in handle dynaClass,type:["+dynaProperty.getType()+"]");
