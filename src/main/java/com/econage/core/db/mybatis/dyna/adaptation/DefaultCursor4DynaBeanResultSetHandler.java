@@ -13,7 +13,7 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.econage.core.db.mybatis.adaptation.dyna;
+package com.econage.core.db.mybatis.dyna.adaptation;
 
 import org.apache.ibatis.cursor.Cursor;
 import org.apache.ibatis.executor.resultset.ResultSetWrapper;

@@ -6,6 +6,7 @@ public interface MapperConst {
     String WHERE_LOGIC_PARAM_NAME = "wl";
     String DYNA_CLASS_PARAM_NAME = "dynaCls";
     String DYNA_ENTITY_PARAM_NAME = "dynaEntity";
+    String DYNA_COLUMN_NAME_ARRAY_PARAM_NAME = "dynaCna";
 
     String ID_COLLECTION_PARAM_NAME = "ids";
     String ID_PARAM_NAME = "id";

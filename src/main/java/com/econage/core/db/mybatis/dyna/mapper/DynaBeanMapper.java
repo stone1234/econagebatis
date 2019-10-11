@@ -1,16 +1,17 @@
-package com.econage.core.db.mybatis.mapper.dyna;
+package com.econage.core.db.mybatis.dyna.mapper;
 
-import com.econage.core.db.mybatis.dyna.DynaBean;
-import com.econage.core.db.mybatis.dyna.DynaClass;
+import com.econage.core.db.mybatis.dyna.entity.DynaBean;
+import com.econage.core.db.mybatis.dyna.entity.DynaClass;
+import com.econage.core.db.mybatis.plugins.pagination.Pagination;
 import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.builder.annotation.ProviderMethodResolver;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.List;
 
 import static com.econage.core.db.mybatis.mapper.MapperConst.*;
 
-public class DynaBeanMapperProvider implements ProviderMethodResolver {
+public interface DynaBeanMapper {
 
     /**
      * 插入一条记录
@@ -18,28 +19,10 @@ public class DynaBeanMapperProvider implements ProviderMethodResolver {
      * @param entity 实体对象
      * @return int
      */
-    public static String insert(
+    Integer insert(
             @Param(DYNA_CLASS_PARAM_NAME) DynaClass dynaClass,
             @Param(DYNA_ENTITY_PARAM_NAME) DynaBean entity
-    ){
-        return null;
-    }
-
-    /**
-     * <p>
-     * 插入一条记录
-     * </p>
-     *
-     * @param entity 实体对象
-     * @return int
-     */
-    public static String insertAllColumn(
-            @Param(DYNA_CLASS_PARAM_NAME) DynaClass dynaClass,
-            @Param(DYNA_ENTITY_PARAM_NAME) DynaBean entity
-    ){
-
-        return null;
-    }
+    );
 
     /**
      * <p>
@@ -49,13 +32,10 @@ public class DynaBeanMapperProvider implements ProviderMethodResolver {
      * @param id 主键ID
      * @return int
      */
-    public static String deleteById(
+    Integer deleteById(
             @Param(DYNA_CLASS_PARAM_NAME) DynaClass dynaClass,
             @Param(ID_PARAM_NAME) Serializable id
-    ){
-
-        return null;
-    }
+    );
 
     /**
      * <p>
@@ -65,13 +45,10 @@ public class DynaBeanMapperProvider implements ProviderMethodResolver {
      * @param idList 主键ID列表
      * @return int
      */
-    public static String deleteByIds(
+    Integer deleteByIds(
             @Param(DYNA_CLASS_PARAM_NAME) DynaClass dynaClass,
             @Param(ID_COLLECTION_PARAM_NAME) Collection<? extends Serializable> idList
-    ){
-
-        return null;
-    }
+    );
 
     /**
      * <p>
@@ -81,13 +58,10 @@ public class DynaBeanMapperProvider implements ProviderMethodResolver {
      * @param fk 外键ID
      * @return int
      */
-    public static String deleteByFk(
+    Integer deleteByFk(
             @Param(DYNA_CLASS_PARAM_NAME) DynaClass dynaClass,
             @Param(FK_PARAM_NAME) Serializable fk
-    ){
-
-        return null;
-    }
+    );
 
     /**
      * <p>
@@ -97,12 +71,10 @@ public class DynaBeanMapperProvider implements ProviderMethodResolver {
      * @param whereLogic where逻辑
      * @return int
      */
-    public static String deleteByWhereLogic(
+    Integer deleteByWhereLogic(
             @Param(DYNA_CLASS_PARAM_NAME) DynaClass dynaClass,
             @Param(WHERE_LOGIC_PARAM_NAME) Object whereLogic
-    ){
-        return null;
-    }
+    );
 
     /**
      * <p>
@@ -112,12 +84,10 @@ public class DynaBeanMapperProvider implements ProviderMethodResolver {
      * @param entity 实体对象
      * @return int
      */
-    public static String updateById(
+    Integer updateById(
             @Param(DYNA_CLASS_PARAM_NAME) DynaClass dynaClass,
             @Param(DYNA_ENTITY_PARAM_NAME) DynaBean entity
-    ){
-        return null;
-    }
+    );
 
     /**
      * <p>
@@ -127,23 +97,19 @@ public class DynaBeanMapperProvider implements ProviderMethodResolver {
      * @param entity 实体对象
      * @return int
      */
-    public static String updateAllColumnById(
+    Integer updateAllColumnById(
             @Param(DYNA_CLASS_PARAM_NAME) DynaClass dynaClass,
             @Param(DYNA_ENTITY_PARAM_NAME) DynaBean entity
-    ){
-        return null;
-    }
+    );
 
     /*
      * 根据id更新特定列
      * */
-    public static String updatePartialColumnById(
+    Integer updatePartialColumnById(
             @Param(DYNA_CLASS_PARAM_NAME) DynaClass dynaClass,
             @Param(DYNA_ENTITY_PARAM_NAME) DynaBean entity,
-            @Param(PROPERTY_NAME_ARRAY_PARAM_NAME) Collection<String> propertyNameArray
-    ){
-        return null;
-    }
+            @Param(DYNA_COLUMN_NAME_ARRAY_PARAM_NAME) Collection<String> propertyNameArray
+    );
 
     /**
      * <p>
@@ -156,13 +122,11 @@ public class DynaBeanMapperProvider implements ProviderMethodResolver {
      * @param whereLogic where逻辑
      * @return int
      */
-    public static String updateBatchByWhereLogic(
+    Integer updateBatchByWhereLogic(
             @Param(DYNA_CLASS_PARAM_NAME) DynaClass dynaClass,
             @Param(DYNA_ENTITY_PARAM_NAME) DynaBean entity,
             @Param(WHERE_LOGIC_PARAM_NAME) Object whereLogic
-    ){
-        return null;
-    }
+    );
 
     /**
      * <p>
@@ -180,9 +144,7 @@ public class DynaBeanMapperProvider implements ProviderMethodResolver {
             @Param(DYNA_CLASS_PARAM_NAME) DynaClass dynaClass,
             @Param(DYNA_ENTITY_PARAM_NAME) DynaBean entity,
             @Param(WHERE_LOGIC_PARAM_NAME) Object whereLogic
-    ){
-        return null;
-    }
+    );
 
     /*
      * <p>
@@ -196,14 +158,12 @@ public class DynaBeanMapperProvider implements ProviderMethodResolver {
      * @param whereLogic where逻辑
      * @return int
      * */
-    public static String updateBatchPartialColumnByWhereLogic(
+    Integer updateBatchPartialColumnByWhereLogic(
             @Param(DYNA_CLASS_PARAM_NAME) DynaClass dynaClass,
             @Param(DYNA_ENTITY_PARAM_NAME) DynaBean entity,
-            @Param(PROPERTY_NAME_ARRAY_PARAM_NAME) Collection<String> propertyNameArray,
+            @Param(DYNA_COLUMN_NAME_ARRAY_PARAM_NAME) Collection<String> propertyNameArray,
             @Param(WHERE_LOGIC_PARAM_NAME) Object whereLogic
-    ){
-        return null;
-    }
+    );
 
     /**
      * <p>
@@ -213,12 +173,10 @@ public class DynaBeanMapperProvider implements ProviderMethodResolver {
      * @param id 主键ID
      * @return T
      */
-    public static String selectById(
+    DynaBean selectById(
             @Param(DYNA_CLASS_PARAM_NAME) DynaClass dynaClass,
             @Param(ID_PARAM_NAME) Serializable id
-    ){
-        return null;
-    }
+    );
 
     /**
      * <p>
@@ -228,58 +186,49 @@ public class DynaBeanMapperProvider implements ProviderMethodResolver {
      * @param idList 主键ID列表
      * @return List<T>
      */
-    public static String selectListByIds(
+    List<DynaBean> selectListByIds(
             @Param(DYNA_CLASS_PARAM_NAME) DynaClass dynaClass,
             @Param(ID_COLLECTION_PARAM_NAME) Collection<? extends Serializable> idList
-    ){
-        return null;
-    }
+    );
 
     /*
      * 按照主键分页显示，会自动侦测主键信息
      * */
-    public static String selectListByPage(
-            @Param(DYNA_CLASS_PARAM_NAME) DynaClass dynaClass
-    ){
-        return null;
-    }
+    List<DynaBean> selectListByPage(
+            @Param(DYNA_CLASS_PARAM_NAME) DynaClass dynaClass,
+            Pagination pagination
+    );
 
     /*
      * 获取总数
      * */
-    public static String selectCountAll(
+    Integer selectCountAll(
             @Param(DYNA_CLASS_PARAM_NAME) DynaClass dynaClass
-    ){
-        return null;
-    }
+    );
 
     /*
      *  按照外键信息，显示
      * */
-    public static String selectListByFk(
+    List<DynaBean> selectListByFk(
             @Param(DYNA_CLASS_PARAM_NAME) DynaClass dynaClass,
-            @Param(FK_COLLECTION_PARAM_NAME) Collection<? extends Serializable> fkCollection
-    ){
-        return null;
-    }
+            @Param(FK_COLLECTION_PARAM_NAME) Collection<? extends Serializable> fkCollection,
+             Pagination pagination
+    );
 
     /*
      * 通用查询方法，可以做分页查询
      * */
-    public static String selectListByWhereLogic(
+    List<DynaBean> selectListByWhereLogic(
             @Param(DYNA_CLASS_PARAM_NAME) DynaClass dynaClass,
-            @Param(WHERE_LOGIC_PARAM_NAME) Object whereLogic
-    ){
-        return null;
-    }
+            @Param(WHERE_LOGIC_PARAM_NAME) Object whereLogic,
+            Pagination page
+    );
 
     /*
      * 通用计数方法
      * */
-    public static String selectCountByWhereLogic(
+    Integer selectCountByWhereLogic(
             @Param(DYNA_CLASS_PARAM_NAME) DynaClass dynaClass,
             @Param(WHERE_LOGIC_PARAM_NAME) Object whereLogic
-    ){
-        return null;
-    }
+    );
 }

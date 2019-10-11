@@ -1,4 +1,4 @@
-package com.econage.core.db.mybatis.dyna;
+package com.econage.core.db.mybatis.dyna.entity;
 
 
 import java.util.HashMap;
@@ -58,7 +58,7 @@ public class DynaBean {
 
     public void set(String name, Object value){
 
-        final DynaProperty descriptor = getDynaProperty(name);
+        final DynaColumn descriptor = getDynaProperty(name);
         if (value == null) {
             if (descriptor.getType().isPrimitive()) {
                 throw new NullPointerException
@@ -76,9 +76,9 @@ public class DynaBean {
     }
 
 
-    protected DynaProperty getDynaProperty(final String name) {
+    protected DynaColumn getDynaProperty(final String name) {
 
-        final DynaProperty descriptor = getDynaClass().getDynaProperty(name);
+        final DynaColumn descriptor = getDynaClass().getDynaProperty(name);
         if (descriptor == null) {
             throw new IllegalArgumentException
                     ("Invalid property name '" + name + "'");

@@ -1,11 +1,11 @@
-package com.econage.core.db.mybatis.dyna;
+package com.econage.core.db.mybatis.dyna.entity;
 
 
 import java.io.*;
 import java.util.List;
 import java.util.Map;
 
-public class DynaProperty implements Serializable {
+public class DynaColumn implements Serializable {
 
     // ----------------------------------------------------------- Constants
 
@@ -35,7 +35,7 @@ public class DynaProperty implements Serializable {
      *
      * @param name Name of the property being described
      */
-    public DynaProperty(final String name) {
+    public DynaColumn(final String name) {
 
         this(name, Object.class);
 
@@ -48,7 +48,7 @@ public class DynaProperty implements Serializable {
      * @param name Name of the property being described
      * @param type Java class representing the property data type
      */
-    public DynaProperty(final String name, final Class<?> type) {
+    public DynaColumn(final String name, final Class<?> type) {
 
         super();
         this.name = name;
@@ -67,7 +67,7 @@ public class DynaProperty implements Serializable {
      * @param type Java class representing the property data type
      * @param contentType Class that all indexed or mapped elements are instances of
      */
-    public DynaProperty(final String name, final Class<?> type, final Class<?> contentType) {
+    public DynaColumn(final String name, final Class<?> type, final Class<?> contentType) {
 
         super();
         this.name = name;
@@ -179,8 +179,8 @@ public class DynaProperty implements Serializable {
 
         result = (obj == this);
 
-        if ((!result) && obj instanceof DynaProperty) {
-            final DynaProperty that = (DynaProperty) obj;
+        if ((!result) && obj instanceof DynaColumn) {
+            final DynaColumn that = (DynaColumn) obj;
             result =
                     ((this.name == null) ? (that.name == null) : (this.name.equals(that.name))) &&
                             ((this.type == null) ? (that.type == null) : (this.type.equals(that.type))) &&

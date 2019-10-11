@@ -1,5 +1,5 @@
-import com.econage.core.db.mybatis.dyna.DynaClass;
-import com.econage.core.db.mybatis.mapper.dyna.DynaBeanMapper;
+import com.econage.core.db.mybatis.dyna.entity.DynaClass;
+import com.econage.core.db.mybatis.dyna.mapper.DynaBeanMapper;
 import org.apache.ibatis.reflection.TypeParameterResolver;
 import org.junit.Test;
 

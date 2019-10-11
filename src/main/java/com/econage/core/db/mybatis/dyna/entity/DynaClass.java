@@ -1,4 +1,4 @@
-package com.econage.core.db.mybatis.dyna;
+package com.econage.core.db.mybatis.dyna.entity;
 
 
 import com.google.common.collect.ImmutableList;
@@ -12,17 +12,19 @@ public class DynaClass implements Serializable {
 
     public DynaClass(
             final String clsName,
-            final String idProperty,
+            final String idColumn,
+            final String fkColumn,
             final String tableDef,
-            final Collection<DynaProperty> properties
+            final Collection<DynaColumn> properties
     ) {
         this.clsName = clsName;
-        this.idProperty = idProperty;
+        this.idColumn = idColumn;
+        this.fkColumn = fkColumn;
         this.tableDef = tableDef;
         if (properties != null) {
-            propertiesMap.clear();
-            for (DynaProperty property : properties) {
-                propertiesMap.put(property.getName(), property);
+            columnsMap.clear();
+            for (DynaColumn property : properties) {
+                columnsMap.put(property.getName(), property);
             }
         }
     }
@@ -33,9 +35,11 @@ public class DynaClass implements Serializable {
 
     protected final String tableDef;
 
-    protected final String idProperty;
+    protected final String idColumn;
 
-    protected HashMap<String, DynaProperty> propertiesMap = new HashMap<>();
+    protected final String fkColumn;
+
+    protected HashMap<String, DynaColumn> columnsMap = new HashMap<>();
     // ------------------------------------------------------ DynaClass Methods
     public String getClsName() {
         return this.clsName;
@@ -45,15 +49,23 @@ public class DynaClass implements Serializable {
         return tableDef;
     }
 
-    public DynaProperty getDynaProperty(final String name) {
+    public String getIdColumn() {
+        return idColumn;
+    }
+
+    public String getFkColumn() {
+        return fkColumn;
+    }
+
+    public DynaColumn getDynaProperty(final String name) {
         if (StringUtils.isEmpty(name)) {
             throw new IllegalArgumentException("No property name specified");
         }
-        return propertiesMap.get(name);
+        return columnsMap.get(name);
     }
 
-    public Collection<DynaProperty> getDynaProperties() {
-        return ImmutableList.copyOf(propertiesMap.values());
+    public Collection<DynaColumn> getDynaColumns() {
+        return ImmutableList.copyOf(columnsMap.values());
     }
 
     public DynaBean newInstance(){

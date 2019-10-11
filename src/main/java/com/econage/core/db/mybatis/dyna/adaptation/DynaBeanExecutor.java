@@ -1,9 +1,8 @@
-package com.econage.core.db.mybatis.adaptation.dyna;
+package com.econage.core.db.mybatis.dyna.adaptation;
 
 import com.econage.core.db.mybatis.adaptation.MybatisGlobalAssistant;
-import com.econage.core.db.mybatis.dyna.DynaClass;
+import com.econage.core.db.mybatis.dyna.entity.DynaClass;
 import com.econage.core.db.mybatis.mapper.MapperConst;
-import com.econage.core.db.mybatis.mapper.dyna.DynaBeanMapper;
 import org.apache.ibatis.cache.CacheKey;
 import org.apache.ibatis.cursor.Cursor;
 import org.apache.ibatis.executor.BatchResult;
@@ -24,9 +23,9 @@ public class DynaBeanExecutor implements Executor {
     private final MybatisGlobalAssistant globalAssistant;
     private final Executor delegate;
     protected Executor wrapper;
-    //是否执行DynaBeanMapper类中的方法
+    //是否执行在环境中使用了DynaClass
     //简单结果集可以不用volatile修饰，将来如果支持懒加载，则添加volatile修饰
-    private boolean isRunningInDynaBeanMapper;
+    private boolean isRunningWithDynaClass;
     public DynaBeanExecutor(MybatisGlobalAssistant globalAssistant, Executor delegate) {
         this.globalAssistant = globalAssistant;
         this.delegate = delegate;
@@ -34,44 +33,49 @@ public class DynaBeanExecutor implements Executor {
         delegate.setExecutorWrapper(this);
     }
 
-    private void detectIsRunningInDynaBeanMapper(MappedStatement ms,Object parameter){
-        if(isRunningInDynaBeanMapper){
+    //其他自定义mapper，只要传入的参数中带了DynaClass，就识别
+    private void detectIsRunningWithDynaClass(MappedStatement ms, Object parameter){
+        if(isRunningWithDynaClass){
             return;
         }
-        isRunningInDynaBeanMapper = globalAssistant.isRunningInDynaBeanMapper(ms);
-        if(isRunningInDynaBeanMapper){
+
+        if(parameter instanceof Map){
             Map<String, Object> params = (Map<String, Object>) parameter;
-            globalAssistant.putExecutorDynaCls(delegate,(DynaClass)params.get(MapperConst.DYNA_CLASS_PARAM_NAME));
+            Object dynaClazzObj = params.get(MapperConst.DYNA_CLASS_PARAM_NAME);
+            if(dynaClazzObj instanceof DynaClass){
+                isRunningWithDynaClass = true;
+                globalAssistant.putExecutorDynaCls(delegate,(DynaClass)dynaClazzObj);
+            }
         }
     }
     private void closeHook(){
-        if(isRunningInDynaBeanMapper){
+        if(isRunningWithDynaClass){
             globalAssistant.removeExecutorDynaCls(delegate);
-            isRunningInDynaBeanMapper = false;
+            isRunningWithDynaClass = false;
         }
     }
 
     @Override
     public int update(MappedStatement ms, Object parameter) throws SQLException {
-        detectIsRunningInDynaBeanMapper(ms, parameter);
+        detectIsRunningWithDynaClass(ms, parameter);
         return delegate.update(ms,parameter);
     }
 
     @Override
     public <E> List<E> query(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, CacheKey cacheKey, BoundSql boundSql) throws SQLException {
-        detectIsRunningInDynaBeanMapper(ms, parameter);
+        detectIsRunningWithDynaClass(ms, parameter);
         return delegate.query(ms, parameter, rowBounds, resultHandler, cacheKey, boundSql);
     }
 
     @Override
     public <E> List<E> query(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler) throws SQLException {
-        detectIsRunningInDynaBeanMapper(ms, parameter);
+        detectIsRunningWithDynaClass(ms, parameter);
         return delegate.query(ms, parameter, rowBounds, resultHandler);
     }
 
     @Override
     public <E> Cursor<E> queryCursor(MappedStatement ms, Object parameter, RowBounds rowBounds) throws SQLException {
-        detectIsRunningInDynaBeanMapper(ms, parameter);
+        detectIsRunningWithDynaClass(ms, parameter);
         return delegate.queryCursor(ms, parameter, rowBounds);
     }
 

@@ -13,13 +13,12 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.econage.core.db.mybatis.adaptation.dyna;
+package com.econage.core.db.mybatis.dyna.adaptation;
 
-import com.econage.core.db.mybatis.adaptation.MybatisConfiguration;
 import com.econage.core.db.mybatis.adaptation.MybatisGlobalAssistant;
-import com.econage.core.db.mybatis.dyna.DynaBean;
-import com.econage.core.db.mybatis.dyna.DynaClass;
-import com.econage.core.db.mybatis.dyna.DynaProperty;
+import com.econage.core.db.mybatis.dyna.entity.DynaBean;
+import com.econage.core.db.mybatis.dyna.entity.DynaClass;
+import com.econage.core.db.mybatis.dyna.entity.DynaColumn;
 import org.apache.ibatis.annotations.AutomapConstructor;
 import org.apache.ibatis.binding.MapperMethod.ParamMap;
 import org.apache.ibatis.cache.CacheKey;
@@ -84,7 +83,6 @@ public class DynaBeanResultSetHandler implements ResultSetHandler {
   private boolean useConstructorMappings;
 
   //todo
-  private MybatisGlobalAssistant globalAssistant;
   private DynaClass dynaClass;
   private Class<DynaBean> dynaBeanClass = DynaBean.class;
 
@@ -123,7 +121,6 @@ public class DynaBeanResultSetHandler implements ResultSetHandler {
     this.reflectorFactory = configuration.getReflectorFactory();
     this.resultHandler = resultHandler;
     //todo
-    this.globalAssistant = globalAssistant;
     this.dynaClass = globalAssistant.getDynaClass(executor);
   }
 
@@ -411,18 +408,21 @@ public class DynaBeanResultSetHandler implements ResultSetHandler {
 
   //todo
   private DynaBean handleDynaBean(ResultSetWrapper rsw, ResultMap resultMap) throws SQLException {
-    if(globalAssistant.isRunningInDynaBeanMapper(resultMap)&&dynaBeanClass.isAssignableFrom(resultMap.getType())){
+    if(dynaBeanClass.isAssignableFrom(resultMap.getType())){
+      if(dynaClass==null){
+        throw new PersistenceException("dynaClass not found,may have no DynaClass in mapper parameter");
+      }
       DynaBean dynaBean = new DynaBean(dynaClass);
-      for(DynaProperty dynaProperty :  dynaClass.getDynaProperties()){
-        String columnName = dynaProperty.getName();
-        TypeHandler<?> typeHandler = typeHandlerRegistry.getTypeHandler(dynaProperty.getType(),rsw.getJdbcType(columnName));
+      for(DynaColumn dynaColumn :  dynaClass.getDynaColumns()){
+        String columnName = dynaColumn.getName();
+        TypeHandler<?> typeHandler = typeHandlerRegistry.getTypeHandler(dynaColumn.getType(),rsw.getJdbcType(columnName));
         if(typeHandler!=null){
           dynaBean.set(
                   columnName,
                   typeHandler.getResult(rsw.getResultSet(), columnName)
           );
         }else{
-          throw new PersistenceException("Unrecognized type in handle dynaClass,type:["+dynaProperty.getType()+"]");
+          throw new PersistenceException("Unrecognized type in handle dynaClass,type:["+ dynaColumn.getType()+"]");
         }
       }
       return dynaBean;

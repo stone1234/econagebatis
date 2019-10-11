@@ -16,9 +16,8 @@
 package com.econage.core.db.mybatis.adaptation;
 
 import com.econage.core.db.mybatis.MybatisPackageInfo;
-import com.econage.core.db.mybatis.dyna.DynaClass;
+import com.econage.core.db.mybatis.dyna.entity.DynaClass;
 import com.econage.core.db.mybatis.entity.MybatisTableInfoHelper;
-import com.econage.core.db.mybatis.mapper.dyna.DynaBeanMapper;
 import com.econage.core.db.mybatis.wherelogic.WhereLogicInfo;
 import com.econage.core.db.mybatis.entity.TableInfo;
 import com.econage.core.db.mybatis.enums.DBType;
@@ -38,8 +37,6 @@ import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
-import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.mapping.ResultMap;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -241,14 +238,6 @@ public class MybatisGlobalAssistant implements Serializable {
 
     public void removeExecutorDynaCls(Executor executorKey){
         runtimeDynaClassMap.remove(executorKey);
-    }
-
-    private static final String DYNA_BEAN_MAPPER_PACKAGE = DynaBeanMapper.class.getName();
-    public boolean isRunningInDynaBeanMapper(MappedStatement ms){
-        return ms.getId().startsWith(DYNA_BEAN_MAPPER_PACKAGE);
-    }
-    public boolean isRunningInDynaBeanMapper(ResultMap resultMap){
-        return resultMap.getId().startsWith(DYNA_BEAN_MAPPER_PACKAGE);
     }
 
     public boolean isMapperCached(Class<?> mapper){
