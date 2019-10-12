@@ -3,7 +3,7 @@ package com.econage.core.db.mybatis.dyna.mapper;
 import com.econage.core.db.mybatis.dyna.entity.DynaBean;
 import com.econage.core.db.mybatis.dyna.entity.DynaClass;
 import com.econage.core.db.mybatis.plugins.pagination.Pagination;
-import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.*;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -19,6 +19,7 @@ public interface DynaBeanMapper {
      * @param entity 实体对象
      * @return int
      */
+    @InsertProvider(DynaBeanMapperProvider.class)
     Integer insert(
             @Param(DYNA_CLASS_PARAM_NAME) DynaClass dynaClass,
             @Param(DYNA_ENTITY_PARAM_NAME) DynaBean entity
@@ -32,6 +33,7 @@ public interface DynaBeanMapper {
      * @param id 主键ID
      * @return int
      */
+    @DeleteProvider(DynaBeanMapperProvider.class)
     Integer deleteById(
             @Param(DYNA_CLASS_PARAM_NAME) DynaClass dynaClass,
             @Param(ID_PARAM_NAME) Serializable id
@@ -45,6 +47,7 @@ public interface DynaBeanMapper {
      * @param idList 主键ID列表
      * @return int
      */
+    @DeleteProvider(DynaBeanMapperProvider.class)
     Integer deleteByIds(
             @Param(DYNA_CLASS_PARAM_NAME) DynaClass dynaClass,
             @Param(ID_COLLECTION_PARAM_NAME) Collection<? extends Serializable> idList
@@ -58,6 +61,7 @@ public interface DynaBeanMapper {
      * @param fk 外键ID
      * @return int
      */
+    @DeleteProvider(DynaBeanMapperProvider.class)
     Integer deleteByFk(
             @Param(DYNA_CLASS_PARAM_NAME) DynaClass dynaClass,
             @Param(FK_PARAM_NAME) Serializable fk
@@ -71,6 +75,7 @@ public interface DynaBeanMapper {
      * @param whereLogic where逻辑
      * @return int
      */
+    @DeleteProvider(DynaBeanMapperProvider.class)
     Integer deleteByWhereLogic(
             @Param(DYNA_CLASS_PARAM_NAME) DynaClass dynaClass,
             @Param(WHERE_LOGIC_PARAM_NAME) Object whereLogic
@@ -84,6 +89,7 @@ public interface DynaBeanMapper {
      * @param entity 实体对象
      * @return int
      */
+    @UpdateProvider(DynaBeanMapperProvider.class)
     Integer updateById(
             @Param(DYNA_CLASS_PARAM_NAME) DynaClass dynaClass,
             @Param(DYNA_ENTITY_PARAM_NAME) DynaBean entity
@@ -97,6 +103,7 @@ public interface DynaBeanMapper {
      * @param entity 实体对象
      * @return int
      */
+    @UpdateProvider(DynaBeanMapperProvider.class)
     Integer updateAllColumnById(
             @Param(DYNA_CLASS_PARAM_NAME) DynaClass dynaClass,
             @Param(DYNA_ENTITY_PARAM_NAME) DynaBean entity
@@ -105,6 +112,7 @@ public interface DynaBeanMapper {
     /*
      * 根据id更新特定列
      * */
+    @UpdateProvider(DynaBeanMapperProvider.class)
     Integer updatePartialColumnById(
             @Param(DYNA_CLASS_PARAM_NAME) DynaClass dynaClass,
             @Param(DYNA_ENTITY_PARAM_NAME) DynaBean entity,
@@ -122,6 +130,7 @@ public interface DynaBeanMapper {
      * @param whereLogic where逻辑
      * @return int
      */
+    @UpdateProvider(DynaBeanMapperProvider.class)
     Integer updateBatchByWhereLogic(
             @Param(DYNA_CLASS_PARAM_NAME) DynaClass dynaClass,
             @Param(DYNA_ENTITY_PARAM_NAME) DynaBean entity,
@@ -140,6 +149,7 @@ public interface DynaBeanMapper {
      * @param whereLogic where逻辑
      * @return int
      */
+    @UpdateProvider(DynaBeanMapperProvider.class)
     Integer updateBatchAllColumnByWhereLogic(
             @Param(DYNA_CLASS_PARAM_NAME) DynaClass dynaClass,
             @Param(DYNA_ENTITY_PARAM_NAME) DynaBean entity,
@@ -158,6 +168,7 @@ public interface DynaBeanMapper {
      * @param whereLogic where逻辑
      * @return int
      * */
+    @UpdateProvider(DynaBeanMapperProvider.class)
     Integer updateBatchPartialColumnByWhereLogic(
             @Param(DYNA_CLASS_PARAM_NAME) DynaClass dynaClass,
             @Param(DYNA_ENTITY_PARAM_NAME) DynaBean entity,
@@ -173,6 +184,7 @@ public interface DynaBeanMapper {
      * @param id 主键ID
      * @return T
      */
+    @SelectProvider(DynaBeanMapperProvider.class)
     DynaBean selectById(
             @Param(DYNA_CLASS_PARAM_NAME) DynaClass dynaClass,
             @Param(ID_PARAM_NAME) Serializable id
@@ -186,6 +198,7 @@ public interface DynaBeanMapper {
      * @param idList 主键ID列表
      * @return List<T>
      */
+    @SelectProvider(DynaBeanMapperProvider.class)
     List<DynaBean> selectListByIds(
             @Param(DYNA_CLASS_PARAM_NAME) DynaClass dynaClass,
             @Param(ID_COLLECTION_PARAM_NAME) Collection<? extends Serializable> idList
@@ -194,6 +207,7 @@ public interface DynaBeanMapper {
     /*
      * 按照主键分页显示，会自动侦测主键信息
      * */
+    @SelectProvider(DynaBeanMapperProvider.class)
     List<DynaBean> selectListByPage(
             @Param(DYNA_CLASS_PARAM_NAME) DynaClass dynaClass,
             Pagination pagination
@@ -202,6 +216,7 @@ public interface DynaBeanMapper {
     /*
      * 获取总数
      * */
+    @SelectProvider(DynaBeanMapperProvider.class)
     Integer selectCountAll(
             @Param(DYNA_CLASS_PARAM_NAME) DynaClass dynaClass
     );
@@ -209,6 +224,7 @@ public interface DynaBeanMapper {
     /*
      *  按照外键信息，显示
      * */
+    @SelectProvider(DynaBeanMapperProvider.class)
     List<DynaBean> selectListByFk(
             @Param(DYNA_CLASS_PARAM_NAME) DynaClass dynaClass,
             @Param(FK_COLLECTION_PARAM_NAME) Collection<? extends Serializable> fkCollection,
@@ -218,6 +234,7 @@ public interface DynaBeanMapper {
     /*
      * 通用查询方法，可以做分页查询
      * */
+    @SelectProvider(DynaBeanMapperProvider.class)
     List<DynaBean> selectListByWhereLogic(
             @Param(DYNA_CLASS_PARAM_NAME) DynaClass dynaClass,
             @Param(WHERE_LOGIC_PARAM_NAME) Object whereLogic,
@@ -227,6 +244,7 @@ public interface DynaBeanMapper {
     /*
      * 通用计数方法
      * */
+    @SelectProvider(DynaBeanMapperProvider.class)
     Integer selectCountByWhereLogic(
             @Param(DYNA_CLASS_PARAM_NAME) DynaClass dynaClass,
             @Param(WHERE_LOGIC_PARAM_NAME) Object whereLogic
