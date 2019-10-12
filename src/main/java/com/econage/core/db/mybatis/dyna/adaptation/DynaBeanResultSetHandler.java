@@ -15,6 +15,7 @@
  */
 package com.econage.core.db.mybatis.dyna.adaptation;
 
+import com.econage.core.db.mybatis.MybatisException;
 import com.econage.core.db.mybatis.adaptation.MybatisGlobalAssistant;
 import com.econage.core.db.mybatis.dyna.entity.DynaBean;
 import com.econage.core.db.mybatis.dyna.entity.DynaClass;
@@ -121,7 +122,11 @@ public class DynaBeanResultSetHandler implements ResultSetHandler {
     this.reflectorFactory = configuration.getReflectorFactory();
     this.resultHandler = resultHandler;
     //todo
-    this.dynaClass = globalAssistant.getDynaClass(executor);
+    if(SqlCommandType.SELECT == mappedStatement.getSqlCommandType()){
+      this.dynaClass = ((DynaBeanExecutor)executor).getDynaClass();
+    }else{
+      this.dynaClass = globalAssistant.getDynaClass(executor);
+    }
   }
 
   //
@@ -410,7 +415,7 @@ public class DynaBeanResultSetHandler implements ResultSetHandler {
   private DynaBean handleDynaBean(ResultSetWrapper rsw, ResultMap resultMap) throws SQLException {
     if(dynaBeanClass.isAssignableFrom(resultMap.getType())){
       if(dynaClass==null){
-        throw new PersistenceException("dynaClass not found,may have no DynaClass in mapper parameter");
+        throw new MybatisException("dynaClass not found,may have no DynaClass in mapper parameter");
       }
       DynaBean dynaBean = new DynaBean(dynaClass);
       for(DynaColumn dynaColumn :  dynaClass.getDynaColumns()){
@@ -422,7 +427,7 @@ public class DynaBeanResultSetHandler implements ResultSetHandler {
                   typeHandler.getResult(rsw.getResultSet(), columnName)
           );
         }else{
-          throw new PersistenceException("Unrecognized type in handle dynaClass,type:["+ dynaColumn.getType()+"]");
+          throw new MybatisException("Unrecognized type in handle dynaClass,type:["+ dynaColumn.getType()+"]");
         }
       }
       return dynaBean;

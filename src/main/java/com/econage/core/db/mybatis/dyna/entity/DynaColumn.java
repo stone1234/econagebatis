@@ -28,20 +28,6 @@ public class DynaColumn implements Serializable {
 
 
     // ----------------------------------------------------------- Constructors
-
-
-    /**
-     * Construct a property that accepts any data type.
-     *
-     * @param name Name of the property being described
-     */
-    public DynaColumn(final String name) {
-
-        this(name, Object.class);
-
-    }
-
-
     /**
      * Construct a property of the specified data type.
      *
@@ -53,26 +39,6 @@ public class DynaColumn implements Serializable {
         super();
         this.name = name;
         this.type = type;
-        if (type != null && type.isArray()) {
-            this.contentType = type.getComponentType();
-        }
-
-    }
-
-    /**
-     * Construct an indexed or mapped <code>DynaProperty</code> that supports (pseudo)-introspection
-     * of the content type.
-     *
-     * @param name Name of the property being described
-     * @param type Java class representing the property data type
-     * @param contentType Class that all indexed or mapped elements are instances of
-     */
-    public DynaColumn(final String name, final Class<?> type, final Class<?> contentType) {
-
-        super();
-        this.name = name;
-        this.type = type;
-        this.contentType = contentType;
 
     }
 
@@ -104,24 +70,6 @@ public class DynaColumn implements Serializable {
      */
     public Class<?> getType() {
         return (this.type);
-    }
-
-
-    /** The <em>(optional)</em> type of content elements for indexed <code>DynaProperty</code> */
-    protected transient Class<?> contentType;
-    /**
-     * Gets the <em>(optional)</em> type of the indexed content for <code>DynaProperty</code>'s
-     * that support this feature.
-     *
-     * <p>There are issues with serializing primitive class types on certain JVM versions
-     * (including java 1.3).
-     * Therefore, this field <strong>must not be serialized using the standard methods</strong>.</p>
-     *
-     * @return the Class for the content type if this is an indexed <code>DynaProperty</code>
-     * and this feature is supported. Otherwise null.
-     */
-    public Class<?> getContentType() {
-        return contentType;
     }
 
     // --------------------------------------------------------- Public Methods
@@ -183,8 +131,7 @@ public class DynaColumn implements Serializable {
             final DynaColumn that = (DynaColumn) obj;
             result =
                     ((this.name == null) ? (that.name == null) : (this.name.equals(that.name))) &&
-                            ((this.type == null) ? (that.type == null) : (this.type.equals(that.type))) &&
-                            ((this.contentType == null) ? (that.contentType == null) : (this.contentType.equals(that.contentType)));
+                            ((this.type == null) ? (that.type == null) : (this.type.equals(that.type)));
         }
 
         return result;
@@ -202,7 +149,6 @@ public class DynaColumn implements Serializable {
 
         result = result * 31 + ((name == null) ? 0 : name.hashCode());
         result = result * 31 + ((type == null) ? 0 : type.hashCode());
-        result = result * 31 + ((contentType == null) ? 0 : contentType.hashCode());
 
         return result;
     }
@@ -214,15 +160,10 @@ public class DynaColumn implements Serializable {
     @Override
     public String toString() {
 
-        final StringBuilder sb = new StringBuilder("DynaProperty[name=");
-        sb.append(this.name);
-        sb.append(",type=");
-        sb.append(this.type);
-        if (isMapped() || isIndexed()) {
-            sb.append(" <").append(this.contentType).append(">");
-        }
-        sb.append("]");
-        return (sb.toString());
+        return "DynaProperty[name=" + this.name +
+                ",type=" +
+                this.type +
+                "]";
 
     }
 
@@ -235,13 +176,7 @@ public class DynaColumn implements Serializable {
      * This method provides a workaround.
      */
     private void writeObject(final ObjectOutputStream out) throws IOException {
-
         writeAnyClass(this.type,out);
-
-        if (isMapped() || isIndexed()) {
-            writeAnyClass(this.contentType,out);
-        }
-
         // write out other values
         out.defaultWriteObject();
     }
@@ -290,13 +225,7 @@ public class DynaColumn implements Serializable {
      * @throws StreamCorruptedException when the stream data values are outside expected range
      */
     private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
-
         this.type = readAnyClass(in);
-
-        if (isMapped() || isIndexed()) {
-            this.contentType = readAnyClass(in);
-        }
-
         // read other values
         in.defaultReadObject();
     }

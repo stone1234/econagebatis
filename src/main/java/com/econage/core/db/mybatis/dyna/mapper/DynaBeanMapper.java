@@ -11,6 +11,7 @@ import java.util.List;
 
 import static com.econage.core.db.mybatis.mapper.MapperConst.*;
 
+@Mapper
 public interface DynaBeanMapper {
 
     /**

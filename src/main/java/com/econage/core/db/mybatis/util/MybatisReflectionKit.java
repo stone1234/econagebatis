@@ -151,7 +151,7 @@ public class MybatisReflectionKit {
      * @return
      */
     public static List<Field> getFieldList(Class<?> clazz) {
-        if (null == clazz) {
+        if (null == clazz||Object.class == clazz) {
             return null;
         }
         List<Field> fieldList = Lists.newLinkedList();
@@ -169,6 +169,9 @@ public class MybatisReflectionKit {
         }
         /* 处理父类字段 */
         Class<?> superClass = clazz.getSuperclass();
+        if(superClass==null){
+            return fieldList;
+        }
         if (superClass.equals(Object.class)) {
             return fieldList;
         }

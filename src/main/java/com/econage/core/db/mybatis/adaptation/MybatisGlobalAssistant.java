@@ -15,7 +15,6 @@
  */
 package com.econage.core.db.mybatis.adaptation;
 
-import com.econage.core.db.mybatis.MybatisPackageInfo;
 import com.econage.core.db.mybatis.dyna.entity.DynaClass;
 import com.econage.core.db.mybatis.entity.MybatisTableInfoHelper;
 import com.econage.core.db.mybatis.wherelogic.WhereLogicInfo;
@@ -51,8 +50,6 @@ import java.util.concurrent.ConcurrentSkipListSet;
  */
 public class MybatisGlobalAssistant implements Serializable {
     private static final Log LOGGER = LogFactory.getLog(MybatisGlobalAssistant.class);
-
-    public static final String MYBATIS_BASE_PACKAGE = Reflection.getPackageName(MybatisPackageInfo.class);
 
     //配置类，与助手类互相引用
     private final MybatisConfiguration configuration;
@@ -240,7 +237,7 @@ public class MybatisGlobalAssistant implements Serializable {
         runtimeDynaClassMap.remove(executorKey);
     }
 
-    public boolean isMapperCached(Class<?> mapper){
+    public boolean isMapperParsed(Class<?> mapper){
         if(!isMapperClass(mapper)){
             throw new IllegalArgumentException("it's not a mapper class.");
         }
@@ -279,52 +276,6 @@ public class MybatisGlobalAssistant implements Serializable {
         this.packageNames = packageNames;
     }
 
-    /*public void scanMapper(
-            String... packageNames
-    ){
-        Preconditions.checkNotNull(packageNames,"PackageName is null!");
-        if(this.packageNames!=null){
-            throw new IllegalStateException("have scan package before!");
-        }
-        this.packageNames = packageNames;
-
-        String resolvingClsName = null;
-        try {
-            ClassPath classpath = ClassPath.from(MybatisGlobalAssistant.class.getClassLoader());
-            for (String packageName : packageNames) {
-                for (ClassPath.ClassInfo classInfo : classpath.getTopLevelClassesRecursive(packageName)) {
-                    resolvingClsName = classInfo.getName();
-                    if(isMapperNameValid(resolvingClsName)){
-                        Class<?> resolvedCls = Resources.classForName(resolvingClsName);
-                        if (isMapperClass(resolvedCls)) {
-                            if (LOGGER.isDebugEnabled()) {
-                                LOGGER.debug("load mapper class :[" + resolvedCls.getName() + "]");
-                            }
-                            configuration.addMapper(resolvedCls);
-                        }
-                    }
-                }
-            }
-        }catch(Throwable t){
-            this.packageNames = null;
-            LOGGER.error("error class:["+resolvingClsName+"]",t);
-            throw new MybatisException("error class:["+resolvingClsName+"]",t);
-        }
-    }*/
-
-    /*在spring环境中，不再使用*/
-    /*private boolean isMapperNameValid(String clazz){
-        //true时，mapper类必须是mapper结尾，并且直接包的名称是mapper结尾
-        clazz = clazz.toLowerCase();
-        if(isMapperNameValidate){
-            return clazz.endsWith("mapper")
-                 &&clazz.substring(0,clazz.lastIndexOf(".")).endsWith("mapper");
-        }else{
-            return true;
-        }
-    }*/
-
-
     public void inspectInject4Mapper(MapperBuilderAssistant mapperBuilderAssistant, Class<?> mapper){
         sqlInjector.inspectInject(mapperBuilderAssistant,mapper);
     }
@@ -350,13 +301,14 @@ public class MybatisGlobalAssistant implements Serializable {
     }
 
     public TableInfo saveAndGetTableInfoByModel(Class<?> modelClass){
-        if(modelClass==null){
+        if(modelClass==null||modelClass.isInterface()){
             return null;
         }
+
         if(modelTableInfoMap.containsKey(modelClass)){
             return modelTableInfoMap.get(modelClass);
         }
-        if(!isClassInScanPackage(modelClass)){
+        if(!isModelClassInScanPackage(modelClass)){
             return null;
         }
         TableInfo tableInfo = MybatisTableInfoHelper.parseTableInfo(this,modelClass);
@@ -428,31 +380,30 @@ public class MybatisGlobalAssistant implements Serializable {
     }
 
     //处于业务程序的类，都可以视为有效的model类
-    private boolean isClassInScanPackage(Class<?> clazz){
-        String modelName = clazz.getName();
-
-        //如果忽略类的package扫描信息，则判断类是否是内置的组件
-        if(ignoreScanPackages){
-            return !modelName.startsWith(MYBATIS_BASE_PACKAGE);
+    private boolean isModelClassInScanPackage(Class<?> modelClazz){
+        Preconditions.checkNotNull(modelClazz,"class is null!");
+        //如果再例外包以外，则直接返回false
+        if(MybatisClassUtils.excludeClazzPrefix4ModelParseStatic(modelClazz)){
+            return false;
         }
-
-        Preconditions.checkNotNull(clazz,"class is null!");
+        //如果忽略类的package扫描信息，则直接返回
+        if(ignoreScanPackages){
+            return true;
+        }
         if(packageNames==null){
             throw new IllegalStateException("not scan package!");
         }
+        String modelName = modelClazz.getName();
         for(String packageName:packageNames){
             //框架类，不参与扫描
-            if(modelName.startsWith(packageName)
-            &&!modelName.startsWith(MYBATIS_BASE_PACKAGE)){
+            if(modelName.startsWith(packageName)){
                 return true;
             }
         }
         return false;
-        //return true;
     }
 
     public boolean isValidModel(Class<?> modelClass){
-        return isClassInScanPackage(modelClass)
-             ||modelTableInfoMap.contains(modelClass);
+        return modelTableInfoMap.contains(modelClass);
     }
 }

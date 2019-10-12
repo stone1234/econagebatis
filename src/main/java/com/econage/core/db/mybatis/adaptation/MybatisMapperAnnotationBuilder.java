@@ -15,6 +15,8 @@
  */
 package com.econage.core.db.mybatis.adaptation;
 
+import com.econage.core.db.mybatis.dyna.entity.DynaBean;
+import com.econage.core.db.mybatis.dyna.entity.DynaClass;
 import com.econage.core.db.mybatis.entity.TableInfo;
 import com.econage.core.db.mybatis.mapper.provider.MybatisProviderSqlSource;
 import org.apache.ibatis.annotations.*;
@@ -300,19 +302,19 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
     }
     //尝试解析参数类型
     modelClass = null;
-    boolean canUserParameterType = true;
+    boolean canUseParameterType = true;
     for (Class<?> currentParameterType : method.getParameterTypes()) {
       if(configuration.getGlobalAssistant().isValidModel(currentParameterType)){
         if(modelClass==null){
           modelClass = currentParameterType;
         }else{
           //如果多个类型可作为model
-          canUserParameterType = false;
+          canUseParameterType = false;
           break;
         }
       }
     }
-    if(canUserParameterType&&modelClass!=null){
+    if(canUseParameterType&&modelClass!=null){
       tableInfo = mybatisGlobalAssistant.saveAndGetTableInfoByModel(modelClass);
       if(tableInfo!=null){
         return tableInfo;

@@ -55,7 +55,7 @@ public class SqlInjector {
     public void inspectInject(MapperBuilderAssistant builderAssistant, Class<?> mapperClass) {
         Preconditions.checkNotNull(mapperClass,"mapperclass is null!");
         //注入器只为BaseMapper的接口注入方法
-        if (!globalAssistant.isMapperCached(mapperClass)
+        if (!globalAssistant.isMapperParsed(mapperClass)
            &&BaseMapper.class.isAssignableFrom(mapperClass)) {
             TableInfo table = globalAssistant.saveAndGetTableInfoByMapper(mapperClass);
             if (table != null) {

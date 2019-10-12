@@ -26,6 +26,9 @@ public class DynaBeanExecutor implements Executor {
     //是否执行在环境中使用了DynaClass
     //简单结果集可以不用volatile修饰，将来如果支持懒加载，则添加volatile修饰
     private boolean isRunningWithDynaClass;
+    //查询操作，底层会使用包装器，此处暂存即可
+    private DynaClass dynaClass;
+
     public DynaBeanExecutor(MybatisGlobalAssistant globalAssistant, Executor delegate) {
         this.globalAssistant = globalAssistant;
         this.delegate = delegate;
@@ -34,7 +37,7 @@ public class DynaBeanExecutor implements Executor {
     }
 
     //其他自定义mapper，只要传入的参数中带了DynaClass，就识别
-    private void detectIsRunningWithDynaClass(MappedStatement ms, Object parameter){
+    private void detectIsRunningWithDynaClass(boolean save2Config, Object parameter){
         if(isRunningWithDynaClass){
             return;
         }
@@ -44,38 +47,50 @@ public class DynaBeanExecutor implements Executor {
             Object dynaClazzObj = params.get(MapperConst.DYNA_CLASS_PARAM_NAME);
             if(dynaClazzObj instanceof DynaClass){
                 isRunningWithDynaClass = true;
-                globalAssistant.putExecutorDynaCls(delegate,(DynaClass)dynaClazzObj);
+                if(save2Config){
+                    globalAssistant.putExecutorDynaCls(delegate,(DynaClass)dynaClazzObj);
+                }else{
+                    dynaClass = (DynaClass)dynaClazzObj;
+                }
             }
         }
     }
     private void closeHook(){
         if(isRunningWithDynaClass){
-            globalAssistant.removeExecutorDynaCls(delegate);
+            if(null==dynaClass){
+                globalAssistant.removeExecutorDynaCls(delegate);
+            }else{
+                dynaClass = null;
+            }
             isRunningWithDynaClass = false;
         }
     }
 
+    public DynaClass getDynaClass() {
+        return dynaClass;
+    }
+
     @Override
     public int update(MappedStatement ms, Object parameter) throws SQLException {
-        detectIsRunningWithDynaClass(ms, parameter);
+        detectIsRunningWithDynaClass(true, parameter);
         return delegate.update(ms,parameter);
     }
 
     @Override
     public <E> List<E> query(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, CacheKey cacheKey, BoundSql boundSql) throws SQLException {
-        detectIsRunningWithDynaClass(ms, parameter);
+        detectIsRunningWithDynaClass(false, parameter);
         return delegate.query(ms, parameter, rowBounds, resultHandler, cacheKey, boundSql);
     }
 
     @Override
     public <E> List<E> query(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler) throws SQLException {
-        detectIsRunningWithDynaClass(ms, parameter);
+        detectIsRunningWithDynaClass(false, parameter);
         return delegate.query(ms, parameter, rowBounds, resultHandler);
     }
 
     @Override
     public <E> Cursor<E> queryCursor(MappedStatement ms, Object parameter, RowBounds rowBounds) throws SQLException {
-        detectIsRunningWithDynaClass(ms, parameter);
+        detectIsRunningWithDynaClass(false, parameter);
         return delegate.queryCursor(ms, parameter, rowBounds);
     }
 

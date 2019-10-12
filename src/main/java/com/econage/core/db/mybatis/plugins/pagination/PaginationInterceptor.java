@@ -15,8 +15,10 @@
  */
 package com.econage.core.db.mybatis.plugins.pagination;
 
+import com.econage.core.db.mybatis.dyna.entity.DynaClass;
 import com.econage.core.db.mybatis.entity.TableInfo;
 import com.econage.core.db.mybatis.enums.DBType;
+import com.econage.core.db.mybatis.mapper.MapperConst;
 import com.econage.core.db.mybatis.util.MybatisStringUtils;
 import com.econage.core.db.mybatis.MybatisException;
 import com.econage.core.db.mybatis.adaptation.MybatisConfiguration;
@@ -219,6 +221,22 @@ public class PaginationInterceptor implements Interceptor {
                 break;
             }
         }*/
+        if(parameter instanceof Map){
+            Map<String, Object> params = (Map<String, Object>) parameter;
+            Object dynaClazzObj = params.get(MapperConst.DYNA_CLASS_PARAM_NAME);
+            if(dynaClazzObj instanceof DynaClass){
+                if(ArrayUtils.isEmpty(pagination.getSortName())){
+                    pagination.setSortName( ((DynaClass)dynaClazzObj).getIdColumn() );
+                }
+                //如果是动态bean环境，则不再推测TableInfo
+                return;
+            }
+        }
+
+        parseByTableInfo(pagination,mappedStatement,parameter);
+    }
+
+    private void parseByTableInfo(Pagination pagination, MappedStatement mappedStatement,Object parameter) throws ClassNotFoundException {
         //尝试获取全局助手，并找到相关的表信息，Pagination存储的排序列是属性名，转换为列名
         TableInfo tableInfo = detectTableInfo(mappedStatement,parameter);
         if(tableInfo==null){

@@ -15,10 +15,12 @@
  */
 package com.econage.core.db.mybatis.util;
 
+import com.econage.core.db.mybatis.MybatisPackageInfo;
 import com.econage.core.db.mybatis.mapper.BaseMapper;
 import com.google.common.base.Preconditions;
+import com.google.common.primitives.Primitives;
+import com.google.common.reflect.Reflection;
 import org.apache.commons.lang3.ClassUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
@@ -26,12 +28,10 @@ import org.apache.ibatis.logging.LogFactory;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.Set;
 
 /**
  * ClassUtils
- *
- * @author Caratacus
- * @date 2017/07/08
  */
 public class MybatisClassUtils {
 
@@ -121,6 +121,32 @@ public class MybatisClassUtils {
             }
         }
         return null;
+    }
+
+    private static final Set<Class<?>> ALL_PRIMITIVE_WRAPPER_TYPES = Primitives.allWrapperTypes();
+    public static boolean isPrimitivesWrapperType(Class<?> clazz){
+        return ALL_PRIMITIVE_WRAPPER_TYPES.contains(clazz);
+    }
+    private static final Set<Class<?>> ALL_PRIMITIVE_TYPES = Primitives.allPrimitiveTypes();
+    public static boolean isPrimitivesType(Class<?> clazz){
+        return ALL_PRIMITIVE_TYPES.contains(clazz);
+    }
+
+    public static final String[] EXCLUDE_CLAZZ_PREFIX_4_MODEL_PARSE_STATIC_ARRAY = {
+            "java",
+            "javax",
+            "jdk",
+            Reflection.getPackageName(MybatisPackageInfo.class)
+    };
+    //是否排除在扫描外的类
+    public static boolean excludeClazzPrefix4ModelParseStatic(Class<?> clazz){
+        String modelName = clazz.getName();
+        for(String excludeClazzPrefix: EXCLUDE_CLAZZ_PREFIX_4_MODEL_PARSE_STATIC_ARRAY){
+            if(modelName.startsWith(excludeClazzPrefix)){
+                return true;
+            }
+        }
+        return isPrimitivesType(clazz)||isPrimitivesWrapperType(clazz);
     }
 
 }
