@@ -92,10 +92,10 @@ public class MybatisSqlUtils {
 
     protected static final Joiner WHERE_PART_JOINER = Joiner.on(" and ").skipNulls();
     public static String wherePartJoin(Collection<String> stringCollection){
-        return WHERE_PART_JOINER.join(stringCollection);
+        return " "+WHERE_PART_JOINER.join(stringCollection)+" ";
     }
     public static String wherePartJoin(String... stringCollection){
-        return WHERE_PART_JOINER.join(stringCollection);
+        return " "+WHERE_PART_JOINER.join(stringCollection)+" ";
     }
 
     /**
@@ -135,4 +135,7 @@ public class MybatisSqlUtils {
     }
 
 
+    public static String formatBoundParameter(String propertyNameInBoundSQL){
+        return "#{"+propertyNameInBoundSQL+"}";
+    }
 }

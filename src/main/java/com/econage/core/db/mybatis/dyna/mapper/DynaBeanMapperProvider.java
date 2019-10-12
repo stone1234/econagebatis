@@ -5,6 +5,7 @@ import com.econage.core.db.mybatis.dyna.entity.DynaClass;
 import com.econage.core.db.mybatis.dyna.entity.DynaColumn;
 import com.econage.core.db.mybatis.dyna.wherelogic.DynaWhereLogic;
 import com.econage.core.db.mybatis.mapper.provider.MybatisProviderContext;
+import com.econage.core.db.mybatis.util.MybatisSqlUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.builder.annotation.ProviderMethodResolver;
@@ -19,10 +20,6 @@ public class DynaBeanMapperProvider implements ProviderMethodResolver {
 
     private static String formatPropertyInBoundSQL(String dynaPropertyName){
         return DYNA_ENTITY_PARAM_NAME+"_"+dynaPropertyName;
-    }
-
-    private static String formatBoundParameter(String propertyNameInBoundSQL){
-        return "#{"+propertyNameInBoundSQL+"}";
     }
 
     /**
@@ -44,7 +41,7 @@ public class DynaBeanMapperProvider implements ProviderMethodResolver {
             String propertyInBoundSQL = formatPropertyInBoundSQL(dynaColumnName);
             if(propertyVal!=null){
                 context.setAdditionalParam(propertyInBoundSQL,propertyVal);
-                sql.VALUES(dynaColumnName,formatBoundParameter(propertyInBoundSQL));
+                sql.VALUES(dynaColumnName, MybatisSqlUtils.formatBoundParameter(propertyInBoundSQL));
             }
         }
 
@@ -65,7 +62,7 @@ public class DynaBeanMapperProvider implements ProviderMethodResolver {
     ){
         return new SQL()
                 .DELETE_FROM(dynaClass.getTableDef())
-                .WHERE( dynaClass.getIdColumn()+" = "+formatBoundParameter(ID_PARAM_NAME) )
+                .WHERE( dynaClass.getIdColumn()+" = "+ MybatisSqlUtils.formatBoundParameter(ID_PARAM_NAME) )
                 .toString();
     }
 
@@ -103,7 +100,7 @@ public class DynaBeanMapperProvider implements ProviderMethodResolver {
     ){
         return new SQL()
                 .DELETE_FROM(dynaClass.getTableDef())
-                .WHERE( dynaClass.getFkColumn()+" = "+formatBoundParameter(FK_PARAM_NAME) )
+                .WHERE( dynaClass.getFkColumn()+" = "+ MybatisSqlUtils.formatBoundParameter(FK_PARAM_NAME) )
                 .toString();
     }
 
@@ -120,8 +117,11 @@ public class DynaBeanMapperProvider implements ProviderMethodResolver {
             @Param(DYNA_CLASS_PARAM_NAME) DynaClass dynaClass,
             @Param(WHERE_LOGIC_PARAM_NAME) DynaWhereLogic whereLogic
     ){
-
-        return null;
+        context.getAdditionalParam().putAll(whereLogic.getBoundParams());
+        return new SQL()
+                .DELETE_FROM(dynaClass.getTableDef())
+                .WHERE(whereLogic.getBoundSqlArray())
+                .toString();
     }
 
     /**
@@ -146,11 +146,11 @@ public class DynaBeanMapperProvider implements ProviderMethodResolver {
             String propertyInBoundSQL = formatPropertyInBoundSQL(dynaColumnName);
             if(StringUtils.equals(idColumn,dynaColumnName)){
                 context.setAdditionalParam(propertyInBoundSQL,propertyVal);
-                sql.WHERE(dynaColumnName+"="+formatBoundParameter(propertyInBoundSQL));
+                sql.WHERE(dynaColumnName+"="+ MybatisSqlUtils.formatBoundParameter(propertyInBoundSQL));
             }else{
                 if(propertyVal!=null){
                     context.setAdditionalParam(propertyInBoundSQL,propertyVal);
-                    sql.SET(dynaColumnName+"="+formatBoundParameter(propertyInBoundSQL));
+                    sql.SET(dynaColumnName+"="+ MybatisSqlUtils.formatBoundParameter(propertyInBoundSQL));
                 }
             }
         }
@@ -180,10 +180,10 @@ public class DynaBeanMapperProvider implements ProviderMethodResolver {
             String propertyInBoundSQL = formatPropertyInBoundSQL(dynaColumnName);
             if(StringUtils.equals(idColumn,dynaColumnName)){
                 context.setAdditionalParam(propertyInBoundSQL,propertyVal);
-                sql.WHERE(dynaColumnName+"="+formatBoundParameter(propertyInBoundSQL));
+                sql.WHERE(dynaColumnName+"="+ MybatisSqlUtils.formatBoundParameter(propertyInBoundSQL));
             }else{
                 context.setAdditionalParam(propertyInBoundSQL,propertyVal);
-                sql.SET(dynaColumnName+"="+formatBoundParameter(propertyInBoundSQL));
+                sql.SET(dynaColumnName+"="+ MybatisSqlUtils.formatBoundParameter(propertyInBoundSQL));
             }
         }
 
@@ -208,11 +208,11 @@ public class DynaBeanMapperProvider implements ProviderMethodResolver {
             String propertyInBoundSQL = formatPropertyInBoundSQL(dynaColumnName);
             if(StringUtils.equals(idColumn,dynaColumnName)){
                 context.setAdditionalParam(propertyInBoundSQL,propertyVal);
-                sql.WHERE(dynaColumnName+"="+formatBoundParameter(propertyInBoundSQL));
+                sql.WHERE(dynaColumnName+"="+ MybatisSqlUtils.formatBoundParameter(propertyInBoundSQL));
             }else{
                 if(propertyNameArray.contains(dynaColumnName)&&propertyVal!=null){
                     context.setAdditionalParam(propertyInBoundSQL,propertyVal);
-                    sql.SET(dynaColumnName+"="+formatBoundParameter(propertyInBoundSQL));
+                    sql.SET(dynaColumnName+"="+ MybatisSqlUtils.formatBoundParameter(propertyInBoundSQL));
                 }
             }
         }
@@ -235,7 +235,23 @@ public class DynaBeanMapperProvider implements ProviderMethodResolver {
             @Param(DYNA_ENTITY_PARAM_NAME) DynaBean entity,
             @Param(WHERE_LOGIC_PARAM_NAME) DynaWhereLogic whereLogic
     ){
-        return null;
+        SQL sql = new SQL().UPDATE(dynaClass.getTableDef());
+        String idColumn = dynaClass.getIdColumn();
+
+        for(DynaColumn dynaColumn : dynaClass.getDynaColumns()){
+            String dynaColumnName = dynaColumn.getName();
+            Object propertyVal = entity.get(dynaColumn.getName());
+            if(!StringUtils.equals(idColumn,dynaColumnName)&&propertyVal!=null){
+                String propertyInBoundSQL = formatPropertyInBoundSQL(dynaColumnName);
+                context.setAdditionalParam(propertyInBoundSQL,propertyVal);
+                sql.SET(dynaColumnName+"="+ MybatisSqlUtils.formatBoundParameter(propertyInBoundSQL));
+            }
+        }
+
+        sql.WHERE(whereLogic.getBoundSqlArray());
+        context.getAdditionalParam().putAll(whereLogic.getBoundParams());
+
+        return sql.toString();
     }
 
     /**
@@ -248,13 +264,29 @@ public class DynaBeanMapperProvider implements ProviderMethodResolver {
      * @param whereLogic where逻辑
      * @return int
      */
-    Integer updateBatchAllColumnByWhereLogic(
+    public static String updateBatchAllColumnByWhereLogic(
             MybatisProviderContext context,
             @Param(DYNA_CLASS_PARAM_NAME) DynaClass dynaClass,
             @Param(DYNA_ENTITY_PARAM_NAME) DynaBean entity,
             @Param(WHERE_LOGIC_PARAM_NAME) DynaWhereLogic whereLogic
     ){
-        return null;
+        SQL sql = new SQL().UPDATE(dynaClass.getTableDef());
+        String idColumn = dynaClass.getIdColumn();
+
+        for(DynaColumn dynaColumn : dynaClass.getDynaColumns()){
+            String dynaColumnName = dynaColumn.getName();
+            Object propertyVal = entity.get(dynaColumn.getName());
+            if(!StringUtils.equals(idColumn,dynaColumnName)){
+                String propertyInBoundSQL = formatPropertyInBoundSQL(dynaColumnName);
+                context.setAdditionalParam(propertyInBoundSQL,propertyVal);
+                sql.SET(dynaColumnName+"="+ MybatisSqlUtils.formatBoundParameter(propertyInBoundSQL));
+            }
+        }
+
+        sql.WHERE(whereLogic.getBoundSqlArray());
+        context.getAdditionalParam().putAll(whereLogic.getBoundParams());
+
+        return sql.toString();
     }
 
     /*
@@ -274,7 +306,23 @@ public class DynaBeanMapperProvider implements ProviderMethodResolver {
             @Param(DYNA_COLUMN_NAME_ARRAY_PARAM_NAME) Collection<String> propertyNameArray,
             @Param(WHERE_LOGIC_PARAM_NAME) DynaWhereLogic whereLogic
     ){
-        return null;
+        SQL sql = new SQL().UPDATE(dynaClass.getTableDef());
+        String idColumn = dynaClass.getIdColumn();
+
+        for(DynaColumn dynaColumn : dynaClass.getDynaColumns()){
+            String dynaColumnName = dynaColumn.getName();
+            Object propertyVal = entity.get(dynaColumn.getName());
+            if(!StringUtils.equals(idColumn,dynaColumnName)&&propertyVal!=null&&propertyNameArray.contains(dynaColumnName)){
+                String propertyInBoundSQL = formatPropertyInBoundSQL(dynaColumnName);
+                context.setAdditionalParam(propertyInBoundSQL,propertyVal);
+                sql.SET(dynaColumnName+"="+ MybatisSqlUtils.formatBoundParameter(propertyInBoundSQL));
+            }
+        }
+
+        sql.WHERE(whereLogic.getBoundSqlArray());
+        context.getAdditionalParam().putAll(whereLogic.getBoundParams());
+
+        return sql.toString();
     }
 
     /**
@@ -292,7 +340,7 @@ public class DynaBeanMapperProvider implements ProviderMethodResolver {
         return new SQL()
                 .SELECT(dynaClass.getDynaColumns().stream().map(DynaColumn::getName).toArray(String[]::new))
                 .FROM(dynaClass.getTableDef())
-                .WHERE( dynaClass.getIdColumn()+" = "+formatBoundParameter(ID_PARAM_NAME) )
+                .WHERE( dynaClass.getIdColumn()+" = "+ MybatisSqlUtils.formatBoundParameter(ID_PARAM_NAME) )
                 .toString();
     }
 
@@ -365,7 +413,12 @@ public class DynaBeanMapperProvider implements ProviderMethodResolver {
             @Param(DYNA_CLASS_PARAM_NAME) DynaClass dynaClass,
             @Param(WHERE_LOGIC_PARAM_NAME) DynaWhereLogic whereLogic
     ){
-        return null;
+        context.getAdditionalParam().putAll(whereLogic.getBoundParams());
+        return new SQL()
+                .SELECT(dynaClass.getDynaColumns().stream().map(DynaColumn::getName).toArray(String[]::new))
+                .FROM(dynaClass.getTableDef())
+                .WHERE(whereLogic.getBoundSqlArray())
+                .toString();
     }
 
     /*
@@ -376,6 +429,11 @@ public class DynaBeanMapperProvider implements ProviderMethodResolver {
             @Param(DYNA_CLASS_PARAM_NAME) DynaClass dynaClass,
             @Param(WHERE_LOGIC_PARAM_NAME) DynaWhereLogic whereLogic
     ){
-        return null;
+        context.getAdditionalParam().putAll(whereLogic.getBoundParams());
+        return new SQL()
+                .SELECT("count(1)")
+                .FROM(dynaClass.getTableDef())
+                .WHERE(whereLogic.getBoundSqlArray())
+                .toString();
     }
 }

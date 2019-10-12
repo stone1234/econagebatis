@@ -13,4 +13,6 @@ public interface MapperConst {
 
     String FK_PARAM_NAME = "fk";
     String FK_COLLECTION_PARAM_NAME = "fks";
+
+    String DYNA_BOUND_PARAM = "dbp";
 }
