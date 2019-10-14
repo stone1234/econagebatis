@@ -84,7 +84,7 @@ public class DynaBeanResultSetHandler implements ResultSetHandler {
   private boolean useConstructorMappings;
 
   //todo
-  private DynaClass dynaClass;
+  private MybatisGlobalAssistant globalAssistant;
   private Class<DynaBean> dynaBeanClass = DynaBean.class;
 
   private static class PendingRelation {
@@ -122,7 +122,7 @@ public class DynaBeanResultSetHandler implements ResultSetHandler {
     this.reflectorFactory = configuration.getReflectorFactory();
     this.resultHandler = resultHandler;
     //todo
-    this.dynaClass = globalAssistant.getDynaClass(executor);
+    this.globalAssistant = globalAssistant;
   }
 
   //
@@ -410,6 +410,7 @@ public class DynaBeanResultSetHandler implements ResultSetHandler {
   //todo
   private DynaBean handleDynaBean(ResultSetWrapper rsw, ResultMap resultMap) throws SQLException {
     if(dynaBeanClass.isAssignableFrom(resultMap.getType())){
+      DynaClass dynaClass = globalAssistant.getDynaClass(executor);
       if(dynaClass==null){
         throw new MybatisException("dynaClass not found,may have no DynaClass in mapper parameter");
       }

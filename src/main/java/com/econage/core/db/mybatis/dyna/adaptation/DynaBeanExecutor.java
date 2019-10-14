@@ -53,10 +53,9 @@ public class DynaBeanExecutor implements Executor {
 
         if(parameter instanceof Map){
             Map<String, Object> params = (Map<String, Object>) parameter;
-            Object dynaClazzObj = params.get(MapperConst.DYNA_CLASS_PARAM_NAME);
-            if(dynaClazzObj instanceof DynaClass){
+            if(params.containsKey(MapperConst.DYNA_CLASS_PARAM_NAME)){
                 isRunningWithDynaClass = true;
-                globalAssistant.putExecutorDynaCls(delegate,(DynaClass)dynaClazzObj);
+                globalAssistant.putExecutorDynaCls(delegate,(DynaClass)params.get(MapperConst.DYNA_CLASS_PARAM_NAME));
             }
         }
     }

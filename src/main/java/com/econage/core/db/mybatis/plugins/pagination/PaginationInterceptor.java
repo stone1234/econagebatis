@@ -223,10 +223,10 @@ public class PaginationInterceptor implements Interceptor {
         }*/
         if(parameter instanceof Map){
             Map<String, Object> params = (Map<String, Object>) parameter;
-            Object dynaClazzObj = params.get(MapperConst.DYNA_CLASS_PARAM_NAME);
-            if(dynaClazzObj instanceof DynaClass){
+            if(params.containsKey(MapperConst.DYNA_CLASS_PARAM_NAME)){
+                DynaClass dynaClazzObj = (DynaClass)params.get(MapperConst.DYNA_CLASS_PARAM_NAME);
                 if(ArrayUtils.isEmpty(pagination.getSortName())){
-                    pagination.setSortName( ((DynaClass)dynaClazzObj).getIdColumn() );
+                    pagination.setSortName( dynaClazzObj.getIdColumn() );
                 }
                 //如果是动态bean环境，则不再推测TableInfo
                 return;
