@@ -122,11 +122,7 @@ public class DynaBeanResultSetHandler implements ResultSetHandler {
     this.reflectorFactory = configuration.getReflectorFactory();
     this.resultHandler = resultHandler;
     //todo
-    if(SqlCommandType.SELECT == mappedStatement.getSqlCommandType()){
-      this.dynaClass = ((DynaBeanExecutor)executor).getDynaClass();
-    }else{
-      this.dynaClass = globalAssistant.getDynaClass(executor);
-    }
+    this.dynaClass = globalAssistant.getDynaClass(executor);
   }
 
   //

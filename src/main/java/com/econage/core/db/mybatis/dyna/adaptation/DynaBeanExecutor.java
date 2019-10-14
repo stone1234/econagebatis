@@ -1,10 +1,12 @@
 package com.econage.core.db.mybatis.dyna.adaptation;
 
+import com.econage.core.db.mybatis.MybatisException;
 import com.econage.core.db.mybatis.adaptation.MybatisGlobalAssistant;
 import com.econage.core.db.mybatis.dyna.entity.DynaClass;
 import com.econage.core.db.mybatis.mapper.MapperConst;
 import org.apache.ibatis.cache.CacheKey;
 import org.apache.ibatis.cursor.Cursor;
+import org.apache.ibatis.executor.BaseExecutor;
 import org.apache.ibatis.executor.BatchResult;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.BoundSql;
@@ -21,23 +23,30 @@ import java.util.Map;
 public class DynaBeanExecutor implements Executor {
 
     private final MybatisGlobalAssistant globalAssistant;
+    //名称不可更改
     private final Executor delegate;
     protected Executor wrapper;
     //是否执行在环境中使用了DynaClass
     //简单结果集可以不用volatile修饰，将来如果支持懒加载，则添加volatile修饰
     private boolean isRunningWithDynaClass;
-    //查询操作，底层会使用包装器，此处暂存即可
-    private DynaClass dynaClass;
 
     public DynaBeanExecutor(MybatisGlobalAssistant globalAssistant, Executor delegate) {
+        if(!(delegate instanceof BaseExecutor)){
+            throw new MybatisException("not a BaseExecutor,maybe a code error in system");
+        }
+
         this.globalAssistant = globalAssistant;
         this.delegate = delegate;
         this.wrapper = this;
         delegate.setExecutorWrapper(this);
     }
 
+    public Executor getDelegate() {
+        return delegate;
+    }
+
     //其他自定义mapper，只要传入的参数中带了DynaClass，就识别
-    private void detectIsRunningWithDynaClass(boolean save2Config, Object parameter){
+    private void detectIsRunningWithDynaClass(MappedStatement ms, Object parameter){
         if(isRunningWithDynaClass){
             return;
         }
@@ -47,50 +56,38 @@ public class DynaBeanExecutor implements Executor {
             Object dynaClazzObj = params.get(MapperConst.DYNA_CLASS_PARAM_NAME);
             if(dynaClazzObj instanceof DynaClass){
                 isRunningWithDynaClass = true;
-                if(save2Config){
-                    globalAssistant.putExecutorDynaCls(delegate,(DynaClass)dynaClazzObj);
-                }else{
-                    dynaClass = (DynaClass)dynaClazzObj;
-                }
+                globalAssistant.putExecutorDynaCls(delegate,(DynaClass)dynaClazzObj);
             }
         }
     }
     private void closeHook(){
         if(isRunningWithDynaClass){
-            if(null==dynaClass){
-                globalAssistant.removeExecutorDynaCls(delegate);
-            }else{
-                dynaClass = null;
-            }
+            globalAssistant.removeExecutorDynaCls(delegate);
             isRunningWithDynaClass = false;
         }
     }
 
-    public DynaClass getDynaClass() {
-        return dynaClass;
-    }
-
     @Override
     public int update(MappedStatement ms, Object parameter) throws SQLException {
-        detectIsRunningWithDynaClass(true, parameter);
+        detectIsRunningWithDynaClass(ms,parameter);
         return delegate.update(ms,parameter);
     }
 
     @Override
     public <E> List<E> query(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, CacheKey cacheKey, BoundSql boundSql) throws SQLException {
-        detectIsRunningWithDynaClass(false, parameter);
+        detectIsRunningWithDynaClass(ms, parameter);
         return delegate.query(ms, parameter, rowBounds, resultHandler, cacheKey, boundSql);
     }
 
     @Override
     public <E> List<E> query(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler) throws SQLException {
-        detectIsRunningWithDynaClass(false, parameter);
+        detectIsRunningWithDynaClass(ms, parameter);
         return delegate.query(ms, parameter, rowBounds, resultHandler);
     }
 
     @Override
     public <E> Cursor<E> queryCursor(MappedStatement ms, Object parameter, RowBounds rowBounds) throws SQLException {
-        detectIsRunningWithDynaClass(false, parameter);
+        detectIsRunningWithDynaClass(ms, parameter);
         return delegate.queryCursor(ms, parameter, rowBounds);
     }
 

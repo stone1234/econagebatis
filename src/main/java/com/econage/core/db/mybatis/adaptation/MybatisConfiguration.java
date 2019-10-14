@@ -122,13 +122,16 @@ public class MybatisConfiguration extends Configuration {
             executor = new SimpleExecutor(this, transaction);
         }
 
-        if(globalAssistant.isDynaBeanEnabled()){
-            executor = new DynaBeanExecutor(globalAssistant, executor);
-        }
 
         /*if (cacheEnabled) {
             executor = new CachingExecutor(executor);
         }*/
+
+        //DynaBeanExecutor放在CachingExecutor之后
+        if(globalAssistant.isDynaBeanEnabled()){
+            executor = new DynaBeanExecutor(globalAssistant, executor);
+        }
+
         executor = (Executor) interceptorChain.pluginAll(executor);
         return executor;
     }

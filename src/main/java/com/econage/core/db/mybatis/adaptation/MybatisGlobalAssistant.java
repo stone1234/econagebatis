@@ -33,9 +33,11 @@ import com.google.common.reflect.Reflection;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
+import org.apache.ibatis.executor.BaseExecutor;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
+import org.apache.ibatis.reflection.MetaObject;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -226,15 +228,14 @@ public class MybatisGlobalAssistant implements Serializable {
     }*/
     /*----------------------GETTER AND SETTER----------- */
     //执行DynaBeanMapper相关方法时需要暂存DynaClass，以便结果集处理器使用
-    public void putExecutorDynaCls(Executor executorKey,DynaClass dynaClass){
-        runtimeDynaClassMap.put(executorKey,dynaClass);
+    public void putExecutorDynaCls(Executor executor,DynaClass dynaClass){
+        runtimeDynaClassMap.put(MybatisClassUtils.extractExecutor(executor),dynaClass);
     }
-    public DynaClass getDynaClass(Executor executorKey){
-        return runtimeDynaClassMap.get(executorKey);
+    public DynaClass getDynaClass(Executor executor){
+        return runtimeDynaClassMap.get(MybatisClassUtils.extractExecutor(executor));
     }
-
-    public void removeExecutorDynaCls(Executor executorKey){
-        runtimeDynaClassMap.remove(executorKey);
+    public void removeExecutorDynaCls(Executor executor){
+        runtimeDynaClassMap.remove(MybatisClassUtils.extractExecutor(executor));
     }
 
     public boolean isMapperParsed(Class<?> mapper){

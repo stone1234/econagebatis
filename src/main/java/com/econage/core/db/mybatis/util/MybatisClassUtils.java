@@ -15,16 +15,22 @@
  */
 package com.econage.core.db.mybatis.util;
 
+import com.econage.core.db.mybatis.MybatisException;
 import com.econage.core.db.mybatis.MybatisPackageInfo;
+import com.econage.core.db.mybatis.dyna.adaptation.DynaBeanExecutor;
 import com.econage.core.db.mybatis.mapper.BaseMapper;
 import com.google.common.base.Preconditions;
 import com.google.common.primitives.Primitives;
 import com.google.common.reflect.Reflection;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.executor.BaseExecutor;
+import org.apache.ibatis.executor.CachingExecutor;
+import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
@@ -147,6 +153,36 @@ public class MybatisClassUtils {
             }
         }
         return isPrimitivesType(clazz)||isPrimitivesWrapperType(clazz);
+    }
+
+    private static final Field cachingExecutorDelegate;
+    static{
+        Field cachingExecutorDelegate1;
+        try {
+            cachingExecutorDelegate1 = CachingExecutor.class.getField("delegate");
+            cachingExecutorDelegate1.setAccessible(true);
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+            cachingExecutorDelegate1 = null;
+        }
+        cachingExecutorDelegate = cachingExecutorDelegate1;
+    }
+
+    //抽取executor包装器代理类
+    public static Executor extractExecutor(Executor executor){
+        if(executor instanceof BaseExecutor){
+            return executor;
+        }else if(executor instanceof DynaBeanExecutor){
+            return ((DynaBeanExecutor)executor).getDelegate();
+        }else if(executor instanceof CachingExecutor){
+            try {
+                return extractExecutor((Executor) cachingExecutorDelegate.get(executor));
+            } catch (IllegalAccessException e) {
+                throw new MybatisException("should never happen!");
+            }
+        }else{
+            throw new MybatisException("unknown executor wrapper,should never happen,executor class:["+executor.getClass()+"]");
+        }
     }
 
 }
