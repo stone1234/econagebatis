@@ -159,7 +159,7 @@ public class MybatisClassUtils {
     static{
         Field cachingExecutorDelegate1;
         try {
-            cachingExecutorDelegate1 = CachingExecutor.class.getField("delegate");
+            cachingExecutorDelegate1 = CachingExecutor.class.getDeclaredField("delegate");
             cachingExecutorDelegate1.setAccessible(true);
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
@@ -173,7 +173,7 @@ public class MybatisClassUtils {
         if(executor instanceof BaseExecutor){
             return executor;
         }else if(executor instanceof DynaBeanExecutor){
-            return ((DynaBeanExecutor)executor).getDelegate();
+            return extractExecutor(((DynaBeanExecutor)executor).getDelegate());
         }else if(executor instanceof CachingExecutor){
             try {
                 return extractExecutor((Executor) cachingExecutorDelegate.get(executor));
