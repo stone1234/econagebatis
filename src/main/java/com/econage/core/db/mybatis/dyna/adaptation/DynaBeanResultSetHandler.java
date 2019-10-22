@@ -24,7 +24,6 @@ import org.apache.ibatis.annotations.AutomapConstructor;
 import org.apache.ibatis.binding.MapperMethod.ParamMap;
 import org.apache.ibatis.cache.CacheKey;
 import org.apache.ibatis.cursor.Cursor;
-import org.apache.ibatis.exceptions.PersistenceException;
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.executor.ExecutorException;
@@ -224,6 +223,7 @@ public class DynaBeanResultSetHandler implements ResultSetHandler {
     }
 
     ResultMap resultMap = resultMaps.get(0);
+    //todo
     return new DefaultCursor4DynaBeanResultSetHandler<>(this, resultMap, rsw, rowBounds);
   }
 
@@ -385,6 +385,7 @@ public class DynaBeanResultSetHandler implements ResultSetHandler {
   //
   // GET VALUE FROM ROW FOR SIMPLE RESULT MAP
   //
+
   private Object getRowValue(ResultSetWrapper rsw, ResultMap resultMap, String columnPrefix) throws SQLException {
     //todo 动态bean仅限处理简单结果集
     DynaBean dynaBean = handleDynaBean(rsw,resultMap);

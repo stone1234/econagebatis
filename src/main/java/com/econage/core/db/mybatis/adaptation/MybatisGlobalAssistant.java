@@ -33,11 +33,9 @@ import com.google.common.reflect.Reflection;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
-import org.apache.ibatis.executor.BaseExecutor;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
-import org.apache.ibatis.reflection.MetaObject;
 
 import java.io.Serializable;
 import java.util.Collection;

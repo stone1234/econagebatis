@@ -15,8 +15,6 @@
  */
 package com.econage.core.db.mybatis.adaptation;
 
-import com.econage.core.db.mybatis.dyna.entity.DynaBean;
-import com.econage.core.db.mybatis.dyna.entity.DynaClass;
 import com.econage.core.db.mybatis.entity.TableInfo;
 import com.econage.core.db.mybatis.mapper.provider.MybatisProviderSqlSource;
 import org.apache.ibatis.annotations.*;
@@ -505,7 +503,7 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
           LanguageDriver languageDriver,
           // todo
           TableInfo tableInfo
-  ){
+  ) {
     try {
       Class<? extends Annotation> sqlAnnotationType = getSqlAnnotationType(method);
       Class<? extends Annotation> sqlProviderAnnotationType = getSqlProviderAnnotationType(method);

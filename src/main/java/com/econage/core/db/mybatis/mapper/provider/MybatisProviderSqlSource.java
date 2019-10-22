@@ -41,12 +41,12 @@ public class MybatisProviderSqlSource implements SqlSource {
   private final Class<?> providerType;
   private final LanguageDriver languageDriver;
   private final Method mapperMethod;
-  private Method providerMethod;
-  private String[] providerMethodArgumentNames;
-  private Class<?>[] providerMethodParameterTypes;
+  private final Method providerMethod;
+  private final String[] providerMethodArgumentNames;
+  private final Class<?>[] providerMethodParameterTypes;
   //todo
   private MybatisProviderContext providerContextTpl;
-  private Integer providerContextIndex;
+  private final Integer providerContextIndex;
 
   /*
    * todo
@@ -70,44 +70,45 @@ public class MybatisProviderSqlSource implements SqlSource {
   }
 
   /**
-   * @since 3.4.5
+   * @since 3.5.3
    */
   public MybatisProviderSqlSource(
           /*todo */
           MybatisConfiguration configuration,
-          Object provider,
+          Annotation provider,
           Class<?> mapperType,
           Method mapperMethod,
           //todo
           TableInfo tableInfo
   ) {
-    String providerMethodName;
+    String candidateProviderMethodName;
+    Method candidateProviderMethod = null;
     try {
       this.configuration = configuration;
       this.mapperMethod = mapperMethod;
       Lang lang = mapperMethod == null ? null : mapperMethod.getAnnotation(Lang.class);
       this.languageDriver = configuration.getLanguageDriver(lang == null ? null : lang.value());
       this.providerType = getProviderType(provider, mapperMethod);
-      providerMethodName = (String) provider.getClass().getMethod("method").invoke(provider);
+      candidateProviderMethodName = (String) provider.annotationType().getMethod("method").invoke(provider);
 
       /*
        * todo 原生的ProviderMethodResolver类，会查找providerType与mapperMethod同名的办法，但是需要ProviderContext类型参数
        *  ProviderContext类型无法被继承，构造函数权限为default
        * */
-      if (providerMethodName.length() == 0 && ProviderMethodResolver.class.isAssignableFrom(this.providerType)) {
-        this.providerMethod = ((ProviderMethodResolver) this.providerType.getDeclaredConstructor().newInstance())
-                .resolveMethod(createMybatisProviderContext(mapperType,mapperMethod,configuration.getDatabaseId()));
+      if (candidateProviderMethodName.length() == 0 && ProviderMethodResolver.class.isAssignableFrom(this.providerType)) {
+        candidateProviderMethod = ((ProviderMethodResolver) this.providerType.getDeclaredConstructor().newInstance())
+            .resolveMethod(createMybatisProviderContext(mapperType,mapperMethod,configuration.getDatabaseId()));
       }
-      if (this.providerMethod == null) {
-        providerMethodName = providerMethodName.length() == 0 ? "provideSql" : providerMethodName;
+      if (candidateProviderMethod == null) {
+        candidateProviderMethodName = candidateProviderMethodName.length() == 0 ? "provideSql" : candidateProviderMethodName;
         for (Method m : this.providerType.getMethods()) {
-          if (providerMethodName.equals(m.getName()) && CharSequence.class.isAssignableFrom(m.getReturnType())) {
-            if (this.providerMethod != null) {
+          if (candidateProviderMethodName.equals(m.getName()) && CharSequence.class.isAssignableFrom(m.getReturnType())) {
+            if (candidateProviderMethod != null) {
               throw new BuilderException("Error creating SqlSource for SqlProvider. Method '"
-                      + providerMethodName + "' is found multiple in SqlProvider '" + this.providerType.getName()
-                      + "'. Sql provider method can not overload.");
+                  + candidateProviderMethodName + "' is found multiple in SqlProvider '" + this.providerType.getName()
+                  + "'. Sql provider method can not overload.");
             }
-            this.providerMethod = m;
+            candidateProviderMethod = m;
           }
         }
       }
@@ -116,13 +117,15 @@ public class MybatisProviderSqlSource implements SqlSource {
     } catch (Exception e) {
       throw new BuilderException("Error creating SqlSource for SqlProvider.  Cause: " + e, e);
     }
-    if (this.providerMethod == null) {
+    if (candidateProviderMethod == null) {
       throw new BuilderException("Error creating SqlSource for SqlProvider. Method '"
-              + providerMethodName + "' not found in SqlProvider '" + this.providerType.getName() + "'.");
+          + candidateProviderMethodName + "' not found in SqlProvider '" + this.providerType.getName() + "'.");
     }
+    this.providerMethod = candidateProviderMethod;
     this.providerMethodArgumentNames = new ParamNameResolver(configuration, this.providerMethod).getNames();
     //todo 修正mybatis框架，处理的单个参数时，参数为原型类型导致错误的问题
-    this.providerMethodParameterTypes =ProviderSqlSourceUtils.parseProviderMethodParameterTypes(providerMethod);
+    this.providerMethodParameterTypes = ProviderSqlSourceUtils.parseProviderMethodParameterTypes(providerMethod);
+    //todo
     this.providerContextTpl = new MybatisProviderContext(
             configuration,
             mapperType,
@@ -130,20 +133,22 @@ public class MybatisProviderSqlSource implements SqlSource {
             configuration.getDatabaseId(),
             tableInfo
     );
+    Integer candidateProviderContextIndex = null;
     for (int i = 0; i < this.providerMethodParameterTypes.length; i++) {
       Class<?> parameterType = this.providerMethodParameterTypes[i];
+      /*
+       * todo
+       * */
       if (parameterType == MybatisProviderContext.class) {
-        /*
-         * todo
-         * */
-        if (this.providerContextIndex != null) {
+        if (candidateProviderContextIndex != null) {
           throw new BuilderException("Error creating SqlSource for SqlProvider. ProviderContext found multiple in SqlProvider method ("
-                  + this.providerType.getName() + "." + providerMethod.getName()
-                  + "). ProviderContext can not define multiple in SqlProvider method argument.");
+              + this.providerType.getName() + "." + providerMethod.getName()
+              + "). ProviderContext can not define multiple in SqlProvider method argument.");
         }
-        this.providerContextIndex = i;
+        candidateProviderContextIndex = i;
       }
     }
+    this.providerContextIndex = candidateProviderContextIndex;
   }
 
   @Override
@@ -168,12 +173,11 @@ public class MybatisProviderSqlSource implements SqlSource {
   ) {
     try {
       String sql;
-      //多参数场景
       if (parameterObject instanceof Map) {
         //todo
         int bindParameterCount = providerMethodParameterTypes.length - (providerContextIndex == null ? 0 : 1);
         if (bindParameterCount == 1 &&
-                (providerMethodParameterTypes[Integer.valueOf(0).equals(providerContextIndex) ? 1 : 0].isAssignableFrom(parameterObject.getClass()))) {
+          (providerMethodParameterTypes[Integer.valueOf(0).equals(providerContextIndex) ? 1 : 0].isAssignableFrom(parameterObject.getClass()))) {
           //如果除context外，只有一个普通参数
           /*todo*/
           sql = invokeProviderMethod(extractProviderMethodArguments(providerContext,parameterObject));
@@ -200,8 +204,8 @@ public class MybatisProviderSqlSource implements SqlSource {
         sql = invokeProviderMethod(extractProviderMethodArguments(providerContext,parameterObject));
       } else {
         throw new BuilderException("Cannot invoke SqlProvider method '" + providerMethod
-                + "' with specify parameter '" + (parameterObject == null ? null : parameterObject.getClass())
-                + "' because SqlProvider method arguments for '" + mapperMethod + "' is an invalid combination.");
+          + "' with specify parameter '" + (parameterObject == null ? null : parameterObject.getClass())
+          + "' because SqlProvider method arguments for '" + mapperMethod + "' is an invalid combination.");
       }
       Class<?> parameterType = parameterObject == null ? Object.class : parameterObject.getClass();
       return languageDriver.createSqlSource(configuration, sql, parameterType);
@@ -209,14 +213,14 @@ public class MybatisProviderSqlSource implements SqlSource {
       throw e;
     } catch (Exception e) {
       throw new BuilderException("Error invoking SqlProvider method '" + providerMethod
-              + "' with specify parameter '" + (parameterObject == null ? null : parameterObject.getClass()) + "'.  Cause: " + extractRootCause(e), e);
+          + "' with specify parameter '" + (parameterObject == null ? null : parameterObject.getClass()) + "'.  Cause: " + extractRootCause(e), e);
     }
   }
 
   private Throwable extractRootCause(Exception e) {
     Throwable cause = e;
     while(cause.getCause() != null) {
-      cause = e.getCause();
+      cause = cause.getCause();
     }
     return cause;
   }
@@ -227,7 +231,7 @@ public class MybatisProviderSqlSource implements SqlSource {
           Object parameterObject
   ) {
     //todo
-    if (providerContextIndex != null) {
+    if (providerContext != null) {
       Object[] args = new Object[2];
       args[providerContextIndex == 0 ? 1 : 0] = parameterObject;
       args[providerContextIndex] = providerContext;
@@ -257,25 +261,25 @@ public class MybatisProviderSqlSource implements SqlSource {
   private String invokeProviderMethod(Object... args) throws Exception {
     Object targetObject = null;
     if (!Modifier.isStatic(providerMethod.getModifiers())) {
-      targetObject = providerType.newInstance();
+      targetObject = providerType.getDeclaredConstructor().newInstance();
     }
     CharSequence sql = (CharSequence) providerMethod.invoke(targetObject, args);
     return sql != null ? sql.toString() : null;
   }
 
-  private Class<?> getProviderType(Object providerAnnotation, Method mapperMethod)
-          throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-    Class<?> type = (Class<?>) providerAnnotation.getClass().getMethod("type").invoke(providerAnnotation);
-    Class<?> value = (Class<?>) providerAnnotation.getClass().getMethod("value").invoke(providerAnnotation);
+  private Class<?> getProviderType(Annotation providerAnnotation, Method mapperMethod)
+      throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    Class<?> type = (Class<?>) providerAnnotation.annotationType().getMethod("type").invoke(providerAnnotation);
+    Class<?> value = (Class<?>) providerAnnotation.annotationType().getMethod("value").invoke(providerAnnotation);
     if (value == void.class && type == void.class) {
       throw new BuilderException("Please specify either 'value' or 'type' attribute of @"
-              + ((Annotation) providerAnnotation).annotationType().getSimpleName()
-              + " at the '" + mapperMethod.toString() + "'.");
+          + providerAnnotation.annotationType().getSimpleName()
+          + " at the '" + mapperMethod.toString() + "'.");
     }
     if (value != void.class && type != void.class && value != type) {
       throw new BuilderException("Cannot specify different class on 'value' and 'type' attribute of @"
-              + ((Annotation) providerAnnotation).annotationType().getSimpleName()
-              + " at the '" + mapperMethod.toString() + "'.");
+          + providerAnnotation.annotationType().getSimpleName()
+          + " at the '" + mapperMethod.toString() + "'.");
     }
     return value == void.class ? type : value;
   }
