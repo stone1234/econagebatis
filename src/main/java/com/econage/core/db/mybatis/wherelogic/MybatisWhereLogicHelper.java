@@ -176,7 +176,8 @@ public class MybatisWhereLogicHelper {
         }else if(objCls==char[].class){
             return Arrays.asList( ArrayUtils.toObject( (char[])obj ));
         }else{
-            throw new IllegalArgumentException("Not a array object");
+            return Arrays.asList( (Object[])obj );
+            //throw new IllegalArgumentException("Not a array object");
         }
     }
 
