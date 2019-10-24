@@ -15,16 +15,15 @@
  */
 package com.econage.core.db.mybatis.mapper.sqlsource.basic;
 
+import com.econage.core.db.mybatis.MybatisException;
+import com.econage.core.db.mybatis.adaptation.MybatisConfiguration;
 import com.econage.core.db.mybatis.entity.TableFieldInfo;
 import com.econage.core.db.mybatis.entity.TableInfo;
 import com.econage.core.db.mybatis.enums.SqlMethod;
-import com.econage.core.db.mybatis.mapper.MapperConst;
 import com.econage.core.db.mybatis.mapper.sqlsource.AbstractDefaultMethodSqlSource;
 import com.econage.core.db.mybatis.mapper.sqlsource.SqlProviderBinding;
 import com.econage.core.db.mybatis.util.MybatisSqlUtils;
 import com.econage.core.db.mybatis.util.MybatisStringUtils;
-import com.econage.core.db.mybatis.MybatisException;
-import com.econage.core.db.mybatis.adaptation.MybatisConfiguration;
 import com.econage.core.db.mybatis.uuid.IdWorker;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -35,9 +34,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import static com.econage.core.db.mybatis.mapper.MapperConst.ENTITY_PARAM_NAME;
+import static com.econage.core.db.mybatis.mapper.MapperConst.PROPERTY_NAME_ARRAY_PARAM_NAME;
+
 public class DefaultUpdateMethodSqlSource extends AbstractDefaultMethodSqlSource {
 
-    public static final String UPDATE_SQL_TEMPLATE = "UPDATE %s SET %s WHERE %s=#{%s}";
+    public static final String UPDATE_SQL_TEMPLATE = "UPDATE %s SET %s WHERE %s=#{" +ENTITY_PARAM_NAME+".%s}";
 
     private final boolean selective;
     private final boolean partial;
@@ -59,13 +61,16 @@ public class DefaultUpdateMethodSqlSource extends AbstractDefaultMethodSqlSource
         }
         /*---------------------1，解析参数*/
         Collection<String> validProperty = null;
-        if(partial){
+        Object entityObj = null;
+        if(parameterObject instanceof Map){
             Map<String, Object> params = (Map<String, Object>) parameterObject;
-            parameterObject = params.get(MapperConst.ENTITY_PARAM_NAME);
-            validProperty = (Collection<String>)params.get(MapperConst.PROPERTY_NAME_ARRAY_PARAM_NAME);
+            entityObj = params.get(ENTITY_PARAM_NAME);
+            if(params.containsKey(PROPERTY_NAME_ARRAY_PARAM_NAME)){
+                validProperty = (Collection<String>)params.get(PROPERTY_NAME_ARRAY_PARAM_NAME);
+            }
         }
         /*---------------------2，解析set部分，并尝试填充版本字段*/
-        MetaObject entityMetaObject = getConfiguration().newMetaObject(parameterObject);
+        MetaObject entityMetaObject = getConfiguration().newMetaObject(entityObj);
         Map<String,Object> additionalMap = Maps.newHashMap();
         List<String> setPart = sqlSet(entityMetaObject, validProperty, additionalMap);
 
@@ -77,9 +82,9 @@ public class DefaultUpdateMethodSqlSource extends AbstractDefaultMethodSqlSource
                 tableInfo.getKeyColumn(),
                 tableInfo.getKeyProperty()
         );
-        if(partial){
+        /*if(partial){
             additionalMap.put(tableInfo.getKeyProperty(), entityMetaObject.getValue(tableInfo.getKeyProperty()));
-        }
+        }*/
         //谓语部分乐观锁处理
         if(tableInfo.getVersionField()!=null){
             TableFieldInfo versionField = tableInfo.getVersionField();
@@ -140,11 +145,11 @@ public class DefaultUpdateMethodSqlSource extends AbstractDefaultMethodSqlSource
                     );
                     versionResolved = true;
                 }else{
-                    sqlSetsPart.add(fieldInfo.getColumn()+"=#{"+fieldInfo.getEl()+"}");
-                    if(partial){
+                    sqlSetsPart.add(fieldInfo.getColumn()+"=#{"+ENTITY_PARAM_NAME+"."+fieldInfo.getEl()+"}");
+                    /*if(partial){
                         //partial为true时，如果使用自动映射需要添加前缀，此处将数据提取，存入additionalParam
                         additionalParam.put(property,propertyVal);
-                    }
+                    }*/
                 }
             }
         }

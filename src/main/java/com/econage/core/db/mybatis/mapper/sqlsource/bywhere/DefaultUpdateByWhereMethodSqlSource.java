@@ -17,6 +17,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import static com.econage.core.db.mybatis.mapper.MapperConst.ENTITY_PARAM_NAME;
+
 public class DefaultUpdateByWhereMethodSqlSource extends AbstractByWhereMethodSqlSource {
 
     public static final String UPDATE_SQL_TPL = "UPDATE %s SET %s WHERE %s ";
@@ -113,9 +115,10 @@ public class DefaultUpdateByWhereMethodSqlSource extends AbstractByWhereMethodSq
                     );
                     versionResolved = true;
                 }else{
-                    sqlSetsPart.add(fieldInfo.getColumn()+"=#{"+fieldInfo.getEl()+"}");
+                    //如果使用自动映射需要添加前缀（et）
+                    sqlSetsPart.add(fieldInfo.getColumn()+"=#{"+ENTITY_PARAM_NAME+"."+fieldInfo.getEl()+"}");
                     //如果使用自动映射需要添加前缀（et），此处将数据提取，存入additionalParam，以便移动映射到sql中的参数中
-                    additionalParam.put(property,propertyVal);
+                    //additionalParam.put(property,propertyVal);
                 }
             }
         }

@@ -97,25 +97,11 @@ public class DefaultSelectMethodSqlSource extends AbstractDefaultMethodSqlSource
     //提供基本全局查询逻辑即可，插件会自动侦测主键，并分页排序
     private final SqlProviderBinding parsePageSelectSQLBinding;
     private SqlProviderBinding parsePageSelect(Object parameterObject){
-        /*String sql = String.format(
-                SELECT_PAGE_LIST,
-                tableInfo.getSelectColumns(),
-                tableInfo.getTableName()
-        );
-        return SqlProviderBinding.of(sql);*/
         return parsePageSelectSQLBinding;
     }
 
     private final SqlProviderBinding parseSelectSQLBinding;
     private SqlProviderBinding parseSelect(Object parameterObject){
-        /*String sql = String.format(
-                SELECT_BY_ID,
-                tableInfo.getSelectColumns(),
-                tableInfo.getTableName(),
-                tableInfo.getKeyColumn(),
-                tableInfo.getKeyProperty()
-        );
-        return SqlProviderBinding.of(sql);*/
         return parseSelectSQLBinding;
     }
 

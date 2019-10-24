@@ -36,7 +36,7 @@ public interface BaseMapper<T extends BasicEntity> {
      * @param entity 实体对象
      * @return int
      */
-    Integer insert(T entity);
+    Integer insert(@Param(ENTITY_PARAM_NAME) T entity);
 
     /**
      * <p>
@@ -46,7 +46,7 @@ public interface BaseMapper<T extends BasicEntity> {
      * @param entity 实体对象
      * @return int
      */
-    Integer insertAllColumn(T entity);
+    Integer insertAllColumn(@Param(ENTITY_PARAM_NAME) T entity);
 
     /**
      * <p>
@@ -86,7 +86,7 @@ public interface BaseMapper<T extends BasicEntity> {
      * @param whereLogic where逻辑
      * @return int
      */
-    Integer deleteByWhereLogic(Object whereLogic);
+    Integer deleteByWhereLogic(@Param(WHERE_LOGIC_PARAM_NAME) Object whereLogic);
 
     /**
      * <p>
@@ -96,7 +96,7 @@ public interface BaseMapper<T extends BasicEntity> {
      * @param entity 实体对象
      * @return int
      */
-    Integer updateById(T entity);
+    Integer updateById(@Param(ENTITY_PARAM_NAME) T entity);
 
     /**
      * <p>
@@ -106,7 +106,7 @@ public interface BaseMapper<T extends BasicEntity> {
      * @param entity 实体对象
      * @return int
      */
-    Integer updateAllColumnById(T entity);
+    Integer updateAllColumnById(@Param(ENTITY_PARAM_NAME) T entity);
 
     /*
     * 根据id更新特定列
@@ -205,11 +205,11 @@ public interface BaseMapper<T extends BasicEntity> {
     /*
     * 通用查询方法，可以做分页查询
     * */
-    List<T> selectListByWhereLogic(Object searForm, Pagination page);
+    List<T> selectListByWhereLogic(@Param(WHERE_LOGIC_PARAM_NAME) Object searForm, Pagination page);
 
     /*
     * 通用计数方法
     * */
-    Integer selectCountByWhereLogic(Object searForm);
+    Integer selectCountByWhereLogic(@Param(WHERE_LOGIC_PARAM_NAME) Object searForm);
 
 }

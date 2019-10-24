@@ -10,6 +10,8 @@ import org.apache.ibatis.mapping.SqlCommandType;
 
 import java.util.Map;
 
+import static com.econage.core.db.mybatis.mapper.MapperConst.WHERE_LOGIC_PARAM_NAME;
+
 public class DefaultDeleteByWhereMethodSqlSource extends AbstractByWhereMethodSqlSource {
     public static final String DELETE_BY_WHERE_LOGIC_TPL = "DELETE FROM %s WHERE %s";
 
@@ -32,12 +34,16 @@ public class DefaultDeleteByWhereMethodSqlSource extends AbstractByWhereMethodSq
         if(parameterObject==null){
             return emptyResultSQLBinding;
         }
+        Object whereLogic = parameterObject;
+        if(parameterObject instanceof Map){
+            whereLogic = ((Map) parameterObject).get(WHERE_LOGIC_PARAM_NAME);
+        }
 
         Map<String,Object> additionalParameter = Maps.newHashMap();
         String sql = String.format(
                 DELETE_BY_WHERE_LOGIC_TPL,
                 tableInfo.getTableName(),
-                parseWhereLogicJoinSQL(parameterObject,additionalParameter)
+                parseWhereLogicJoinSQL(whereLogic,additionalParameter)
         );
 
         return SqlProviderBinding.of(sql,additionalParameter);

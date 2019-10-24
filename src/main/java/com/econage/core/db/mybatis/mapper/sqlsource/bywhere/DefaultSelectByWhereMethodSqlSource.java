@@ -25,6 +25,8 @@ import org.apache.ibatis.mapping.SqlCommandType;
 
 import java.util.Map;
 
+import static com.econage.core.db.mybatis.mapper.MapperConst.WHERE_LOGIC_PARAM_NAME;
+
 public class DefaultSelectByWhereMethodSqlSource extends AbstractByWhereMethodSqlSource {
 
     public static final String SELECT_LIST_BY_SEARCH_FORM = "SELECT %s FROM %s WHERE %s ";
@@ -52,12 +54,17 @@ public class DefaultSelectByWhereMethodSqlSource extends AbstractByWhereMethodSq
             return emptyResultSQLBinding;
         }
 
+        Object whereLogic = parameterObject;
+        if(parameterObject instanceof Map){
+            whereLogic = ((Map) parameterObject).get(WHERE_LOGIC_PARAM_NAME);
+        }
+
         Map<String,Object> additionalParameter = Maps.newHashMap();
         String sql = String.format(
                 SELECT_LIST_BY_SEARCH_FORM,
                 parseSelectPart(),
                 tableInfo.getTableName(),
-                parseWhereLogicJoinSQL(parameterObject,additionalParameter)
+                parseWhereLogicJoinSQL(whereLogic,additionalParameter)
         );
 
         return SqlProviderBinding.of(sql,additionalParameter);

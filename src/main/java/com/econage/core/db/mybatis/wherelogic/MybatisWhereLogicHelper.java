@@ -4,6 +4,7 @@ import com.econage.core.db.mybatis.MybatisException;
 import com.econage.core.db.mybatis.adaptation.MybatisGlobalAssistant;
 import com.econage.core.db.mybatis.annotations.WhereLogic;
 import com.econage.core.db.mybatis.annotations.WhereLogicField;
+import com.econage.core.db.mybatis.mapper.sqlsource.TokenReplaceHandler;
 import com.econage.core.db.mybatis.util.*;
 import com.google.common.collect.Lists;
 import com.google.common.primitives.Primitives;
@@ -12,11 +13,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
+import org.apache.ibatis.parsing.GenericTokenParser;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
 import java.lang.reflect.Field;
 import java.util.*;
+
+import static com.econage.core.db.mybatis.mapper.MapperConst.WHERE_LOGIC_PARAM_NAME;
 
 public class MybatisWhereLogicHelper {
     private static final Log logger = LogFactory.getLog(MybatisWhereLogicHelper.class);
@@ -135,13 +139,15 @@ public class MybatisWhereLogicHelper {
 
             //普通类型或者原型包装类，如果非空，则放入谓语语句
             wherePart.add(whereLogicFieldInfo.getWhereLogic());
+            //将普通参数从whereLogic中提取，方便使用
+            additionMap.put(property,propertyVal);
         } );
 
         return wherePart;
     }
 
     /* 是否对应原型里的0值*/
-    private static Character ZERO_CHAR = Character.valueOf((char)0);
+    private static Character ZERO_CHAR = (char) 0;
     private static boolean isZero(Object propertyVal){
         return Objects.equals(NumberUtils.LONG_ZERO,propertyVal)
                 ||Objects.equals(NumberUtils.INTEGER_ZERO,propertyVal)
@@ -182,15 +188,10 @@ public class MybatisWhereLogicHelper {
     }
 
 
-    /*private static Object getProperty(Object obj,String property){
-        try {
-            return PropertyUtils.getProperty(obj,property);
-        } catch (Exception e) {
-            logger.error("error in parse property",e);
-        }
-        return null;
-    }*/
-
+    private final static GenericTokenParser WHERE_LOGIC_FIELD_TOKEN_PARSER = new GenericTokenParser(
+            "#{", "}",
+            new TokenReplaceHandler(WHERE_LOGIC_PARAM_NAME)
+    );
     private static WhereLogicFieldInfo parseField(MybatisGlobalAssistant globalAssistant, Field field) throws IllegalAccessException, InstantiationException {
         WhereLogicFieldInfo whereLogicFieldInfo = new WhereLogicFieldInfo();
         whereLogicFieldInfo.setType(field.getType());
@@ -221,12 +222,13 @@ public class MybatisWhereLogicHelper {
         * 整理where部分语句，如果是集合，则需要使用特殊替换另外处理，如果注解有自己的解析语句，则使用注解的信息
         * */
         if(whereLogicField !=null&& StringUtils.isNotEmpty(whereLogicField.wherePart())){
-            whereLogicFieldInfo.setWhereLogic(whereLogicField.wherePart());
+            //将语句中的替换符添加前缀
+            whereLogicFieldInfo.setWhereLogic(WHERE_LOGIC_FIELD_TOKEN_PARSER.parse(whereLogicField.wherePart()));
         }else{
             if(whereLogicFieldInfo.isCollectionType()||whereLogicFieldInfo.isArrayType()){
                 whereLogicFieldInfo.setWhereLogic(whereLogicFieldInfo.getColumn()+" in ( "+ MybatisStringUtils.WHERE_LOGIC_COLLECTION_REPLACE+" )");
             }else{
-                whereLogicFieldInfo.setWhereLogic(whereLogicFieldInfo.getColumn()+"=#{"+ whereLogicFieldInfo.getProperty()+"}");
+                whereLogicFieldInfo.setWhereLogic(whereLogicFieldInfo.getColumn()+"=#{"+ WHERE_LOGIC_PARAM_NAME+"."+StringUtils.trim(whereLogicFieldInfo.getProperty())+"}");
             }
         }
 

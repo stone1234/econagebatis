@@ -15,17 +15,17 @@
  */
 package com.econage.core.db.mybatis.mapper.sqlsource.basic;
 
+import com.econage.core.db.mybatis.MybatisException;
+import com.econage.core.db.mybatis.adaptation.MybatisConfiguration;
+import com.econage.core.db.mybatis.entity.TableFieldInfo;
 import com.econage.core.db.mybatis.entity.TableInfo;
 import com.econage.core.db.mybatis.enums.IdType;
 import com.econage.core.db.mybatis.enums.SqlMethod;
 import com.econage.core.db.mybatis.mapper.sqlsource.AbstractDefaultMethodSqlSource;
 import com.econage.core.db.mybatis.mapper.sqlsource.SqlProviderBinding;
-import com.econage.core.db.mybatis.util.MybatisStringUtils;
 import com.econage.core.db.mybatis.uid.dbincrementer.IKeyGenerator;
 import com.econage.core.db.mybatis.util.MybatisSqlUtils;
-import com.econage.core.db.mybatis.MybatisException;
-import com.econage.core.db.mybatis.adaptation.MybatisConfiguration;
-import com.econage.core.db.mybatis.entity.TableFieldInfo;
+import com.econage.core.db.mybatis.util.MybatisStringUtils;
 import com.econage.core.db.mybatis.uuid.IdWorker;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
@@ -41,6 +41,9 @@ import org.apache.ibatis.mapping.StatementType;
 import org.apache.ibatis.reflection.MetaObject;
 
 import java.util.List;
+import java.util.Map;
+
+import static com.econage.core.db.mybatis.mapper.MapperConst.ENTITY_PARAM_NAME;
 
 public class DefaultInsertMethodSqlSource extends AbstractDefaultMethodSqlSource {
     public static final String INSERT_SQL_TEMPLATE = "INSERT INTO %s (%s) VALUES (%s)";
@@ -128,6 +131,10 @@ public class DefaultInsertMethodSqlSource extends AbstractDefaultMethodSqlSource
         //参数及状态检查
         Preconditions.checkNotNull(entityObject,"can not insert null object!");
 
+        if(entityObject instanceof Map){
+            entityObject = ((Map) entityObject).get(ENTITY_PARAM_NAME);
+        }
+
         //变量准备
         MetaObject entityMetaObject = getConfiguration().newMetaObject(entityObject);
         List<String> columns = Lists.newArrayList();
@@ -167,11 +174,11 @@ public class DefaultInsertMethodSqlSource extends AbstractDefaultMethodSqlSource
             if(selective){
                 if(useFieldInModifySql(fieldInfo,propertyType,propertyVal)){
                     columns.add(fieldInfo.getColumn());
-                    parameterTokens.add("#{"+fieldInfo.getEl()+"}");
+                    parameterTokens.add("#{"+ENTITY_PARAM_NAME+"."+fieldInfo.getEl()+"}");
                 }
             }else{
                 columns.add(fieldInfo.getColumn());
-                parameterTokens.add("#{"+fieldInfo.getEl()+"}");
+                parameterTokens.add("#{"+ENTITY_PARAM_NAME+"."+fieldInfo.getEl()+"}");
             }
 
         }
@@ -212,7 +219,7 @@ public class DefaultInsertMethodSqlSource extends AbstractDefaultMethodSqlSource
             }
         }
         columns.add(tableInfo.getKeyColumn());
-        parameterTokens.add("#{"+ tableInfo.getKeyProperty()+"}");
+        parameterTokens.add("#{"+ ENTITY_PARAM_NAME+"."+tableInfo.getKeyProperty()+"}");
     }
 
 
