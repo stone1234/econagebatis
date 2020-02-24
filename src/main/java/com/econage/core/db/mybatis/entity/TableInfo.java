@@ -191,12 +191,14 @@ public class TableInfo {
 
     public String getAutoMappingColumnByProperty(String property){
         Preconditions.checkNotNull(property,"property is null!");
-        if(!propertyFieldMap.containsKey(property)){
-            return null;
+        TableFieldInfo tableFieldInfo = propertyFieldMap.get(property);
+        if(tableFieldInfo!=null){
+            return tableFieldInfo.getAutoMappingColumn();
         }else if(keyProperty!=null&&keyProperty.equals(property)){
             return keyColumn;
+        }else{
+            return null;
         }
-        return propertyFieldMap.get(property).getAutoMappingColumn();
     }
 
     public Class<?> getModelClass() {
