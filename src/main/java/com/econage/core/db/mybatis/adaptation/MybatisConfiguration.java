@@ -15,8 +15,8 @@
  */
 package com.econage.core.db.mybatis.adaptation;
 
-import com.econage.core.db.mybatis.dyna.adaptation.DynaBeanExecutor;
-import com.econage.core.db.mybatis.dyna.adaptation.DynaBeanResultSetHandler;
+import com.econage.core.db.mybatis.mapper.dyna.adaptation.DynaBeanExecutor;
+import com.econage.core.db.mybatis.mapper.dyna.adaptation.DynaBeanResultSetHandler;
 import org.apache.ibatis.binding.MapperRegistry;
 import org.apache.ibatis.executor.*;
 import org.apache.ibatis.executor.parameter.ParameterHandler;

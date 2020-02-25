@@ -15,11 +15,9 @@
  */
 package com.econage.core.db.mybatis.util;
 
-import com.econage.core.db.mybatis.entity.TableInfo;
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.ibatis.jdbc.SQL;
 
 import java.util.Collection;
 import java.util.List;
@@ -32,6 +30,7 @@ public class MybatisSqlUtils {
                                STATIC_TRUE_WHERE_SQL  = " 1=1 ";
 
     public static final String NEW_VERSION_STAMP_SUFFIX = "_new_stamp__";
+    public static final String CURR_VERSION_STAMP_SUFFIX = "_curr_stamp__";
 
 
     public static final Joiner COMMA_JOINER = Joiner.on(",").skipNulls();
@@ -94,9 +93,15 @@ public class MybatisSqlUtils {
     public static String wherePartJoin(Collection<String> stringCollection){
         return " "+WHERE_PART_JOINER.join(stringCollection)+" ";
     }
-    public static String wherePartJoin(String... stringCollection){
-        return " "+WHERE_PART_JOINER.join(stringCollection)+" ";
+    public static String wherePartJoin(String prefix,Collection<String> stringCollection){
+        return (prefix!=null?prefix:StringUtils.EMPTY)+" "+WHERE_PART_JOINER.join(stringCollection)+" ";
     }
+    /*public static String wherePartJoin(String... stringCollection){
+        return " "+WHERE_PART_JOINER.join(stringCollection)+" ";
+    }*/
+    /*public static String wherePartJoin(String prefix,String... stringCollection){
+        return (prefix!=null?prefix:StringUtils.EMPTY)+" "+WHERE_PART_JOINER.join(stringCollection)+" ";
+    }*/
 
     /**
      * <p>

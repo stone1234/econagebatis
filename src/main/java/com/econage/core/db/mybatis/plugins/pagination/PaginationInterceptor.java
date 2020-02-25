@@ -15,7 +15,7 @@
  */
 package com.econage.core.db.mybatis.plugins.pagination;
 
-import com.econage.core.db.mybatis.dyna.entity.DynaClass;
+import com.econage.core.db.mybatis.mapper.dyna.entity.DynaClass;
 import com.econage.core.db.mybatis.entity.TableInfo;
 import com.econage.core.db.mybatis.enums.DBType;
 import com.econage.core.db.mybatis.mapper.MapperConst;

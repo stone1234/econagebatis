@@ -4,7 +4,6 @@ import com.econage.core.db.mybatis.MybatisException;
 import com.econage.core.db.mybatis.adaptation.MybatisGlobalAssistant;
 import com.econage.core.db.mybatis.annotations.WhereLogic;
 import com.econage.core.db.mybatis.annotations.WhereLogicField;
-import com.econage.core.db.mybatis.mapper.sqlsource.TokenReplaceHandler;
 import com.econage.core.db.mybatis.util.*;
 import com.google.common.collect.Lists;
 import com.google.common.primitives.Primitives;
@@ -15,9 +14,10 @@ import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.parsing.GenericTokenParser;
 import org.apache.ibatis.reflection.MetaObject;
+import org.apache.ibatis.reflection.TypeParameterResolver;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
-import java.lang.reflect.Field;
+import java.lang.reflect.*;
 import java.util.*;
 
 import static com.econage.core.db.mybatis.mapper.MapperConst.WHERE_LOGIC_PARAM_NAME;
@@ -62,11 +62,11 @@ public class MybatisWhereLogicHelper {
             Map<String,Object> additionMap
     ){
         if(whereLogicObj==null){
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
         WhereLogicInfo whereLogicInfo = globalAssistant.saveAndGetWhereLogic(whereLogicObj.getClass());
         if(whereLogicInfo ==null){
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
 
         MetaObject whereLogicMetaObject = globalAssistant.getConfiguration().newMetaObject(whereLogicObj);
@@ -82,11 +82,12 @@ public class MybatisWhereLogicHelper {
 
             //如果有解析器，则其他解析参数忽略
             if(whereLogicFieldInfo.getWhereLogicParser()!=null){
-                wherePart.add(
-                        whereLogicFieldInfo
-                                .getWhereLogicParser()
-                                .parseWhereLogic(WhereLogicContext.newContext(additionMap,whereLogicObj))
-                );
+                String parsedStr = whereLogicFieldInfo
+                        .getWhereLogicParser()
+                        .parseWhereLogic(WhereLogicContext.newContext(additionMap,whereLogicObj));
+                if(MybatisStringUtils.isNotEmpty(parsedStr)){
+                    wherePart.add(parsedStr);
+                }
                 return;
             }
 
@@ -113,18 +114,16 @@ public class MybatisWhereLogicHelper {
                     //数组类型，需要额外转换成集合，方便处理
                     collectionVal= convert2Collection( propertyVal ) ;
                 }else{
-                    collectionVal = (Collection)propertyVal;
+                    collectionVal = (Collection<?>)propertyVal;
                 }
                 if(MybatisCollectionUtils.isEmpty(collectionVal)){
                     return;
                 }
 
-                String collectionReplaceHolder = MybatisSqlUtils.formatCollection2ParameterMappings(property, collectionVal, additionMap);
-
                 wherePart.add(StringUtils.replace(
                         whereLogicFieldInfo.getWhereLogic(),
                         MybatisStringUtils.WHERE_LOGIC_COLLECTION_REPLACE,
-                        collectionReplaceHolder
+                        MybatisSqlUtils.formatCollection2ParameterMappings(property, collectionVal, additionMap)
                 ));
                 return;
             }
@@ -245,39 +244,61 @@ public class MybatisWhereLogicHelper {
     * */
     private static List<Field> getAllFields(MybatisGlobalAssistant globalAssistant,Class<?> cls) {
         TypeHandlerRegistry typeHandlerRegistry = globalAssistant.getConfiguration().getTypeHandlerRegistry();
-        List<Field> fieldList = MybatisReflectionKit.getFieldList(MybatisClassUtils.getUserClass(cls));
-        if (MybatisCollectionUtils.isNotEmpty(fieldList)) {
-            Iterator<Field> iterator = fieldList.iterator();
-            while (iterator.hasNext()) {
-                Field field = iterator.next();
-                WhereLogicField whereLogicField = field.getAnnotation(WhereLogicField.class);
-                Class<?> fileCls = field.getType();
-                if (whereLogicField != null && !whereLogicField.enable()) {
-                    /* 过滤注解非表字段属性 */
-                    iterator.remove();
-                }else if(Collection.class.isAssignableFrom(fileCls)){
-                    /*
-                     * 如果是集合类，则认为可以处理
-                     * */
-                    continue;
-                }else if(fileCls.isArray()){
-                    /*
-                    * 如果是数组类型，则提取组件信息
-                    * */
-                    fileCls = fileCls.getComponentType();
-                    if(!typeHandlerRegistry.hasTypeHandler(fileCls)){
-                        iterator.remove();
+        List<Field> rawFieldList = MybatisReflectionKit.getFieldList(MybatisClassUtils.getUserClass(cls));
+        if (MybatisCollectionUtils.isEmpty(rawFieldList)) {
+            return Collections.emptyList();
+        }
+        List<Field> validFieldList = new ArrayList<>(rawFieldList.size());
+        for(Field field : rawFieldList) {
+            WhereLogicField whereLogicField = field.getAnnotation(WhereLogicField.class);
+            if (whereLogicField != null && !whereLogicField.enable()) {
+                /* 注解明确不需要使用 */
+                continue;
+            }
+            //尝试域组件类型，并征询mybatis转换器，是否可处理
+            if (typeHandlerRegistry.hasTypeHandler(parseWhereFieldComponentType(field,cls))) {
+                //mybatis可以处理转换逻辑
+                validFieldList.add(field);
+            }
+        }
+
+        return validFieldList;
+    }
+
+    private static Class<?> parseWhereFieldComponentType(Field field, Class<?> cls) {
+        Class<?> returnType = field.getType();
+        Type resolvedReturnType = TypeParameterResolver.resolveFieldType(field, cls);
+        if (resolvedReturnType instanceof Class) {
+            returnType = (Class<?>) resolvedReturnType;
+            if (returnType.isArray()) {
+                returnType = returnType.getComponentType();
+            }
+        } else if (resolvedReturnType instanceof ParameterizedType) {
+            ParameterizedType parameterizedType = (ParameterizedType) resolvedReturnType;
+            Class<?> rawType = (Class<?>) parameterizedType.getRawType();
+            if (Collection.class.isAssignableFrom(rawType)) {
+                Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
+                if (actualTypeArguments != null && actualTypeArguments.length == 1) {
+                    Type returnTypeParameter = actualTypeArguments[0];
+                    if (returnTypeParameter instanceof Class<?>) {
+                        returnType = (Class<?>) returnTypeParameter;
+                    } else if (returnTypeParameter instanceof ParameterizedType) {
+                        returnType = (Class<?>) ((ParameterizedType) returnTypeParameter).getRawType();
+                    } else if (returnTypeParameter instanceof GenericArrayType) {
+                        Class<?> componentType = (Class<?>) ((GenericArrayType) returnTypeParameter).getGenericComponentType();
+                        returnType = Array.newInstance(componentType, 0).getClass();
                     }
-                }else if(!typeHandlerRegistry.hasTypeHandler(fileCls)){
-                    //mybatis框架没有转换逻辑的
-                    iterator.remove();
+                }
+            } else if (Optional.class.equals(rawType)) {
+                Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
+                Type returnTypeParameter = actualTypeArguments[0];
+                if (returnTypeParameter instanceof Class<?>) {
+                    returnType = (Class<?>) returnTypeParameter;
                 }
             }
         }
-        return fieldList;
+
+        return returnType;
     }
-
-
-
 
 }

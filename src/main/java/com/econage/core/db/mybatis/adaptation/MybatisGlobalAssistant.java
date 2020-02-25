@@ -15,16 +15,16 @@
  */
 package com.econage.core.db.mybatis.adaptation;
 
-import com.econage.core.db.mybatis.dyna.entity.DynaClass;
+import com.econage.core.db.mybatis.mapper.dyna.entity.DynaClass;
 import com.econage.core.db.mybatis.entity.MybatisTableInfoHelper;
 import com.econage.core.db.mybatis.wherelogic.WhereLogicInfo;
 import com.econage.core.db.mybatis.entity.TableInfo;
 import com.econage.core.db.mybatis.enums.DBType;
 import com.econage.core.db.mybatis.enums.FieldStrategy;
 import com.econage.core.db.mybatis.enums.IdType;
-import com.econage.core.db.mybatis.mapper.BaseMapper;
+import com.econage.core.db.mybatis.mapper.base.BaseMapper;
 import com.econage.core.db.mybatis.wherelogic.MybatisWhereLogicHelper;
-import com.econage.core.db.mybatis.mapper.SqlInjector;
+import com.econage.core.db.mybatis.mapper.base.SqlInjector;
 import com.econage.core.db.mybatis.uid.dbincrementer.IKeyGenerator;
 import com.econage.core.db.mybatis.util.*;
 import com.google.common.base.Preconditions;

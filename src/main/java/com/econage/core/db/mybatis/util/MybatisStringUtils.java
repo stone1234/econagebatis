@@ -41,7 +41,7 @@ public class MybatisStringUtils {
     /*
     * where逻辑，集合或者数组替换信息
     * */
-    public static final String WHERE_LOGIC_COLLECTION_REPLACE = "@[collectionHolder]";
+    public static final String WHERE_LOGIC_COLLECTION_REPLACE = "_@[collectionHolder]";
     /**
      * 下划线字符
      */

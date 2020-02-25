@@ -16,7 +16,7 @@
 package com.econage.core.db.mybatis.adaptation;
 
 import com.econage.core.db.mybatis.entity.TableInfo;
-import com.econage.core.db.mybatis.mapper.provider.MybatisProviderSqlSource;
+import com.econage.core.db.mybatis.mapper.strengthen.MybatisProviderSqlSource;
 import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.annotations.ResultMap;
 import org.apache.ibatis.annotations.Options.FlushCachePolicy;
@@ -211,11 +211,11 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
 
   private String parseResultMap(Method method) {
     Class<?> returnType = getReturnType(method);
-    ConstructorArgs args = method.getAnnotation(ConstructorArgs.class);
-    Results results = method.getAnnotation(Results.class);
+    Arg[] args = method.getAnnotationsByType(Arg.class);
+    Result[] results = method.getAnnotationsByType(Result.class);
     TypeDiscriminator typeDiscriminator = method.getAnnotation(TypeDiscriminator.class);
     String resultMapId = generateResultMapName(method);
-    applyResultMap(resultMapId, returnType, argsIf(args), resultsIf(results), typeDiscriminator);
+    applyResultMap(resultMapId, returnType, args, results, typeDiscriminator);
     return resultMapId;
   }
 
@@ -664,14 +664,6 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
 
   private String nullOrEmpty(String value) {
     return value == null || value.trim().length() == 0 ? null : value;
-  }
-
-  private Result[] resultsIf(Results results) {
-    return results == null ? new Result[0] : results.value();
-  }
-
-  private Arg[] argsIf(ConstructorArgs args) {
-    return args == null ? new Arg[0] : args.value();
   }
 
   private KeyGenerator handleSelectKeyAnnotation(SelectKey selectKeyAnnotation, String baseStatementId, Class<?> parameterTypeClass, LanguageDriver languageDriver) {
