@@ -18,7 +18,7 @@ package com.econage.core.db.mybatis.util;
 import com.econage.core.db.mybatis.MybatisException;
 import com.econage.core.db.mybatis.MybatisPackageInfo;
 import com.econage.core.db.mybatis.mapper.dyna.adaptation.DynaBeanExecutor;
-import com.econage.core.db.mybatis.mapper.base.BaseMapper;
+import com.econage.core.db.mybatis.mapper.BaseMapper;
 import com.google.common.base.Preconditions;
 import com.google.common.primitives.Primitives;
 import com.google.common.reflect.Reflection;

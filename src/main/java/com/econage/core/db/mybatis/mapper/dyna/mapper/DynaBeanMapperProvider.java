@@ -4,7 +4,7 @@ import com.econage.core.db.mybatis.mapper.dyna.entity.DynaBean;
 import com.econage.core.db.mybatis.mapper.dyna.entity.DynaClass;
 import com.econage.core.db.mybatis.mapper.dyna.entity.DynaColumn;
 import com.econage.core.db.mybatis.mapper.dyna.wherelogic.DynaWhereLogic;
-import com.econage.core.db.mybatis.mapper.strengthen.MybatisProviderContext;
+import com.econage.core.db.mybatis.mapper.provider.MybatisProviderContext;
 import com.econage.core.db.mybatis.util.MybatisSqlUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.annotations.Param;

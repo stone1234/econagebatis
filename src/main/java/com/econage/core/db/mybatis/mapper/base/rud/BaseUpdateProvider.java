@@ -1,9 +1,9 @@
-package com.econage.core.db.mybatis.mapper.base.provider;
+package com.econage.core.db.mybatis.mapper.base.rud;
 
 import com.econage.core.db.mybatis.MybatisException;
 import com.econage.core.db.mybatis.entity.TableFieldInfo;
 import com.econage.core.db.mybatis.entity.TableInfo;
-import com.econage.core.db.mybatis.mapper.strengthen.MybatisProviderContext;
+import com.econage.core.db.mybatis.mapper.provider.MybatisProviderContext;
 import com.econage.core.db.mybatis.util.MybatisSqlUtils;
 import com.econage.core.db.mybatis.util.MybatisStringUtils;
 import com.econage.core.db.mybatis.uuid.IdWorker;
@@ -22,18 +22,26 @@ public class BaseUpdateProvider implements ProviderMethodResolver {
     /*
      * -------------------------------------------基本方法
      * */
+    /*
+     * 由于mybatis解析Provider方法的问题,多写一个参数，规避解析不正确的问题
+     * */
     public static String updateById(
             MybatisProviderContext context,
-            @Param(ENTITY_PARAM_NAME) Object entity
+            @Param(ENTITY_PARAM_NAME) Object entity,
+            @Param("param1") Object obj
     ){
         MetaObject entityMetaObject = context.newMetaObject(entity);
         List<String> setParts = parseSqlSetPartByEntity(context.getTableInfo(),entityMetaObject,true);
 
         return doUpdateById(context,entityMetaObject,setParts);
     }
+    /*
+     * 由于mybatis解析Provider方法的问题,多写一个参数，规避解析不正确的问题
+     * */
     public static String updateAllColumnById(
             MybatisProviderContext context,
-            @Param(ENTITY_PARAM_NAME) Object entity
+            @Param(ENTITY_PARAM_NAME) Object entity,
+            @Param("param1") Object obj
     ){
         MetaObject entityMetaObject = context.newMetaObject(entity);
         List<String> setParts = parseSqlSetPartByEntity(context.getTableInfo(),entityMetaObject,false);

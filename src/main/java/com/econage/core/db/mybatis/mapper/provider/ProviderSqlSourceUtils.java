@@ -1,4 +1,4 @@
-package com.econage.core.db.mybatis.mapper.strengthen;
+package com.econage.core.db.mybatis.mapper.provider;
 
 import com.google.common.base.Preconditions;
 import com.google.common.primitives.Primitives;

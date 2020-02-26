@@ -1,8 +1,8 @@
-package com.econage.core.db.mybatis.mapper.base.provider;
+package com.econage.core.db.mybatis.mapper.base.rud;
 
 import com.econage.core.db.mybatis.MybatisException;
 import com.econage.core.db.mybatis.entity.TableInfo;
-import com.econage.core.db.mybatis.mapper.strengthen.MybatisProviderContext;
+import com.econage.core.db.mybatis.mapper.provider.MybatisProviderContext;
 import com.econage.core.db.mybatis.util.MybatisCollectionUtils;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.builder.annotation.ProviderMethodResolver;
@@ -88,16 +88,24 @@ public class BaseSelectProvider implements ProviderMethodResolver {
     /*
     * --------------------------------whereLogic查询部分
     * */
+    /*
+     * 由于mybatis解析Provider方法的问题,多写一个参数，规避解析不正确的问题
+     * */
     public static String selectListByWhereLogic(
             MybatisProviderContext context,
-            @Param(WHERE_LOGIC_PARAM_NAME) Object whereLogic
+            @Param(WHERE_LOGIC_PARAM_NAME) Object whereLogic,
+            @Param("param1") Object obj
     ){
         return doSelectByWhereLogic(context,whereLogic,context.getSelectColumns());
     }
 
+    /*
+     * 由于mybatis解析Provider方法的问题,多写一个参数，规避解析不正确的问题
+     * */
     public static String selectCountByWhereLogic(
             MybatisProviderContext context,
-            @Param(WHERE_LOGIC_PARAM_NAME) Object whereLogic
+            @Param(WHERE_LOGIC_PARAM_NAME) Object whereLogic,
+            @Param("param1") Object obj
     ){
         return doSelectByWhereLogic(context,whereLogic,"COUNT(1)");
     }

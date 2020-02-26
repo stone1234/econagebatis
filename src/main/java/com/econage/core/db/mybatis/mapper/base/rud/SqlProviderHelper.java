@@ -1,9 +1,9 @@
-package com.econage.core.db.mybatis.mapper.base.provider;
+package com.econage.core.db.mybatis.mapper.base.rud;
 
 import com.econage.core.db.mybatis.entity.TableFieldInfo;
 import com.econage.core.db.mybatis.entity.TableInfo;
 import com.econage.core.db.mybatis.enums.FieldStrategy;
-import com.econage.core.db.mybatis.mapper.strengthen.MybatisProviderContext;
+import com.econage.core.db.mybatis.mapper.provider.MybatisProviderContext;
 import com.econage.core.db.mybatis.util.MybatisCollectionUtils;
 import com.econage.core.db.mybatis.util.MybatisSqlUtils;
 import com.econage.core.db.mybatis.util.MybatisStringUtils;

@@ -13,12 +13,12 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.econage.core.db.mybatis.mapper.base;
+package com.econage.core.db.mybatis.mapper;
 
 import com.econage.core.db.mybatis.entity.BasicEntity;
-import com.econage.core.db.mybatis.mapper.base.provider.BaseDeleteProvider;
-import com.econage.core.db.mybatis.mapper.base.provider.BaseSelectProvider;
-import com.econage.core.db.mybatis.mapper.base.provider.BaseUpdateProvider;
+import com.econage.core.db.mybatis.mapper.base.rud.BaseDeleteProvider;
+import com.econage.core.db.mybatis.mapper.base.rud.BaseSelectProvider;
+import com.econage.core.db.mybatis.mapper.base.rud.BaseUpdateProvider;
 import com.econage.core.db.mybatis.plugins.pagination.Pagination;
 import org.apache.ibatis.annotations.DeleteProvider;
 import org.apache.ibatis.annotations.Param;

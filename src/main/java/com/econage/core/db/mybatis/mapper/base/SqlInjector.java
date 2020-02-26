@@ -17,8 +17,9 @@ package com.econage.core.db.mybatis.mapper.base;
 
 import com.econage.core.db.mybatis.adaptation.MybatisGlobalAssistant;
 import com.econage.core.db.mybatis.entity.TableInfo;
-import com.econage.core.db.mybatis.mapper.base.sqlsource.AbstractMethodSqlSource;
-import com.econage.core.db.mybatis.mapper.base.sqlsource.DefaultInsertMethodSqlSource;
+import com.econage.core.db.mybatis.mapper.BaseMapper;
+import com.econage.core.db.mybatis.mapper.base.insert.AbstractMethodSqlSource;
+import com.econage.core.db.mybatis.mapper.base.insert.DefaultInsertMethodSqlSource;
 import com.google.common.base.Preconditions;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
@@ -52,7 +53,7 @@ public class SqlInjector {
         Preconditions.checkNotNull(mapperClass,"mapperclass is null!");
         //注入器只为BaseMapper的接口注入方法
         if (!globalAssistant.isMapperParsed(mapperClass)
-           &&BaseMapper.class.isAssignableFrom(mapperClass)) {
+           && BaseMapper.class.isAssignableFrom(mapperClass)) {
             TableInfo table = globalAssistant.saveAndGetTableInfoByMapper(mapperClass);
             if (table != null) {
                 injectSql(builderAssistant, table);

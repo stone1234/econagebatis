@@ -1,7 +1,8 @@
-package com.econage.core.db.mybatis.mapper.dyna.mapper;
+package com.econage.core.db.mybatis.mapper;
 
 import com.econage.core.db.mybatis.mapper.dyna.entity.DynaBean;
 import com.econage.core.db.mybatis.mapper.dyna.entity.DynaClass;
+import com.econage.core.db.mybatis.mapper.dyna.mapper.DynaBeanMapperProvider;
 import com.econage.core.db.mybatis.plugins.pagination.Pagination;
 import org.apache.ibatis.annotations.*;
 

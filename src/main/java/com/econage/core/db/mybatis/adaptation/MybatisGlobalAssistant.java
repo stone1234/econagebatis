@@ -22,7 +22,7 @@ import com.econage.core.db.mybatis.entity.TableInfo;
 import com.econage.core.db.mybatis.enums.DBType;
 import com.econage.core.db.mybatis.enums.FieldStrategy;
 import com.econage.core.db.mybatis.enums.IdType;
-import com.econage.core.db.mybatis.mapper.base.BaseMapper;
+import com.econage.core.db.mybatis.mapper.BaseMapper;
 import com.econage.core.db.mybatis.wherelogic.MybatisWhereLogicHelper;
 import com.econage.core.db.mybatis.mapper.base.SqlInjector;
 import com.econage.core.db.mybatis.uid.dbincrementer.IKeyGenerator;

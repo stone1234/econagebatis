@@ -1,6 +1,6 @@
 package entity;
 
-import com.econage.core.db.mybatis.mapper.base.BaseMapper;
+import com.econage.core.db.mybatis.mapper.BaseMapper;
 
 public interface TestMapper extends BaseMapper<TestEntity> {
 }
