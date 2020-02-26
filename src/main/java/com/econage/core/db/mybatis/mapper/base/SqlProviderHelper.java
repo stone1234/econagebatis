@@ -1,4 +1,4 @@
-package com.econage.core.db.mybatis.mapper.base.rud;
+package com.econage.core.db.mybatis.mapper.base;
 
 import com.econage.core.db.mybatis.entity.TableFieldInfo;
 import com.econage.core.db.mybatis.entity.TableInfo;
@@ -23,7 +23,7 @@ public class SqlProviderHelper {
     * 此函数负责wherelogic解析及统一处理，crud通用
     * 如果wherelogic为空，则返回结果一直为空
     * */
-    static String parseWhereLogic(MybatisProviderContext context, Object whereLogic){
+    public static String parseWhereLogic(MybatisProviderContext context, Object whereLogic){
         if(whereLogic==null){
             return SqlProviderHelper.STATIC_FALSE_WHERE;
         }
@@ -41,7 +41,7 @@ public class SqlProviderHelper {
     * 处理id集合where部分逻辑
     * 简单删除，查询方法用到
     * */
-    static String parseIdCollectionWherePart(
+    public static String parseIdCollectionWherePart(
             MybatisProviderContext context,
             @Param("collection") Collection<? extends Serializable> idList
     ){
@@ -51,7 +51,7 @@ public class SqlProviderHelper {
     }
 
     //某个字段在默认的修改、插入操作中，是否可以被使用，依据是否为空策略
-    static boolean useFieldInModifySql(TableFieldInfo fieldInfo, Class<?> propertyType, Object propertyVal){
+    public static boolean useFieldInModifySql(TableFieldInfo fieldInfo, Class<?> propertyType, Object propertyVal){
         boolean canUse = false;
         if(FieldStrategy.IGNORED==fieldInfo.getFieldStrategy()){
             canUse = true;

@@ -3,6 +3,7 @@ package com.econage.core.db.mybatis.mapper.base.rud;
 import com.econage.core.db.mybatis.MybatisException;
 import com.econage.core.db.mybatis.entity.TableFieldInfo;
 import com.econage.core.db.mybatis.entity.TableInfo;
+import com.econage.core.db.mybatis.mapper.base.SqlProviderHelper;
 import com.econage.core.db.mybatis.mapper.provider.MybatisProviderContext;
 import com.econage.core.db.mybatis.util.MybatisSqlUtils;
 import com.econage.core.db.mybatis.util.MybatisStringUtils;

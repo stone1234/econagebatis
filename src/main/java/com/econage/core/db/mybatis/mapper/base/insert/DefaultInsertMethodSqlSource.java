@@ -21,6 +21,7 @@ import com.econage.core.db.mybatis.entity.TableFieldInfo;
 import com.econage.core.db.mybatis.entity.TableInfo;
 import com.econage.core.db.mybatis.enums.IdType;
 import com.econage.core.db.mybatis.enums.SqlMethod;
+import com.econage.core.db.mybatis.mapper.base.SqlProviderHelper;
 import com.econage.core.db.mybatis.uid.dbincrementer.IKeyGenerator;
 import com.econage.core.db.mybatis.util.MybatisSqlUtils;
 import com.econage.core.db.mybatis.util.MybatisStringUtils;
@@ -44,7 +45,7 @@ import java.util.Map;
 import static com.econage.core.db.mybatis.mapper.MapperConst.ENTITY_PARAM_NAME;
 
 public class DefaultInsertMethodSqlSource extends AbstractMethodSqlSource {
-    public static final String INSERT_SQL_TEMPLATE = "INSERT INTO %s (%s) VALUES (%s)";
+    public static final String INSERT_SQL_TEMPLATE = "insert into %s (%s) values (%s)";
 
 
     private final boolean selective;
@@ -169,16 +170,10 @@ public class DefaultInsertMethodSqlSource extends AbstractMethodSqlSource {
                 throw new IllegalArgumentException("inconsistent parameter property type");
             }
 
-            if(selective){
-                if(useFieldInModifySql(fieldInfo,propertyType,propertyVal)){
-                    columns.add(fieldInfo.getColumn());
-                    parameterTokens.add("#{"+ENTITY_PARAM_NAME+"."+fieldInfo.getEl()+"}");
-                }
-            }else{
+            if(!selective||SqlProviderHelper.useFieldInModifySql(fieldInfo,propertyType,propertyVal)){
                 columns.add(fieldInfo.getColumn());
                 parameterTokens.add("#{"+ENTITY_PARAM_NAME+"."+fieldInfo.getEl()+"}");
             }
-
         }
         /*public static final String INSERT_SQL_TEMPLATE = "INSERT INTO %s (%s) VALUES (%s)";*/
         String sql = String.format(
@@ -203,9 +198,8 @@ public class DefaultInsertMethodSqlSource extends AbstractMethodSqlSource {
             return;
         }
 
-        if (null != tableInfo.getKeySequence()) {
-            //通过sequence等数据库查询方式获取的主键，由mybatis框架负责注入id值
-        } else {
+        //通过sequence等数据库查询方式获取的主键，由mybatis框架负责注入id值
+        if (null == tableInfo.getKeySequence()) {
             //其他uuid方式，则在此处注入主键，如果主键属性已经有值，则不注入
             Object idValue = entityMetaObject.getValue(tableInfo.getKeyProperty());
             if (MybatisStringUtils.checkValNull(idValue)) {

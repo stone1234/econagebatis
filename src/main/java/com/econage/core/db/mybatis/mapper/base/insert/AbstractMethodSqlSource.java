@@ -15,14 +15,10 @@
  */
 package com.econage.core.db.mybatis.mapper.base.insert;
 
-import com.econage.core.db.mybatis.adaptation.MybatisGlobalAssistant;
+import com.econage.core.db.mybatis.adaptation.MybatisConfiguration;
 import com.econage.core.db.mybatis.entity.TableInfo;
-import com.econage.core.db.mybatis.enums.FieldStrategy;
 import com.econage.core.db.mybatis.util.MybatisMapUtils;
 import com.econage.core.db.mybatis.util.MybatisStringUtils;
-import com.econage.core.db.mybatis.adaptation.MybatisConfiguration;
-import com.econage.core.db.mybatis.entity.TableFieldInfo;
-import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import org.apache.ibatis.builder.SqlSourceBuilder;
 import org.apache.ibatis.logging.Log;
@@ -32,7 +28,6 @@ import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.mapping.SqlSource;
 import org.apache.ibatis.parsing.PropertyParser;
 
-import java.util.Collection;
 import java.util.Map;
 
 public abstract class AbstractMethodSqlSource implements SqlSource {
@@ -89,13 +84,6 @@ public abstract class AbstractMethodSqlSource implements SqlSource {
         return configuration;
     }
 
-    public MybatisGlobalAssistant getGlobalAssistant(){
-        if(configuration!=null){
-            return configuration.getGlobalAssistant();
-        }
-        return null;
-    }
-
     protected SqlSource createStaticSqlSource(String sql,Class<?> parameterType){
         if(MybatisStringUtils.isEmpty(sql)){
             throw new IllegalArgumentException("sql is empty or null!");
@@ -111,25 +99,8 @@ public abstract class AbstractMethodSqlSource implements SqlSource {
         return PropertyParser.parse(sql, configuration.getVariables());
     }
 
-    //某个字段是否可以在修改、插入语句中使用
-    protected boolean useFieldInModifySql(TableFieldInfo fieldInfo,Class<?> propertyType,Object propertyVal){
-        boolean canUse = false;
-        if(FieldStrategy.IGNORED==fieldInfo.getFieldStrategy()){
-            canUse = true;
-        }else if(FieldStrategy.NOT_NULL==fieldInfo.getFieldStrategy()){
-            canUse = propertyVal!=null;
-        }else if(FieldStrategy.NOT_EMPTY==fieldInfo.getFieldStrategy()){
-            if(MybatisStringUtils.isCharSequence(propertyType)){
-                canUse = !Strings.isNullOrEmpty((String)propertyVal);
-            }else{
-                canUse = propertyVal!=null;
-            }
-        }
-        return canUse;
-    }
-
     //尝试提取collection类型的参数
-    protected Collection<?> fetchCollectionTypeParameter(Object parameter){
+    /*protected Collection<?> fetchCollectionTypeParameter(Object parameter){
         if(parameter instanceof Collection){
             return (Collection<?>) parameter;
         }
@@ -138,6 +109,6 @@ public abstract class AbstractMethodSqlSource implements SqlSource {
             return (Collection<?>) ((Map) parameter).get("collection");
         }
         return null;
-    }
+    }*/
 
 }

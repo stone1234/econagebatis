@@ -1,6 +1,7 @@
 package com.econage.core.db.mybatis.mapper.base.rud;
 
 import com.econage.core.db.mybatis.entity.TableInfo;
+import com.econage.core.db.mybatis.mapper.base.SqlProviderHelper;
 import com.econage.core.db.mybatis.mapper.provider.MybatisProviderContext;
 import com.econage.core.db.mybatis.util.MybatisCollectionUtils;
 import org.apache.ibatis.annotations.Param;
