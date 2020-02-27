@@ -63,8 +63,6 @@ public class SessionFactoryHolder {
         globalAssistant.setDbType(DBType.MYSQL8);
         //spring环境忽略包扫描
         globalAssistant.ignoreScanPackage();
-        //启用动态bean
-        globalAssistant.setDynaBeanEnabled(true);
 
         configuration.addMapper(TestMapper.class);
 

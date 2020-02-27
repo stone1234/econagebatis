@@ -15,25 +15,25 @@
  */
 package com.econage.core.db.mybatis.adaptation;
 
-import com.econage.core.db.mybatis.mapper.dyna.entity.DynaClass;
 import com.econage.core.db.mybatis.entity.MybatisTableInfoHelper;
-import com.econage.core.db.mybatis.wherelogic.WhereLogicInfo;
 import com.econage.core.db.mybatis.entity.TableInfo;
 import com.econage.core.db.mybatis.enums.DBType;
 import com.econage.core.db.mybatis.enums.FieldStrategy;
 import com.econage.core.db.mybatis.enums.IdType;
 import com.econage.core.db.mybatis.mapper.BaseMapper;
-import com.econage.core.db.mybatis.wherelogic.MybatisWhereLogicHelper;
 import com.econage.core.db.mybatis.mapper.base.SqlInjector;
 import com.econage.core.db.mybatis.uid.dbincrementer.IKeyGenerator;
-import com.econage.core.db.mybatis.util.*;
+import com.econage.core.db.mybatis.util.MybatisClassUtils;
+import com.econage.core.db.mybatis.util.MybatisJdbcUtils;
+import com.econage.core.db.mybatis.util.MybatisStringUtils;
+import com.econage.core.db.mybatis.wherelogic.MybatisWhereLogicHelper;
+import com.econage.core.db.mybatis.wherelogic.WhereLogicInfo;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 import com.google.common.reflect.Reflection;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
-import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 
@@ -88,9 +88,6 @@ public class MybatisGlobalAssistant implements Serializable {
     private String[] packageNames;
 
     private boolean globalCacheEnabled;
-
-    private boolean dynaBeanEnabled;
-    private final ConcurrentHashMap<Executor, DynaClass> runtimeDynaClassMap = new ConcurrentHashMap<>(5000);
 
     private Set<String> disabledPropertyInDefaultUpdateMethod = Sets.newHashSet("createDate","createUser");
 
@@ -204,14 +201,6 @@ public class MybatisGlobalAssistant implements Serializable {
         this.globalCacheEnabled = globalCacheEnabled;
     }
 
-    public boolean isDynaBeanEnabled() {
-        return dynaBeanEnabled;
-    }
-
-    public void setDynaBeanEnabled(boolean dynaBeanEnabled) {
-        this.dynaBeanEnabled = dynaBeanEnabled;
-    }
-
     /*
     * todo 分布式缓存方案
     * */
@@ -225,16 +214,6 @@ public class MybatisGlobalAssistant implements Serializable {
         this.mybatisCacheAssistant = mybatisCacheAssistant;
     }*/
     /*----------------------GETTER AND SETTER----------- */
-    //执行DynaBeanMapper相关方法时需要暂存DynaClass，以便结果集处理器使用
-    public void putExecutorDynaCls(Executor executor,DynaClass dynaClass){
-        runtimeDynaClassMap.put(MybatisClassUtils.extractExecutor(executor),dynaClass);
-    }
-    public DynaClass getDynaClass(Executor executor){
-        return runtimeDynaClassMap.get(MybatisClassUtils.extractExecutor(executor));
-    }
-    public void removeExecutorDynaCls(Executor executor){
-        runtimeDynaClassMap.remove(MybatisClassUtils.extractExecutor(executor));
-    }
 
     public boolean isMapperParsed(Class<?> mapper){
         if(!isMapperClass(mapper)){

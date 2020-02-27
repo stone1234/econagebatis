@@ -15,18 +15,27 @@
  */
 package com.econage.core.db.mybatis.adaptation;
 
-import com.econage.core.db.mybatis.mapper.dyna.adaptation.DynaBeanExecutor;
+import com.econage.core.db.mybatis.MybatisException;
+import com.econage.core.db.mybatis.mapper.MapperConst;
 import com.econage.core.db.mybatis.mapper.dyna.adaptation.DynaBeanResultSetHandler;
+import com.econage.core.db.mybatis.mapper.dyna.entity.DynaBean;
+import com.econage.core.db.mybatis.mapper.dyna.entity.DynaClass;
 import org.apache.ibatis.binding.MapperRegistry;
-import org.apache.ibatis.executor.*;
+import org.apache.ibatis.executor.BatchExecutor;
+import org.apache.ibatis.executor.Executor;
+import org.apache.ibatis.executor.ReuseExecutor;
+import org.apache.ibatis.executor.SimpleExecutor;
 import org.apache.ibatis.executor.parameter.ParameterHandler;
 import org.apache.ibatis.executor.resultset.ResultSetHandler;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.mapping.ResultMap;
 import org.apache.ibatis.session.*;
 import org.apache.ibatis.transaction.Transaction;
+
+import java.util.Map;
 
 
 //拦截mapper注册器
@@ -122,18 +131,38 @@ public class MybatisConfiguration extends Configuration {
             executor = new SimpleExecutor(this, transaction);
         }
 
-
         /*if (cacheEnabled) {
             executor = new CachingExecutor(executor);
         }*/
 
-        //DynaBeanExecutor放在CachingExecutor之后
-        if(globalAssistant.isDynaBeanEnabled()){
-            executor = new DynaBeanExecutor(globalAssistant, executor);
-        }
-
         executor = (Executor) interceptorChain.pluginAll(executor);
         return executor;
+    }
+
+
+    private Class<DynaBean> dynaBeanClass = DynaBean.class;
+    private boolean isDynaBeanResult(
+            MappedStatement mappedStatement
+    ){
+        for(ResultMap resultMap:  mappedStatement.getResultMaps()){
+            if(dynaBeanClass.isAssignableFrom(resultMap.getType())){
+                return true;
+            }
+        }
+        return false;
+    }
+    private DynaClass detectDynaCls( ParameterHandler parameterHandler){
+        Object parameter = parameterHandler.getParameterObject();
+        if(parameter instanceof Map){
+            Map<String, Object> params = (Map<String, Object>) parameter;
+            Object dynaCls = params.get(MapperConst.DYNA_CLASS_PARAM_NAME);
+            if(! (dynaCls instanceof DynaClass) ){
+                throw new MybatisException("Unexpected error,dynaCls error type:[" +dynaCls.getClass().getName()+"]");
+            }
+            return (DynaClass)dynaCls;
+        }else{
+            throw new MybatisException("Unexpected error,parameter error type:[" +parameter.getClass().getName()+"]");
+        }
     }
 
     @Override
@@ -141,10 +170,10 @@ public class MybatisConfiguration extends Configuration {
             Executor executor, MappedStatement mappedStatement, RowBounds rowBounds, ParameterHandler parameterHandler,
             ResultHandler resultHandler, BoundSql boundSql
     ){
-        if(globalAssistant.isDynaBeanEnabled()){
+        if(isDynaBeanResult(mappedStatement)){
             ResultSetHandler resultSetHandler = new DynaBeanResultSetHandler(
-                    globalAssistant,
-                    executor, mappedStatement, parameterHandler, resultHandler, boundSql, rowBounds
+                    executor, mappedStatement, parameterHandler, resultHandler, boundSql, rowBounds,
+                    detectDynaCls(parameterHandler)
             );
             resultSetHandler = (ResultSetHandler) interceptorChain.pluginAll(resultSetHandler);
             return resultSetHandler;
