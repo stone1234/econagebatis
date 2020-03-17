@@ -16,6 +16,7 @@ import java.util.List;
 public class SqlProviderHelper {
     public static final String STATIC_WHERE_SQL_FRAGMENT = " where ";
     public static final String STATIC_FALSE_WHERE = STATIC_WHERE_SQL_FRAGMENT+ MybatisSqlUtils.STATIC_FALSE_WHERE_SQL;
+    public static final String STATIC_TRUE_WHERE = STATIC_WHERE_SQL_FRAGMENT+ MybatisSqlUtils.STATIC_TRUE_WHERE_SQL;
 
     /*
     * whereLogic方式解析，由两部分组成，一部分是sql基础部分，由select和from组成
@@ -28,9 +29,9 @@ public class SqlProviderHelper {
         }
 
         List<String> wherePart = context.parseWhereLogic(whereLogic);
-        //解析结果为空，则认为不应该有查询结果
+        //有whereLogic对象，但没有谓语解析逻辑，则直接显示全部
         if(MybatisCollectionUtils.isEmpty(wherePart)){
-            return SqlProviderHelper.STATIC_FALSE_WHERE;
+            return MybatisStringUtils.EMPTY;
         }
 
         return MybatisSqlUtils.wherePartJoin(STATIC_WHERE_SQL_FRAGMENT,wherePart);
