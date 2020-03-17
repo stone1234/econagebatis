@@ -13,24 +13,20 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.econage.core.db.mybatis.plugins.pagination.dialects;
+package com.econage.core.db.mybatis.pagination.dialects;
 
-
-import com.econage.core.db.mybatis.plugins.pagination.PaginationContext;
+import com.econage.core.db.mybatis.pagination.PaginationContext;
 
 /**
  * <p>
- * SQLite 数据库分页语句组装实现
+ * 数据库 分页语句组装接口
+ * IDialect能操作的是boundSql层面的信息，此时sql替换符已经解析完毕
  * </p>
  */
-public class SQLiteDialect implements IDialect {
-
-    public static final SQLiteDialect INSTANCE = new SQLiteDialect();
-
-    @Override
-    public String buildPaginationSql(PaginationContext paginationContext) {
-        StringBuilder sql = new StringBuilder(paginationContext.getOriginalSql());
-        sql.append(" limit ").append(paginationContext.getLimit()).append(" offset ").append(paginationContext.getOffset());
-        return sql.toString();
-    }
+public interface IDialect {
+    /**
+     * 组装分页语句
+     * @return 分页语句
+     */
+    String buildPaginationSql(PaginationContext paginationContext);
 }

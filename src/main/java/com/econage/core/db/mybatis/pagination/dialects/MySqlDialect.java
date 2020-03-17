@@ -13,10 +13,10 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.econage.core.db.mybatis.plugins.pagination.dialects;
+package com.econage.core.db.mybatis.pagination.dialects;
 
 
-import com.econage.core.db.mybatis.plugins.pagination.PaginationContext;
+import com.econage.core.db.mybatis.pagination.PaginationContext;
 import com.econage.core.db.mybatis.util.MybatisStringUtils;
 
 /**

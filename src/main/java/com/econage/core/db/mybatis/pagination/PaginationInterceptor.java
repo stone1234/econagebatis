@@ -13,7 +13,7 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.econage.core.db.mybatis.plugins.pagination;
+package com.econage.core.db.mybatis.pagination;
 
 import com.econage.core.db.mybatis.MybatisException;
 import com.econage.core.db.mybatis.adaptation.MybatisConfiguration;
@@ -57,6 +57,7 @@ import java.util.Properties;
                 @Signature(type = Executor.class, method = "query", args = {MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class, CacheKey.class, BoundSql.class}),
         }
 )
+@Deprecated
 public class PaginationInterceptor implements Interceptor {
 
     private static final Log logger = LogFactory.getLog(PaginationInterceptor.class);
@@ -274,7 +275,7 @@ public class PaginationInterceptor implements Interceptor {
         return mybatisConfiguration.getGlobalAssistant().getDbType();
     }
 
-    public PaginationInterceptor() {
+    private PaginationInterceptor() {
         try {
             //反射获取 BoundSql 中的 additionalParameters 属性
             additionalParametersField = BoundSql.class.getDeclaredField(

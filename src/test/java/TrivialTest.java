@@ -1,5 +1,6 @@
-import com.econage.core.db.mybatis.mapper.dyna.entity.DynaClass;
 import com.econage.core.db.mybatis.mapper.DynaBeanMapper;
+import com.econage.core.db.mybatis.mapper.dyna.entity.DynaClass;
+import com.econage.core.db.mybatis.pagination.Pagination;
 import entity.TestMapper;
 import org.apache.ibatis.reflection.TypeParameterResolver;
 import org.apache.ibatis.session.SqlSession;
@@ -10,6 +11,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Collection;
+import java.util.Collections;
 
 public class TrivialTest {
     @Test
@@ -59,12 +61,13 @@ public class TrivialTest {
         whereLogic.setText1("aaaaaa");
         mapper.updateBatchByWhereLogic(entity,whereLogic);*/
 
-        /*mapper.selectById("1187323606815277058");
+        Pagination pagination = Pagination.newPaginationWithPageRows(1,30);
+        mapper.selectById("1187323606815277058");
         mapper.selectListByIds(Collections.singletonList("1187323606815277058"));
-        mapper.selectListByPage(null);*/
-        TestWhereLogic whereLogic = new TestWhereLogic();
+        mapper.selectListByPage(pagination);
+        /*TestWhereLogic whereLogic = new TestWhereLogic();
         whereLogic.setText1("eeeeeeee");
-        mapper.selectCountByWhereLogic(whereLogic);
+        mapper.selectCountByWhereLogic(whereLogic);*/
 
         sqlSession.commit(true);
     }

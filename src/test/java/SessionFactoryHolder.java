@@ -3,7 +3,6 @@ import com.econage.core.db.mybatis.adaptation.MybatisGlobalAssistant;
 import com.econage.core.db.mybatis.enums.DBType;
 import com.econage.core.db.mybatis.handlers.DefaultEnumTypeHandler;
 import com.econage.core.db.mybatis.handlers.LocaleTypeHandler;
-import com.econage.core.db.mybatis.plugins.pagination.PaginationInterceptor;
 import entity.TestMapper;
 import org.apache.ibatis.datasource.pooled.PooledDataSourceFactory;
 import org.apache.ibatis.logging.stdout.StdOutImpl;
@@ -56,13 +55,14 @@ public class SessionFactoryHolder {
         //禁用二级缓存
         configuration.setCacheEnabled(false);
         configuration.setDefaultEnumTypeHandler(DefaultEnumTypeHandler.class);
-        configuration.addInterceptor(new PaginationInterceptor());
+        //configuration.addInterceptor(new PaginationInterceptor());
         configuration.getTypeHandlerRegistry().register(Locale.class, JdbcType.VARCHAR,new LocaleTypeHandler());
         configuration.setLogImpl(StdOutImpl.class);
 
         globalAssistant.setDbType(DBType.MYSQL8);
         //spring环境忽略包扫描
         globalAssistant.ignoreScanPackage();
+        globalAssistant.setPaginationEnabled(true);
 
         configuration.addMapper(TestMapper.class);
 

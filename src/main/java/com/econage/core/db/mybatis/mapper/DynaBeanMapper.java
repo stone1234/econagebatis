@@ -3,7 +3,7 @@ package com.econage.core.db.mybatis.mapper;
 import com.econage.core.db.mybatis.mapper.dyna.entity.DynaBean;
 import com.econage.core.db.mybatis.mapper.dyna.entity.DynaClass;
 import com.econage.core.db.mybatis.mapper.dyna.mapper.DynaBeanMapperProvider;
-import com.econage.core.db.mybatis.plugins.pagination.Pagination;
+import com.econage.core.db.mybatis.pagination.Pagination;
 import org.apache.ibatis.annotations.*;
 
 import java.io.Serializable;

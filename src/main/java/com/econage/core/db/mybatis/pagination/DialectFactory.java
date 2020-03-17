@@ -13,12 +13,12 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.econage.core.db.mybatis.plugins.pagination;
+package com.econage.core.db.mybatis.pagination;
 
-import com.econage.core.db.mybatis.enums.DBType;
-import com.econage.core.db.mybatis.plugins.pagination.dialects.*;
-import com.econage.core.db.mybatis.util.MybatisStringUtils;
 import com.econage.core.db.mybatis.MybatisException;
+import com.econage.core.db.mybatis.enums.DBType;
+import com.econage.core.db.mybatis.pagination.dialects.*;
+import com.econage.core.db.mybatis.util.MybatisStringUtils;
 
 /**
  * <p>
@@ -37,6 +37,12 @@ public class DialectFactory {
     public static String buildPaginationSql(PaginationContext paginationContext,String dialectClazz)
             throws Exception {
         IDialect dialect = getDialect(paginationContext.getDbType(), dialectClazz);
+        return dialect.buildPaginationSql(paginationContext);
+    }
+
+    public static String buildPaginationSql(PaginationContext paginationContext)
+            throws Exception {
+        IDialect dialect = getDialect(paginationContext.getDbType(),null);
         return dialect.buildPaginationSql(paginationContext);
     }
 

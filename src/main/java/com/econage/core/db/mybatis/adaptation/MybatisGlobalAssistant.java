@@ -86,6 +86,8 @@ public class MybatisGlobalAssistant implements Serializable {
     private boolean ignoreScanPackages;
     private String[] packageNames;
 
+    private boolean paginationEnabled;
+
     private boolean globalCacheEnabled;
 
     private Set<String> disabledPropertyInDefaultUpdateMethod;
@@ -203,6 +205,14 @@ public class MybatisGlobalAssistant implements Serializable {
 
     public void setGlobalCacheEnabled(boolean globalCacheEnabled) {
         this.globalCacheEnabled = globalCacheEnabled;
+    }
+
+    public boolean isPaginationEnabled() {
+        return paginationEnabled;
+    }
+
+    public void setPaginationEnabled(boolean paginationEnabled) {
+        this.paginationEnabled = paginationEnabled;
     }
 
     /*

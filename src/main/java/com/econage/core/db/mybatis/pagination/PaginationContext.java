@@ -13,7 +13,7 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.econage.core.db.mybatis.plugins.pagination;
+package com.econage.core.db.mybatis.pagination;
 
 import com.econage.core.db.mybatis.enums.DBType;
 import com.econage.core.db.mybatis.util.MybatisSqlUtils;

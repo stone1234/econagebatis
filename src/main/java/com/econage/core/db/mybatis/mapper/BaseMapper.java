@@ -19,7 +19,7 @@ import com.econage.core.db.mybatis.entity.BasicEntity;
 import com.econage.core.db.mybatis.mapper.base.rud.BaseDeleteProvider;
 import com.econage.core.db.mybatis.mapper.base.rud.BaseSelectProvider;
 import com.econage.core.db.mybatis.mapper.base.rud.BaseUpdateProvider;
-import com.econage.core.db.mybatis.plugins.pagination.Pagination;
+import com.econage.core.db.mybatis.pagination.Pagination;
 import org.apache.ibatis.annotations.DeleteProvider;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.SelectProvider;

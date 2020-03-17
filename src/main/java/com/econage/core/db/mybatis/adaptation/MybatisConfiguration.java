@@ -131,6 +131,10 @@ public class MybatisConfiguration extends Configuration {
             executor = new SimpleExecutor(this, transaction);
         }
 
+        if(globalAssistant.isPaginationEnabled()){
+            executor = new MybatisExecutorMaster(executor,this);
+        }
+
         /*if (cacheEnabled) {
             executor = new CachingExecutor(executor);
         }*/
@@ -138,7 +142,6 @@ public class MybatisConfiguration extends Configuration {
         executor = (Executor) interceptorChain.pluginAll(executor);
         return executor;
     }
-
 
     private Class<DynaBean> dynaBeanClass = DynaBean.class;
     private boolean isDynaBeanResult(

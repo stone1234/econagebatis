@@ -13,20 +13,19 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.econage.core.db.mybatis.plugins.pagination.dialects;
+package com.econage.core.db.mybatis.pagination.dialects;
 
 
-import com.econage.core.db.mybatis.plugins.pagination.PaginationContext;
-import com.econage.core.db.mybatis.plugins.pagination.PaginationContext;
+import com.econage.core.db.mybatis.pagination.PaginationContext;
 
 /**
  * <p>
- * Postgre 数据库分页语句组装实现
+ * SQLite 数据库分页语句组装实现
  * </p>
  */
-public class PostgreDialect implements IDialect {
+public class SQLiteDialect implements IDialect {
 
-    public static final PostgreDialect INSTANCE = new PostgreDialect();
+    public static final SQLiteDialect INSTANCE = new SQLiteDialect();
 
     @Override
     public String buildPaginationSql(PaginationContext paginationContext) {
