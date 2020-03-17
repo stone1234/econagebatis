@@ -20,11 +20,11 @@ import com.econage.core.db.mybatis.entity.TableInfo;
 import com.econage.core.db.mybatis.util.MybatisSqlUtils;
 import com.econage.core.db.mybatis.util.MybatisStringUtils;
 import com.econage.core.db.mybatis.wherelogic.MybatisWhereLogicHelper;
-import com.google.common.collect.Maps;
 import org.apache.ibatis.reflection.MetaObject;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -87,14 +87,14 @@ public final class MybatisProviderContext implements Cloneable {
 
   public void setAdditionalParam(String key,Object object){
     if(additionalParam==null){
-      additionalParam = Maps.newHashMap();
+      additionalParam = new HashMap<>();
     }
     additionalParam.put(key,object);
   }
 
   public Map<String, Object> getAdditionalParam() {
     if(additionalParam==null){
-      additionalParam = Maps.newHashMap();
+      additionalParam = new HashMap<>();
     }
     return additionalParam;
   }

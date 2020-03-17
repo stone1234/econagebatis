@@ -17,9 +17,6 @@ package com.econage.core.db.mybatis.util;
 
 import com.econage.core.db.mybatis.MybatisPackageInfo;
 import com.econage.core.db.mybatis.mapper.BaseMapper;
-import com.google.common.base.Preconditions;
-import com.google.common.primitives.Primitives;
-import com.google.common.reflect.Reflection;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.logging.Log;
@@ -92,7 +89,7 @@ public class MybatisClassUtils {
      * @return
      */
     public static Class<?> getUserClass(Object object) {
-        Preconditions.checkNotNull(object,"Error: Instance must not be null");
+        MybatisPreconditions.checkNotNull(object,"Error: Instance must not be null");
         return getUserClass(object.getClass());
     }
 
@@ -123,11 +120,11 @@ public class MybatisClassUtils {
         return null;
     }
 
-    private static final Set<Class<?>> ALL_PRIMITIVE_WRAPPER_TYPES = Primitives.allWrapperTypes();
+    private static final Set<Class<?>> ALL_PRIMITIVE_WRAPPER_TYPES = MybatisPrimitives.allWrapperTypes();
     public static boolean isPrimitivesWrapperType(Class<?> clazz){
         return ALL_PRIMITIVE_WRAPPER_TYPES.contains(clazz);
     }
-    private static final Set<Class<?>> ALL_PRIMITIVE_TYPES = Primitives.allPrimitiveTypes();
+    private static final Set<Class<?>> ALL_PRIMITIVE_TYPES = MybatisPrimitives.allPrimitiveTypes();
     public static boolean isPrimitivesType(Class<?> clazz){
         return ALL_PRIMITIVE_TYPES.contains(clazz);
     }
@@ -136,7 +133,7 @@ public class MybatisClassUtils {
             "java",
             "javax",
             "jdk",
-            Reflection.getPackageName(MybatisPackageInfo.class)
+            getPackageName(MybatisPackageInfo.class)
     };
     //是否排除在扫描外的类
     public static boolean excludeClazzPrefix4ModelParseStatic(Class<?> clazz){
@@ -149,4 +146,12 @@ public class MybatisClassUtils {
         return isPrimitivesType(clazz)||isPrimitivesWrapperType(clazz);
     }
 
+
+    public static String getPackageName(Class<?> clazz) {
+        return getPackageName(clazz.getName());
+    }
+    public static String getPackageName(String classFullName) {
+        int lastDot = classFullName.lastIndexOf('.');
+        return (lastDot < 0) ? "" : classFullName.substring(0, lastDot);
+    }
 }

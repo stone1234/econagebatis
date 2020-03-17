@@ -18,8 +18,10 @@ package com.econage.core.db.mybatis.util;
 
 import com.econage.core.db.mybatis.adaptation.MybatisGlobalAssistant;
 import com.econage.core.db.mybatis.enums.DBType;
-import com.google.common.collect.ImmutableSet;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -35,7 +37,8 @@ public class MybatisSqlReservedWords {
     public static final Set<String> RESERVED_WORDS;
 
     static {
-        RESERVED_WORDS = ImmutableSet.of("AUDIT", "VOLUMES", "MINVALUE", "STATIC", "FLOOR", "CATALOG", "YEAR", "TRIGGER_CATALOG", "WLM",
+        Set<String> reservedWordsTmp = new HashSet<>(Arrays.asList(
+                "AUDIT", "VOLUMES", "MINVALUE", "STATIC", "FLOOR", "CATALOG", "YEAR", "TRIGGER_CATALOG", "WLM",
                 "DISCONNECT", "PARTITION", "LEFT", " MODE", "SEARCH", "CURRENT_PATH", "DAYOFYEAR", "SIZE", "RESTRICT", "RELEASE",
                 "WHERE", "POSTFIX", "SQLWARNING", "UID", "AS", "AT", "SYSID", "DATABASE", "SPECIFIC_NAME", "TIMEZONE_MINUTE",
                 "LC_CTYPE", "ATTRIBUTES", "LOCATION", "A", "DOMAIN", "C", "SET", " INCREMENT", "MERGE", "G", "DAYS", "HEADER",
@@ -139,7 +142,11 @@ public class MybatisSqlReservedWords {
                 "UNENCRYPTED", "UTC_TIMESTAMP", "LIKE", "ZEROFILL", "DATA", "SUCCESSFUL", "INSERT", "YEAR_MONTH", "OFFLINE",
                 "INOUT", "VAR_SAMP", "BROWSE", "SCHEMAS", "CONSTRAINT_NAME", "PARAMETER_MODE", "LIMIT", "LINKTYPE", "NULLS",
                 "DEC", "CASCADED", "ENCRYPTED", "CONTAINSTABLE", "DYNAMIC_FUNCTION", "CONDITION_NUMBER", "BEFORE", "DB2GENERAL",
-                "DECLARE", "SUPERUSER", "WHILE");
+                "DECLARE", "SUPERUSER", "WHILE"
+        ));
+
+
+        RESERVED_WORDS = Collections.unmodifiableSet(reservedWordsTmp);
     }
 
     /**

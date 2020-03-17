@@ -19,7 +19,6 @@ import com.econage.core.db.mybatis.adaptation.MybatisConfiguration;
 import com.econage.core.db.mybatis.entity.TableInfo;
 import com.econage.core.db.mybatis.util.MybatisMapUtils;
 import com.econage.core.db.mybatis.util.MybatisStringUtils;
-import com.google.common.collect.Maps;
 import org.apache.ibatis.builder.SqlSourceBuilder;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
@@ -28,6 +27,7 @@ import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.mapping.SqlSource;
 import org.apache.ibatis.parsing.PropertyParser;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public abstract class AbstractMethodSqlSource implements SqlSource {
@@ -91,7 +91,7 @@ public abstract class AbstractMethodSqlSource implements SqlSource {
         return sqlSourceParser.parse(
                 replacePlaceholder(sql),
                 parameterType,
-                Maps.<String, Object>newHashMap()
+                new HashMap<>()
         );
     }
 

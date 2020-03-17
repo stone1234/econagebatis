@@ -5,8 +5,6 @@ import com.econage.core.db.mybatis.adaptation.MybatisGlobalAssistant;
 import com.econage.core.db.mybatis.annotations.WhereLogic;
 import com.econage.core.db.mybatis.annotations.WhereLogicField;
 import com.econage.core.db.mybatis.util.*;
-import com.google.common.collect.Lists;
-import com.google.common.primitives.Primitives;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -34,8 +32,8 @@ public class MybatisWhereLogicHelper {
         * 如果是原型，或者string类，或者不带注解，则认为不是表单对象
         * */
         if(whereLogicCls==null
-         ||Primitives.allPrimitiveTypes().contains(whereLogicCls)
-         ||Primitives.isWrapperType(whereLogicCls)
+         ||MybatisPrimitives.allPrimitiveTypes().contains(whereLogicCls)
+         ||MybatisPrimitives.isWrapperType(whereLogicCls)
          ||whereLogicCls==String.class
          ||whereLogicCls.getAnnotation(WhereLogic.class)==null
         ){
@@ -71,7 +69,7 @@ public class MybatisWhereLogicHelper {
 
         MetaObject whereLogicMetaObject = globalAssistant.getConfiguration().newMetaObject(whereLogicObj);
 
-        List<String> wherePart = Lists.newArrayListWithCapacity(whereLogicInfo.getFieldInfos().size());
+        List<String> wherePart = new ArrayList<>(whereLogicInfo.getFieldInfos().size());
 
         whereLogicInfo.getFieldInfos().forEach(whereLogicFieldInfo -> {
             String property = whereLogicFieldInfo.getProperty();
@@ -202,7 +200,7 @@ public class MybatisWhereLogicHelper {
         }else if(field.getType().isArray()){
             whereLogicFieldInfo.setArrayType(true);
         }else {
-            whereLogicFieldInfo.setPrimitiveType(Primitives.allPrimitiveTypes().contains(field.getType()));
+            whereLogicFieldInfo.setPrimitiveType(MybatisPrimitives.allPrimitiveTypes().contains(field.getType()));
         }
 
         WhereLogicField whereLogicField = field.getAnnotation(WhereLogicField.class);

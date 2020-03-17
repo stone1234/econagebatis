@@ -25,12 +25,10 @@ import com.econage.core.db.mybatis.mapper.base.SqlInjector;
 import com.econage.core.db.mybatis.uid.dbincrementer.IKeyGenerator;
 import com.econage.core.db.mybatis.util.MybatisClassUtils;
 import com.econage.core.db.mybatis.util.MybatisJdbcUtils;
+import com.econage.core.db.mybatis.util.MybatisPreconditions;
 import com.econage.core.db.mybatis.util.MybatisStringUtils;
 import com.econage.core.db.mybatis.wherelogic.MybatisWhereLogicHelper;
 import com.econage.core.db.mybatis.wherelogic.WhereLogicInfo;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Sets;
-import com.google.common.reflect.Reflection;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
@@ -39,6 +37,7 @@ import org.apache.ibatis.logging.LogFactory;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
@@ -89,7 +88,12 @@ public class MybatisGlobalAssistant implements Serializable {
 
     private boolean globalCacheEnabled;
 
-    private Set<String> disabledPropertyInDefaultUpdateMethod = Sets.newHashSet("createDate","createUser");
+    private Set<String> disabledPropertyInDefaultUpdateMethod;
+    {
+        disabledPropertyInDefaultUpdateMethod = new HashSet<>();
+        disabledPropertyInDefaultUpdateMethod.add("createDate");
+        disabledPropertyInDefaultUpdateMethod.add("createUser");
+    }
 
     public MybatisGlobalAssistant(MybatisConfiguration configuration) {
         this.configuration = configuration;
@@ -224,7 +228,7 @@ public class MybatisGlobalAssistant implements Serializable {
 
     //仅处理接口，如果继承了BaseMapper或者有Mapper注解，则认为是一个mapper对象
     public boolean isMapperClass(Class<?> resolvedCls){
-        Preconditions.checkNotNull(resolvedCls,"mapper is null!");
+        MybatisPreconditions.checkNotNull(resolvedCls,"mapper is null!");
         if(resolvedCls.isInterface()&&BaseMapper.class!=resolvedCls){
             if(BaseMapper.class.isAssignableFrom(resolvedCls)){
                 return true;
@@ -249,7 +253,7 @@ public class MybatisGlobalAssistant implements Serializable {
         }
         String[] packageNames = new String[cls.length];
         for(int idx=0,len=cls.length;idx<len;idx++){
-            packageNames[idx]= Reflection.getPackageName(cls[idx]);
+            packageNames[idx]= MybatisClassUtils.getPackageName(cls[idx]);
         }
         this.packageNames = packageNames;
     }
@@ -330,7 +334,7 @@ public class MybatisGlobalAssistant implements Serializable {
 
     //格式化没有手动备注的列名表名
     public String formatColumn(String property){
-        Preconditions.checkNotNull(property,"column is null!");
+        MybatisPreconditions.checkNotNull(property,"column is null!");
         if(isDbColumnUnderline()){
             property = MybatisStringUtils.camelToUnderline(dbColumnPrefix,property,dbColumnSuffix);
         }
@@ -359,7 +363,7 @@ public class MybatisGlobalAssistant implements Serializable {
 
     //处于业务程序的类，都可以视为有效的model类
     private boolean isModelClassInScanPackage(Class<?> modelClazz){
-        Preconditions.checkNotNull(modelClazz,"class is null!");
+        MybatisPreconditions.checkNotNull(modelClazz,"class is null!");
         //如果再例外包以外，则直接返回false
         if(MybatisClassUtils.excludeClazzPrefix4ModelParseStatic(modelClazz)){
             return false;

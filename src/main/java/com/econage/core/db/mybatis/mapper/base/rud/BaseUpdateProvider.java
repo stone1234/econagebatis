@@ -8,11 +8,11 @@ import com.econage.core.db.mybatis.mapper.provider.MybatisProviderContext;
 import com.econage.core.db.mybatis.util.MybatisSqlUtils;
 import com.econage.core.db.mybatis.util.MybatisStringUtils;
 import com.econage.core.db.mybatis.uuid.IdWorker;
-import com.google.common.collect.Lists;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.builder.annotation.ProviderMethodResolver;
 import org.apache.ibatis.reflection.MetaObject;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -69,7 +69,8 @@ public class BaseUpdateProvider implements ProviderMethodResolver {
         String wherePart;
         TableFieldInfo versionField =  context.getTableInfo().getVersionField();
         if(versionField!=null){
-            List<String> whereParts = Lists.newArrayList(pkColWherePart);
+            List<String> whereParts = new ArrayList<>();
+            whereParts.add(pkColWherePart);
             handleVersion2SetOnBasic(context,entityMetaObject,versionField,setParts,whereParts);
             wherePart = MybatisSqlUtils.wherePartJoin(SqlProviderHelper.STATIC_WHERE_SQL_FRAGMENT,whereParts);
         }else{
@@ -204,7 +205,7 @@ public class BaseUpdateProvider implements ProviderMethodResolver {
             /*entity是否选择性插入*/
             boolean selective
     ){
-        List<String> sqlSetsPart = Lists.newArrayList();
+        List<String> sqlSetsPart = new ArrayList<>();
         TableFieldInfo versionField = tableInfo.getVersionField();
 
         for (TableFieldInfo fieldInfo : tableInfo.getFieldList()) {
@@ -242,7 +243,7 @@ public class BaseUpdateProvider implements ProviderMethodResolver {
             /*entity是否选择性插入*/
             Collection<String> partialProperty
     ){
-        List<String> sqlSetsPart = Lists.newArrayList();
+        List<String> sqlSetsPart = new ArrayList<>();
         TableFieldInfo versionField = tableInfo.getVersionField();
 
         for (TableFieldInfo fieldInfo : tableInfo.getFieldList()) {

@@ -18,9 +18,9 @@ package com.econage.core.db.mybatis.plugins.pagination;
 import com.econage.core.db.mybatis.enums.DBType;
 import com.econage.core.db.mybatis.util.MybatisSqlUtils;
 import com.econage.core.db.mybatis.util.MybatisStringUtils;
-import com.google.common.collect.Lists;
 import org.apache.commons.lang3.ArrayUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PaginationContext {
@@ -54,7 +54,7 @@ public class PaginationContext {
         if(ArrayUtils.isEmpty(sortArray)){
             return MybatisStringUtils.EMPTY;
         }
-        List<String> sortColumnWithOrder = Lists.newArrayListWithCapacity(sortArray.length);
+        List<String> sortColumnWithOrder = new ArrayList<>(sortArray.length);
         for(int i=0,l=sortArray.length;i<l;i++){
             if(ArrayUtils.isNotEmpty(orderArray)){
                 sortColumnWithOrder.add(sortArray[i]+" "+orderArray[i]);
@@ -81,14 +81,14 @@ public class PaginationContext {
 
     public void addPaginationParamBefore(Object param) {
         if(this.paginationParamBefore==null){
-            this.paginationParamBefore= Lists.newArrayList();
+            this.paginationParamBefore = new ArrayList<>();
         }
         paginationParamBefore.add(param);
     }
 
     public void addPaginationParamAfter(Object param) {
         if(this.paginationParamAfter==null){
-            this.paginationParamAfter= Lists.newArrayList();
+            this.paginationParamAfter = new ArrayList<>();
         }
         paginationParamAfter.add(param);
     }

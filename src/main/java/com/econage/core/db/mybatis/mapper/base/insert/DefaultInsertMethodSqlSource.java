@@ -23,11 +23,10 @@ import com.econage.core.db.mybatis.enums.IdType;
 import com.econage.core.db.mybatis.enums.SqlMethod;
 import com.econage.core.db.mybatis.mapper.base.SqlProviderHelper;
 import com.econage.core.db.mybatis.uid.dbincrementer.IKeyGenerator;
+import com.econage.core.db.mybatis.util.MybatisPreconditions;
 import com.econage.core.db.mybatis.util.MybatisSqlUtils;
 import com.econage.core.db.mybatis.util.MybatisStringUtils;
 import com.econage.core.db.mybatis.uuid.IdWorker;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.executor.keygen.Jdbc3KeyGenerator;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
@@ -39,6 +38,7 @@ import org.apache.ibatis.mapping.SqlSource;
 import org.apache.ibatis.mapping.StatementType;
 import org.apache.ibatis.reflection.MetaObject;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -128,7 +128,7 @@ public class DefaultInsertMethodSqlSource extends AbstractMethodSqlSource {
     @Override
     protected SqlProviderBinding parseBinding(Object entityObject) {
         //参数及状态检查
-        Preconditions.checkNotNull(entityObject,"can not insert null object!");
+        MybatisPreconditions.checkNotNull(entityObject,"can not insert null object!");
 
         if(entityObject instanceof Map){
             entityObject = ((Map) entityObject).get(ENTITY_PARAM_NAME);
@@ -136,8 +136,8 @@ public class DefaultInsertMethodSqlSource extends AbstractMethodSqlSource {
 
         //变量准备
         MetaObject entityMetaObject = getConfiguration().newMetaObject(entityObject);
-        List<String> columns = Lists.newArrayList();
-        List<String> parameterTokens = Lists.newArrayList();
+        List<String> columns = new ArrayList<>();
+        List<String> parameterTokens = new ArrayList<>();
 
         if(!saveAndGetKeyGeneratorRun){
             throw new IllegalStateException("not try save KeyGenerator!");

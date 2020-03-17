@@ -1,18 +1,18 @@
 package com.econage.core.db.mybatis.mapper.provider;
 
-import com.google.common.base.Preconditions;
-import com.google.common.primitives.Primitives;
+import com.econage.core.db.mybatis.util.MybatisPreconditions;
+import com.econage.core.db.mybatis.util.MybatisPrimitives;
 
 import java.lang.reflect.Method;
 
 class ProviderSqlSourceUtils {
     static Class<?>[] parseProviderMethodParameterTypes(Method providerMethod){
-        Preconditions.checkNotNull(providerMethod,"providerMethod is null!");
+        MybatisPreconditions.checkNotNull(providerMethod,"providerMethod is null!");
         Class<?>[] providerMethodParameterTypes = providerMethod.getParameterTypes();
         for(int i=0,l=providerMethodParameterTypes.length;i<l;i++){
             Class<?> parameterType = providerMethodParameterTypes[i];
             if(parameterType.isPrimitive()){
-                providerMethodParameterTypes[i] = Primitives.wrap(parameterType);
+                providerMethodParameterTypes[i] = MybatisPrimitives.wrap(parameterType);
             }
         }
         return providerMethodParameterTypes;

@@ -1,9 +1,9 @@
 package com.econage.core.db.mybatis.wherelogic;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -16,9 +16,9 @@ public class WhereLogicInfo {
 
     private String className;
     /*字段where映射*/
-    private Map<String, WhereLogicFieldInfo> propertyWhereMap = Maps.newHashMap();
+    private Map<String, WhereLogicFieldInfo> propertyWhereMap = new HashMap<>();
 
-    private List<WhereLogicFieldInfo> fieldInfos = Lists.newArrayList();
+    private List<WhereLogicFieldInfo> fieldInfos = new ArrayList<>();
 
     public String getClassName() {
         return className;

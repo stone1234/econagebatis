@@ -15,10 +15,10 @@
  */
 package com.econage.core.db.mybatis.plugins.pagination;
 
-import com.google.common.base.MoreObjects;
 import org.apache.ibatis.session.RowBounds;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 /**
  * 简单分页模型
@@ -131,12 +131,13 @@ public class Pagination extends RowBounds implements Serializable {
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this)
-                .add("paginationOffset", paginationOffset)
-                .add("paginationLimit",paginationLimit)
-                .add("sort[]", sortName)
-                .add("order[]", sortOrder)
-                .toString();
+        return getClass().getName() +
+                "{" +
+                "paginationOffset" + "=" + paginationOffset + "," +
+                "paginationLimit" + "=" + paginationLimit + "," +
+                "sort[]" + "=" + Arrays.toString(sortName) + "," +
+                "order[]" + "=" + Arrays.toString(sortOrder) +
+                "}";
     }
 
 }

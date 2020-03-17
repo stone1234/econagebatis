@@ -3,21 +3,17 @@ package com.econage.core.db.mybatis.mapper.dyna.wherelogic;
 import com.econage.core.db.mybatis.mapper.MapperConst;
 import com.econage.core.db.mybatis.util.MybatisSqlUtils;
 import com.econage.core.db.mybatis.uuid.IdWorker;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import org.apache.commons.lang3.ArrayUtils;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class DynaWhereLogic {
     private static String newDynaBoundSQLParamName(){
         return MapperConst.DYNA_BOUND_PARAM+"_"+ IdWorker.getId();
     }
 
-    private final List<String> boundSqlList = Lists.newArrayList();
-    private final Map<String,Object> boundParams = Maps.newHashMap();
+    private final List<String> boundSqlList = new ArrayList<>();
+    private final Map<String,Object> boundParams = new HashMap<>();
 
     public DynaWhereLogic() {
     }
@@ -34,7 +30,7 @@ public class DynaWhereLogic {
      * 列集合搜索
      * */
     public void addColumnInCollectionIntoWhere(String column, Collection<Object> params){
-        List<String> boundSqlParams = Lists.newArrayList();
+        List<String> boundSqlParams = new ArrayList<>();
 
         for(Object paramVal : params){
             String dynaBoundParamName = newDynaBoundSQLParamName();

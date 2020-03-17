@@ -7,7 +7,6 @@ import com.econage.core.db.mybatis.mapper.provider.MybatisProviderContext;
 import com.econage.core.db.mybatis.util.MybatisCollectionUtils;
 import com.econage.core.db.mybatis.util.MybatisSqlUtils;
 import com.econage.core.db.mybatis.util.MybatisStringUtils;
-import com.google.common.base.Strings;
 import org.apache.ibatis.annotations.Param;
 
 import java.io.Serializable;
@@ -59,7 +58,7 @@ public class SqlProviderHelper {
             canUse = propertyVal!=null;
         }else if(FieldStrategy.NOT_EMPTY==fieldInfo.getFieldStrategy()){
             if(MybatisStringUtils.isCharSequence(propertyType)){
-                canUse = !Strings.isNullOrEmpty((String)propertyVal);
+                canUse = MybatisStringUtils.isNotEmpty((String)propertyVal);
             }else{
                 canUse = propertyVal!=null;
             }

@@ -15,8 +15,6 @@
  */
 package com.econage.core.db.mybatis.util;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Preconditions;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collection;
@@ -31,9 +29,6 @@ public class MybatisSqlUtils {
 
     public static final String NEW_VERSION_STAMP_SUFFIX = "_new_stamp__";
     public static final String CURR_VERSION_STAMP_SUFFIX = "_curr_stamp__";
-
-
-    public static final Joiner COMMA_JOINER = Joiner.on(",").skipNulls();
 
     public static String formatCollection2ParameterMappings(
             String item,
@@ -53,7 +48,7 @@ public class MybatisSqlUtils {
             Collection<?> typeParams,
             Map<String,Object> additionalMap
     ){
-        Preconditions.checkNotNull(item,"item is null!");
+        MybatisPreconditions.checkNotNull(item,"item is null!");
         if(additionalMap==null){
             throw new NullPointerException(" additional map is null!");
         }
@@ -74,7 +69,7 @@ public class MybatisSqlUtils {
         if(MybatisStringUtils.isNotEmpty(open)){
             tokens.append(open);
         }
-        tokens.append(COMMA_JOINER.join(parameterTokenList));
+        tokens.append(commaJoin(parameterTokenList));
         if(MybatisStringUtils.isNotEmpty(close)){
             tokens.append(close);
         }
@@ -82,26 +77,19 @@ public class MybatisSqlUtils {
     }
 
     public static String commaJoin(Collection<String> stringCollection){
-        return COMMA_JOINER.join(stringCollection);
+        return MybatisStringUtils.join(stringCollection,",");
     }
     public static String commaJoin(String... stringCollection){
-        return COMMA_JOINER.join(stringCollection);
+        return MybatisStringUtils.join(stringCollection,",");
     }
 
 
-    protected static final Joiner WHERE_PART_JOINER = Joiner.on(" and ").skipNulls();
     public static String wherePartJoin(Collection<String> stringCollection){
-        return " "+WHERE_PART_JOINER.join(stringCollection)+" ";
+        return " "+MybatisStringUtils.join(stringCollection," and ")+" ";
     }
     public static String wherePartJoin(String prefix,Collection<String> stringCollection){
-        return (prefix!=null?prefix:StringUtils.EMPTY)+" "+WHERE_PART_JOINER.join(stringCollection)+" ";
+        return (prefix!=null?prefix:StringUtils.EMPTY)+" "+MybatisStringUtils.join(stringCollection," and ")+" ";
     }
-    /*public static String wherePartJoin(String... stringCollection){
-        return " "+WHERE_PART_JOINER.join(stringCollection)+" ";
-    }*/
-    /*public static String wherePartJoin(String prefix,String... stringCollection){
-        return (prefix!=null?prefix:StringUtils.EMPTY)+" "+WHERE_PART_JOINER.join(stringCollection)+" ";
-    }*/
 
     /**
      * <p>

@@ -15,28 +15,31 @@
  */
 package com.econage.core.db.mybatis.plugins.pagination;
 
-import com.econage.core.db.mybatis.mapper.dyna.entity.DynaClass;
-import com.econage.core.db.mybatis.entity.TableInfo;
-import com.econage.core.db.mybatis.enums.DBType;
-import com.econage.core.db.mybatis.mapper.MapperConst;
-import com.econage.core.db.mybatis.util.MybatisStringUtils;
 import com.econage.core.db.mybatis.MybatisException;
 import com.econage.core.db.mybatis.adaptation.MybatisConfiguration;
 import com.econage.core.db.mybatis.adaptation.MybatisGlobalAssistant;
-import com.google.common.collect.Lists;
+import com.econage.core.db.mybatis.entity.TableInfo;
+import com.econage.core.db.mybatis.enums.DBType;
+import com.econage.core.db.mybatis.mapper.MapperConst;
+import com.econage.core.db.mybatis.mapper.dyna.entity.DynaClass;
+import com.econage.core.db.mybatis.util.MybatisStringUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.ibatis.cache.CacheKey;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
-import org.apache.ibatis.mapping.*;
+import org.apache.ibatis.mapping.BoundSql;
+import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.mapping.ParameterMapping;
+import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.plugin.*;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -106,7 +109,7 @@ public class PaginationInterceptor implements Interceptor {
         /*-------------------准备分页上下文信息-------------------*/
 
         String paginationSql = DialectFactory.buildPaginationSql(paginationContext,dialectClazz);
-        List<ParameterMapping> parameterMappings = Lists.newArrayList();
+        List<ParameterMapping> parameterMappings = new ArrayList<>();
         Map<String,Object> additionalParamMap = getBoundSqlAdditionalParameter(boundSql);
         //前置的参数映射
         if(paginationContext.getPaginationParamBefore()!=null){

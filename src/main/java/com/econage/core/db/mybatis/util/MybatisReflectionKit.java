@@ -15,11 +15,13 @@
  */
 package com.econage.core.db.mybatis.util;
 
-import com.google.common.collect.Lists;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 
-import java.lang.reflect.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.*;
 
 
@@ -154,7 +156,7 @@ public class MybatisReflectionKit {
         if (null == clazz||Object.class == clazz) {
             return null;
         }
-        List<Field> fieldList = Lists.newLinkedList();
+        List<Field> fieldList = new ArrayList<>();
         Field[] fields = clazz.getDeclaredFields();
         for (Field field : fields) {
             /* 过滤静态属性 */

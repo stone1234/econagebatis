@@ -794,4 +794,34 @@ public class MybatisStringUtils {
 
 
 
+
+    public static String join(Collection<String> stringCollection,String separator){
+        if(MybatisCollectionUtils.isEmpty(stringCollection)){
+            return MybatisStringUtils.EMPTY;
+        }
+
+        if (separator == null) {
+            separator = EMPTY;
+        }
+
+        StringBuilder buf = new StringBuilder(256);
+        boolean isStart = true;
+        for(String str : stringCollection){
+            if (!isStart) {
+                buf.append(separator);
+            }
+            if(MybatisStringUtils.isNotEmpty(str)){
+                buf.append(str);
+            }
+            isStart = false;
+        }
+        return buf.toString();
+
+    }
+    public static String join(String[] stringCollection,String separator){
+        if(stringCollection==null){
+            return MybatisStringUtils.EMPTY;
+        }
+        return join(Arrays.asList(stringCollection),separator);
+    }
 }

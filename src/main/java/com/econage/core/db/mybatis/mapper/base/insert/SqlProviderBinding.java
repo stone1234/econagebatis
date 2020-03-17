@@ -15,8 +15,7 @@
  */
 package com.econage.core.db.mybatis.mapper.base.insert;
 
-import com.google.common.collect.Maps;
-
+import java.util.HashMap;
 import java.util.Map;
 
 public class SqlProviderBinding {
@@ -33,7 +32,7 @@ public class SqlProviderBinding {
     public SqlProviderBinding(String sql, Map<String, Object> additionalParameter) {
         this.sql = sql;
         if(additionalParameter==null){
-            additionalParameter = Maps.newHashMap();
+            additionalParameter = new HashMap<>();
         }
         this.additionalParameter = additionalParameter;
     }

@@ -17,14 +17,13 @@ package com.econage.core.db.mybatis.entity;
 
 import com.econage.core.db.mybatis.annotations.KeySequence;
 import com.econage.core.db.mybatis.enums.IdType;
+import com.econage.core.db.mybatis.util.MybatisPreconditions;
 import com.econage.core.db.mybatis.util.MybatisStringUtils;
-import com.google.common.base.Function;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Maps;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /*
 * tableInfo可能使用到的场景
@@ -177,20 +176,15 @@ public class TableInfo {
     }
 
 
-    private static Function<TableFieldInfo,String> fetchFieldProperty = input-> {
-            if(input!=null){
-                return input.getProperty();
-            }
-            return null;
-        };
-
     void setFieldList(List<TableFieldInfo> fieldList) {
-        this.fieldList = ImmutableList.copyOf(fieldList);
-        this.propertyFieldMap = Maps.uniqueIndex(fieldList,fetchFieldProperty);
+        this.fieldList = Collections.unmodifiableList(fieldList);
+        this.propertyFieldMap = fieldList
+                .stream()
+                .collect( Collectors.toMap(TableFieldInfo::getProperty,t->t) );
     }
 
     public String getAutoMappingColumnByProperty(String property){
-        Preconditions.checkNotNull(property,"property is null!");
+        MybatisPreconditions.checkNotNull(property,"property is null!");
         TableFieldInfo tableFieldInfo = propertyFieldMap.get(property);
         if(tableFieldInfo!=null){
             return tableFieldInfo.getAutoMappingColumn();

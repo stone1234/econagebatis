@@ -16,18 +16,19 @@
 package com.econage.core.db.mybatis.entity;
 
 import com.econage.core.db.mybatis.MybatisException;
-import com.econage.core.db.mybatis.annotations.*;
 import com.econage.core.db.mybatis.adaptation.MybatisGlobalAssistant;
+import com.econage.core.db.mybatis.annotations.KeySequence;
+import com.econage.core.db.mybatis.annotations.TableDef;
+import com.econage.core.db.mybatis.annotations.TableField;
+import com.econage.core.db.mybatis.annotations.TableId;
 import com.econage.core.db.mybatis.enums.IdType;
 import com.econage.core.db.mybatis.util.*;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -53,7 +54,7 @@ public class MybatisTableInfoHelper {
             MybatisGlobalAssistant globalAssistant,
             Class<?> modelClass
     ) {
-        Preconditions.checkNotNull(modelClass,"model class is null!");
+        MybatisPreconditions.checkNotNull(modelClass,"model class is null!");
 
         TableInfo tableInfo = new TableInfo();
         tableInfo.setModelClass(modelClass);
@@ -73,10 +74,10 @@ public class MybatisTableInfoHelper {
         }
 
         /* 表结果集映射 */
-        if (table != null && !Strings.isNullOrEmpty(table.defaultSelectResultMap())) {
+        if (table != null && MybatisStringUtils.isNotEmpty(table.defaultSelectResultMap())) {
             tableInfo.setDefaultSelectResultMap(table.defaultSelectResultMap());
         }
-        List<TableFieldInfo> fieldList = Lists.newArrayList();
+        List<TableFieldInfo> fieldList = new ArrayList<>();
         List<Field> list = getAllFields(globalAssistant,modelClass);
         // 标记是否读取到主键
         boolean isReadPK = false;
@@ -285,7 +286,7 @@ public class MybatisTableInfoHelper {
     }
 
     private static String sqlSelectColumns(TableInfo tableInfo) {
-        List<String> columnList = Lists.newArrayList();
+        List<String> columnList = new ArrayList<>();
         if(tableInfo.getDefaultSelectResultMap()!=null){
             columnList.add("*");
         }else{
@@ -310,6 +311,6 @@ public class MybatisTableInfoHelper {
 
         }
 
-        return MybatisSqlUtils.COMMA_JOINER.join(columnList);
+        return MybatisSqlUtils.commaJoin(columnList);
     }
 }
