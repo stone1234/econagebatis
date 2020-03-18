@@ -37,9 +37,9 @@ public class SessionFactoryHolder {
 
         Properties properties = new Properties();
         properties.setProperty("driver","org.mariadb.jdbc.Driver");
-        properties.setProperty("url","jdbc:mariadb://127.0.0.1:3306/test");
-        properties.setProperty("username","testu");
-        properties.setProperty("password","testu123");
+        properties.setProperty("url","jdbc:mariadb://192.168.0.59:3306/test");
+        properties.setProperty("username","newsoft");
+        properties.setProperty("password","econage123");
         pooledDataSourceFactory.setProperties(properties);
 
         JdbcTransactionFactory transactionFactory = new JdbcTransactionFactory();

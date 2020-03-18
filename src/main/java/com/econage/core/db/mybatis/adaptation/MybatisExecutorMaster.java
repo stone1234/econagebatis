@@ -59,17 +59,40 @@ public class MybatisExecutorMaster implements Executor {
     @Override
     public <E> List<E> query(MappedStatement ms, Object parameterObject, RowBounds rowBounds, ResultHandler resultHandler) throws SQLException {
         BoundSql boundSql = ms.getBoundSql(parameterObject);
-        return doQuery(ms, parameterObject, rowBounds, resultHandler, boundSql);
+        return query(ms, parameterObject, rowBounds, resultHandler,null, boundSql);
     }
 
     @Override
-    public <E> List<E> query(MappedStatement ms, Object parameterObject, RowBounds rowBounds, ResultHandler resultHandler, CacheKey key, BoundSql boundSql)
+    public <E> List<E> query(MappedStatement ms, Object parameterObject, RowBounds rowBounds, ResultHandler resultHandler, CacheKey orgKey, BoundSql boundSql)
             throws SQLException {
-        return doQuery(ms, parameterObject, rowBounds, resultHandler, boundSql);
+        /*-------------------不需要分页*/
+        /*未传入分页对象或者分页对象含义是获取全部*/
+        if(rowBounds==null||rowBounds==RowBounds.DEFAULT){
+            rowBounds = RowBounds.DEFAULT;
+            CacheKey key = orgKey==null?createCacheKey(ms, parameterObject, rowBounds, boundSql):orgKey;
+            return delegate.query(
+                    ms,
+                    parameterObject,
+                    rowBounds,
+                    resultHandler,
+                    key,
+                    boundSql
+            );
+        }
+        /*-------------------不需要分页-------------------*/
+
+        return doPaginationQuery(ms, parameterObject, rowBounds, resultHandler, boundSql);
     }
 
-    private <E> List<E> doQuery(MappedStatement mappedStatement, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
+    private <E> List<E> doPaginationQuery(
+            final MappedStatement mappedStatement,
+            final Object parameter,
+            final RowBounds rowBounds,
+            final ResultHandler resultHandler,
+            final BoundSql boundSql
+    ) throws SQLException {
         try{
+
             /*-------------------准备分页上下文信息*/
             Pagination pagination;
             if(rowBounds instanceof Pagination){

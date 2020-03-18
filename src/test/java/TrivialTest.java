@@ -11,7 +11,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Collection;
-import java.util.Collections;
 
 public class TrivialTest {
     @Test
@@ -62,9 +61,10 @@ public class TrivialTest {
         mapper.updateBatchByWhereLogic(entity,whereLogic);*/
 
         Pagination pagination = Pagination.newPaginationWithPageRows(1,30);
-        mapper.selectById("1187323606815277058");
-        mapper.selectListByIds(Collections.singletonList("1187323606815277058"));
+        //mapper.selectById("1187323606815277058");
+        //mapper.selectListByIds(Collections.singletonList("1187323606815277058"));
         mapper.selectListByPage(pagination);
+        mapper.selectListByPage(null);
         /*TestWhereLogic whereLogic = new TestWhereLogic();
         whereLogic.setText1("eeeeeeee");
         mapper.selectCountByWhereLogic(whereLogic);*/

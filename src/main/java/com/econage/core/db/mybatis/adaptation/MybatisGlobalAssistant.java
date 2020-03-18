@@ -86,7 +86,7 @@ public class MybatisGlobalAssistant implements Serializable {
     private boolean ignoreScanPackages;
     private String[] packageNames;
 
-    private boolean paginationEnabled;
+    private boolean paginationEnabled = true;
 
     private boolean globalCacheEnabled;
 
