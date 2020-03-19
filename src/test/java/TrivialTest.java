@@ -1,6 +1,6 @@
 import com.econage.core.db.mybatis.mapper.DynaBeanMapper;
 import com.econage.core.db.mybatis.mapper.dyna.entity.DynaClass;
-import com.econage.core.db.mybatis.pagination.Pagination;
+import entity.TestEntity;
 import entity.TestMapper;
 import org.apache.ibatis.reflection.TypeParameterResolver;
 import org.apache.ibatis.session.SqlSession;
@@ -30,7 +30,7 @@ public class TrivialTest {
 
         TestMapper mapper = sqlSession.getMapper(TestMapper.class);
 
-        /*TestEntity entity = new TestEntity();
+        TestEntity entity = new TestEntity();
         entity.setFk("aa");
         entity.setText1("1");
         entity.setText2("2");
@@ -39,14 +39,14 @@ public class TrivialTest {
 
         entity.setId(null);
         entity.setText2(null);
-        mapper.insert(entity);*/
-
-        //mapper.deleteById("1187319930285559810");
-        //mapper.deleteByIds(Collections.singletonList("1187319930684018690"));
-        //mapper.deleteByFk("aa");
-        /*TestWhereLogic testWhereLogic = new TestWhereLogic();
-        testWhereLogic.setText1("1");*/
-        //mapper.deleteByWhereLogic(testWhereLogic);
+        mapper.insertAllColumn(entity);
+/*
+        mapper.deleteById("1187319930285559810");
+        mapper.deleteByIds(Collections.singletonList("1187319930684018690"));
+        mapper.deleteByFk("aa");
+        TestWhereLogic testWhereLogic = new TestWhereLogic();
+        testWhereLogic.setText1("1");
+        mapper.deleteByWhereLogic(testWhereLogic);*/
 
         /*TestEntity entity = new TestEntity();
         entity.setId("1187323607213735937");
@@ -60,11 +60,11 @@ public class TrivialTest {
         whereLogic.setText1("aaaaaa");
         mapper.updateBatchByWhereLogic(entity,whereLogic);*/
 
-        Pagination pagination = Pagination.newPaginationWithPageRows(1,30);
-        //mapper.selectById("1187323606815277058");
-        //mapper.selectListByIds(Collections.singletonList("1187323606815277058"));
-        mapper.selectListByPage(pagination);
-        mapper.selectListByPage(null);
+        /*mapper.selectById("1187323606815277058");
+        mapper.selectListByIds(Collections.singletonList("1187323606815277058"));
+        mapper.selectListByFk(Collections.singletonList("1187323606815277058"),null);
+        mapper.selectListByPage(Pagination.newPaginationWithPageRows(1,30));
+        mapper.selectListByPage(null);*/
         /*TestWhereLogic whereLogic = new TestWhereLogic();
         whereLogic.setText1("eeeeeeee");
         mapper.selectCountByWhereLogic(whereLogic);*/

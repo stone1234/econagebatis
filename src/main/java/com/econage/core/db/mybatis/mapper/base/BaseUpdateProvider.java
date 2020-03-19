@@ -1,4 +1,4 @@
-package com.econage.core.db.mybatis.mapper.base.rud;
+package com.econage.core.db.mybatis.mapper.base;
 
 import com.econage.core.db.mybatis.MybatisException;
 import com.econage.core.db.mybatis.entity.TableFieldInfo;

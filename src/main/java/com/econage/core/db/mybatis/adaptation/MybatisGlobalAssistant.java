@@ -21,7 +21,6 @@ import com.econage.core.db.mybatis.enums.DBType;
 import com.econage.core.db.mybatis.enums.FieldStrategy;
 import com.econage.core.db.mybatis.enums.IdType;
 import com.econage.core.db.mybatis.mapper.BaseMapper;
-import com.econage.core.db.mybatis.mapper.base.SqlInjector;
 import com.econage.core.db.mybatis.uid.dbincrementer.IKeyGenerator;
 import com.econage.core.db.mybatis.util.MybatisClassUtils;
 import com.econage.core.db.mybatis.util.MybatisJdbcUtils;
@@ -31,7 +30,6 @@ import com.econage.core.db.mybatis.wherelogic.MybatisWhereLogicHelper;
 import com.econage.core.db.mybatis.wherelogic.WhereLogicInfo;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 
@@ -52,8 +50,6 @@ public class MybatisGlobalAssistant implements Serializable {
 
     //配置类，与助手类互相引用
     private final MybatisConfiguration configuration;
-    // SQL注入器
-    private final SqlInjector sqlInjector;
 
     // 数据库类型
     private DBType dbType;
@@ -99,7 +95,6 @@ public class MybatisGlobalAssistant implements Serializable {
 
     public MybatisGlobalAssistant(MybatisConfiguration configuration) {
         this.configuration = configuration;
-        this.sqlInjector = new SqlInjector(this);
     }
 
 
@@ -143,10 +138,6 @@ public class MybatisGlobalAssistant implements Serializable {
 
     public boolean isDbColumnUnderline() {
         return configuration.isMapUnderscoreToCamelCase();
-    }
-
-    public SqlInjector getSqlInjector() {
-        return sqlInjector;
     }
 
     /*public void setSqlInjector(SqlInjector sqlInjector) {
@@ -268,12 +259,8 @@ public class MybatisGlobalAssistant implements Serializable {
         this.packageNames = packageNames;
     }
 
-    public void inspectInject4Mapper(MapperBuilderAssistant mapperBuilderAssistant, Class<?> mapper){
-        sqlInjector.inspectInject(mapperBuilderAssistant,mapper);
-    }
-
     public TableInfo saveAndGetTableInfoByMapper(Class<?> mapperClass) {
-        if(mapperClass==null){
+        if(mapperClass==null||!BaseMapper.class.isAssignableFrom(mapperClass)){
             return null;
         }
         if(mapperTableInfoMap.containsKey(mapperClass)){

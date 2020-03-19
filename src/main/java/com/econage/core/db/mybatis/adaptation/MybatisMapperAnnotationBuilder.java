@@ -16,6 +16,7 @@
 package com.econage.core.db.mybatis.adaptation;
 
 import com.econage.core.db.mybatis.entity.TableInfo;
+import com.econage.core.db.mybatis.mapper.base.SqlProviderHelper;
 import com.econage.core.db.mybatis.mapper.provider.MybatisProviderSqlSource;
 import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.annotations.ResultMap;
@@ -100,8 +101,8 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
       parseCache();
       parseCacheRef();
       Method[] methods = type.getMethods();
-      // TODO 注入 CURD 动态 SQL (应该在注解之前注入)
-      configuration.getGlobalAssistant().inspectInject4Mapper(assistant,type);
+      // TODO 解析Mapper对应的entity
+      configuration.getGlobalAssistant().saveAndGetTableInfoByMapper(type);
       for (Method method : methods) {
         try {
           // issue #237
@@ -322,6 +323,7 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
     return null;
   }
 
+
   void parseStatement(Method method) {
     Class<?> parameterTypeClass = getParameterType(method);
     LanguageDriver languageDriver = getLanguageDriver(method);
@@ -362,6 +364,19 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
         }
       } else {
         keyGenerator = NoKeyGenerator.INSTANCE;
+      }
+
+      //todo 内置的插入语句，主键处理逻辑
+      if(SqlCommandType.INSERT.equals(sqlCommandType)){
+        KeyGenerator innerKeyGenerator = SqlProviderHelper.parseKeyGenerator(
+                mappedStatementId, tableInfo,
+                configuration, assistant
+        );
+        if(innerKeyGenerator!=null){
+          keyGenerator = innerKeyGenerator;
+          keyProperty = tableInfo.getKeyProperty();
+          keyColumn = tableInfo.getKeyColumn();
+        }
       }
 
       if (options != null) {
