@@ -64,7 +64,7 @@ public interface BaseMapper<T extends BasicEntity> {
      * @return int
      */
     @DeleteProvider(BaseDeleteProvider.class)
-    Integer deleteById(Serializable id);
+    Integer deleteById(@Param(ID_PARAM_NAME) Serializable id);
 
     /**
      * <p>
@@ -75,7 +75,7 @@ public interface BaseMapper<T extends BasicEntity> {
      * @return int
      */
     @DeleteProvider(BaseDeleteProvider.class)
-    Integer deleteByIds(Collection<? extends Serializable> idList);
+    Integer deleteByIds(@Param(ID_COLLECTION_PARAM_NAME) Collection<? extends Serializable> idList);
 
     /**
      * <p>
@@ -86,7 +86,7 @@ public interface BaseMapper<T extends BasicEntity> {
      * @return int
      */
     @DeleteProvider(BaseDeleteProvider.class)
-    Integer deleteByFk(Serializable fk);
+    Integer deleteByFk(@Param(FK_PARAM_NAME) Serializable fk);
 
     /**
      * <p>
@@ -193,7 +193,7 @@ public interface BaseMapper<T extends BasicEntity> {
      * @return T
      */
     @SelectProvider(BaseSelectProvider.class)
-    T selectById(Serializable id);
+    T selectById(@Param(ID_PARAM_NAME) Serializable id);
 
     /**
      * <p>
@@ -204,7 +204,7 @@ public interface BaseMapper<T extends BasicEntity> {
      * @return List<T>
      */
     @SelectProvider(BaseSelectProvider.class)
-    List<T> selectListByIds(Collection<? extends Serializable> idList);
+    List<T> selectListByIds(@Param(ID_COLLECTION_PARAM_NAME) Collection<? extends Serializable> idList);
 
     /*
     * 按照主键分页显示，会自动侦测主键信息
@@ -222,7 +222,7 @@ public interface BaseMapper<T extends BasicEntity> {
     *  按照外键信息，显示
     * */
     @SelectProvider(BaseSelectProvider.class)
-    List<T> selectListByFk(Collection<? extends Serializable> fkCollection,Pagination page);
+    List<T> selectListByFk(@Param(ID_COLLECTION_PARAM_NAME) Collection<? extends Serializable> fkCollection,Pagination page);
 
     /*
     * 通用查询方法，可以做分页查询

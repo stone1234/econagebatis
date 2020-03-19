@@ -11,6 +11,7 @@ import org.apache.ibatis.builder.annotation.ProviderMethodResolver;
 import java.io.Serializable;
 import java.util.Collection;
 
+import static com.econage.core.db.mybatis.mapper.MapperConst.ID_COLLECTION_PARAM_NAME;
 import static com.econage.core.db.mybatis.mapper.MapperConst.WHERE_LOGIC_PARAM_NAME;
 
 /*
@@ -32,7 +33,7 @@ public class BaseSelectProvider implements ProviderMethodResolver {
     }
     public static String selectListByIds(
             MybatisProviderContext context,
-            @Param("collection") Collection<? extends Serializable> idList
+            @Param(ID_COLLECTION_PARAM_NAME)  Collection<? extends Serializable> idList
     ){
         TableInfo tableInfo = context.getTableInfo();
 
@@ -63,7 +64,7 @@ public class BaseSelectProvider implements ProviderMethodResolver {
 
     public static String selectListByFk(
             MybatisProviderContext context,
-            @Param("collection") Collection<? extends Serializable> fkCollection
+            @Param(ID_COLLECTION_PARAM_NAME)  Collection<? extends Serializable> fkCollection
     ){
         TableInfo tableInfo = context.getTableInfo();
         StringBuilder sqlBuf = new StringBuilder()

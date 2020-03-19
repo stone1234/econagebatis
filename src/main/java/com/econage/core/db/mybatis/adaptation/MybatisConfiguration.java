@@ -135,10 +135,6 @@ public class MybatisConfiguration extends Configuration {
             executor = new MybatisExecutorMaster(executor,this);
         }
 
-        /*if (cacheEnabled) {
-            executor = new CachingExecutor(executor);
-        }*/
-
         executor = (Executor) interceptorChain.pluginAll(executor);
         return executor;
     }
