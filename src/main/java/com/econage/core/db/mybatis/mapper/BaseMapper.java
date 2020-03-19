@@ -21,10 +21,7 @@ import com.econage.core.db.mybatis.mapper.base.BaseInsertProvider;
 import com.econage.core.db.mybatis.mapper.base.BaseSelectProvider;
 import com.econage.core.db.mybatis.mapper.base.BaseUpdateProvider;
 import com.econage.core.db.mybatis.pagination.Pagination;
-import org.apache.ibatis.annotations.DeleteProvider;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.SelectProvider;
-import org.apache.ibatis.annotations.UpdateProvider;
+import org.apache.ibatis.annotations.*;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -44,7 +41,7 @@ public interface BaseMapper<T extends BasicEntity> {
      * @param entity 实体对象
      * @return int
      */
-    @DeleteProvider(BaseInsertProvider.class)
+    @InsertProvider(BaseInsertProvider.class)
     Integer insert(@Param(ENTITY_PARAM_NAME) T entity);
 
     /**
@@ -55,7 +52,7 @@ public interface BaseMapper<T extends BasicEntity> {
      * @param entity 实体对象
      * @return int
      */
-    @DeleteProvider(BaseInsertProvider.class)
+    @InsertProvider(BaseInsertProvider.class)
     Integer insertAllColumn(@Param(ENTITY_PARAM_NAME) T entity);
 
     /**

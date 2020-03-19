@@ -1,7 +1,6 @@
 package com.econage.core.db.mybatis.mapper.base;
 
 import com.econage.core.db.mybatis.entity.TableInfo;
-import com.econage.core.db.mybatis.mapper.base.SqlProviderHelper;
 import com.econage.core.db.mybatis.mapper.provider.MybatisProviderContext;
 import com.econage.core.db.mybatis.util.MybatisCollectionUtils;
 import org.apache.ibatis.annotations.Param;
@@ -19,7 +18,7 @@ public class BaseDeleteProvider implements ProviderMethodResolver {
     ){
         TableInfo tableInfo = context.getTableInfo();
         return "delete from " + tableInfo.getTableName()+
-                " where " + tableInfo.getKeyColumn()+"=#{" + tableInfo.getKeyProperty()+"}";
+                " where " + tableInfo.getKeyColumn()+"=#{" + ID_PARAM_NAME +"}";
     }
 
     public static String deleteByIds(
@@ -38,7 +37,7 @@ public class BaseDeleteProvider implements ProviderMethodResolver {
     ){
         TableInfo tableInfo = context.getTableInfo();
         return "delete from " + tableInfo.getTableName()+
-               " where " + tableInfo.getFkColumn()+ "=#{" +tableInfo.getFkProperty()+"}";
+               " where " + tableInfo.getFkColumn()+ "=#{" + FK_PARAM_NAME +"}";
     }
 
     /*

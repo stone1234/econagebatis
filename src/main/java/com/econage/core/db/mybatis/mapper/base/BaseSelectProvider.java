@@ -2,7 +2,6 @@ package com.econage.core.db.mybatis.mapper.base;
 
 import com.econage.core.db.mybatis.MybatisException;
 import com.econage.core.db.mybatis.entity.TableInfo;
-import com.econage.core.db.mybatis.mapper.base.SqlProviderHelper;
 import com.econage.core.db.mybatis.mapper.provider.MybatisProviderContext;
 import com.econage.core.db.mybatis.util.MybatisCollectionUtils;
 import org.apache.ibatis.annotations.Param;
@@ -11,8 +10,7 @@ import org.apache.ibatis.builder.annotation.ProviderMethodResolver;
 import java.io.Serializable;
 import java.util.Collection;
 
-import static com.econage.core.db.mybatis.mapper.MapperConst.ID_COLLECTION_PARAM_NAME;
-import static com.econage.core.db.mybatis.mapper.MapperConst.WHERE_LOGIC_PARAM_NAME;
+import static com.econage.core.db.mybatis.mapper.MapperConst.*;
 
 /*
 * SqlProvider已做增强
@@ -29,7 +27,7 @@ public class BaseSelectProvider implements ProviderMethodResolver {
         TableInfo tableInfo = context.getTableInfo();
         return "select " +tableInfo.getSelectColumns()+
                 " from " +tableInfo.getTableName()+
-                " where " +tableInfo.getKeyColumn()+"=#{" +tableInfo.getKeyProperty()+ "}";
+                " where " +tableInfo.getKeyColumn()+"=#{" +ID_PARAM_NAME+ "}";
     }
     public static String selectListByIds(
             MybatisProviderContext context,
