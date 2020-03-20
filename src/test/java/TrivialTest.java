@@ -1,5 +1,6 @@
 import com.econage.core.db.mybatis.mapper.DynaBeanMapper;
 import com.econage.core.db.mybatis.mapper.dyna.entity.DynaClass;
+import com.econage.core.db.mybatis.pagination.Pagination;
 import entity.TestEntity;
 import entity.TestMapper;
 import entity.TestShardingMapper;
@@ -12,6 +13,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Collection;
+import java.util.List;
 
 public class TrivialTest {
     @Test
@@ -77,11 +79,13 @@ public class TrivialTest {
         entity.setFk("aa");
         entity.setText1("1");
         entity.setText2(null);
+        entity.setText3(Locale.CHINA);
 
         mapper.insert(entity);
 
         entity.setId(null);
         entity.setText2(null);
+        entity.setText3(null);
         mapper.insertAllColumn(entity);*/
 /*
         mapper.deleteById("1187319930285559810");
@@ -97,17 +101,18 @@ public class TrivialTest {
         entity.setText1("aaaaaa");
         mapper.updatePartialColumnById(entity, Arrays.asList("text1"));*/
 
-        TestEntity entity = new TestEntity();
+        /*TestEntity entity = new TestEntity();
         entity.setText1("eeeeeeee");
         TestWhereLogic whereLogic = new TestWhereLogic();
         whereLogic.setText1("aaaaaa");
-        mapper.updateBatchByWhereLogic(entity,whereLogic);
+        mapper.updateBatchByWhereLogic(entity,whereLogic);*/
 
         /*mapper.selectById("1187323606815277058");
         mapper.selectListByIds(Collections.singletonList("1187323606815277058"));
         mapper.selectListByFk(Collections.singletonList("1187323606815277058"),null);
-        mapper.selectListByPage(Pagination.newPaginationWithPageRows(1,30));
+
         mapper.selectListByPage(null);*/
+        List rs = mapper.selectListByPage(Pagination.newPaginationWithPageRows(1,30));
         /*TestWhereLogic whereLogic = new TestWhereLogic();
         whereLogic.setText1("eeeeeeee");
         mapper.selectCountByWhereLogic(whereLogic);*/

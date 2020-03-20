@@ -37,12 +37,9 @@ public class LocaleTypeHandler extends BaseTypeHandler<Locale> {
     }
 
     private Locale toLocale(String localeStr){
-        if(MybatisStringUtils.isEmpty(localeStr)){
-            //如果本地语言为空，则处理为简体中文;
-            return Locale.CHINA;
-        }else{
-            return Locale.forLanguageTag(localeStr);
-        }
+        return MybatisStringUtils.isNotEmpty(localeStr)?
+                Locale.forLanguageTag(localeStr):
+                null;
     }
 
 }
