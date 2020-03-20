@@ -1,7 +1,7 @@
 package com.econage.core.db.mybatis.mapper.dyna.entity;
 
 
-import org.apache.commons.lang3.StringUtils;
+import com.econage.core.db.mybatis.util.MybatisStringUtils;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -57,7 +57,7 @@ public class DynaClass implements Serializable {
     }
 
     public DynaColumn getDynaProperty(final String name) {
-        if (StringUtils.isEmpty(name)) {
+        if (MybatisStringUtils.isEmpty(name)) {
             throw new IllegalArgumentException("No property name specified");
         }
         return columnsMap.get(name);

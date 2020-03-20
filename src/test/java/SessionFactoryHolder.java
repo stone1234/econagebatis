@@ -61,8 +61,6 @@ public class SessionFactoryHolder {
         configuration.setLogImpl(StdOutImpl.class);
 
         globalAssistant.setDbType(DBType.MYSQL8);
-        //spring环境忽略包扫描
-        globalAssistant.ignoreScanPackage();
 
         configuration.addMapper(TestMapper.class);
         configuration.addMapper(TestShardingMapper.class);

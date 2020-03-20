@@ -1,7 +1,6 @@
 package com.econage.core.db.mybatis.util;
 
 import com.econage.core.db.mybatis.enums.IEnum;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.Objects;
 
@@ -34,7 +33,7 @@ public class MybatisIEnumUtils {
                         ((Number) value).doubleValue() == ((Number) iEnum.getValue()).doubleValue()) {
                     return iEnum;
                 }
-            } else if(StringUtils.equals(
+            } else if(MybatisStringUtils.equals(
                     String.valueOf(value),
                     String.valueOf(iEnum.getValue())
             )) {

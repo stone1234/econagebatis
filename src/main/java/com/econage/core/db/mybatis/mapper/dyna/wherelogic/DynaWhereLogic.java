@@ -1,9 +1,9 @@
 package com.econage.core.db.mybatis.mapper.dyna.wherelogic;
 
 import com.econage.core.db.mybatis.mapper.MapperConst;
+import com.econage.core.db.mybatis.util.MybatisArrayUtils;
 import com.econage.core.db.mybatis.util.MybatisSqlUtils;
 import com.econage.core.db.mybatis.uuid.IdWorker;
-import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.*;
 
@@ -74,7 +74,7 @@ public class DynaWhereLogic {
         return boundSqlList;
     }
     public String[] getBoundSqlArray(){
-        return boundSqlList.toArray(ArrayUtils.EMPTY_STRING_ARRAY);
+        return boundSqlList.toArray(MybatisArrayUtils.EMPTY_STRING_ARRAY);
     }
     public Map<String,Object> getBoundParams(){
         return boundParams;

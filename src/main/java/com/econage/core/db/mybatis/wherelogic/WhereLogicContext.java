@@ -1,7 +1,7 @@
 package com.econage.core.db.mybatis.wherelogic;
 
 import com.econage.core.db.mybatis.util.MybatisSqlUtils;
-import org.apache.commons.lang3.StringUtils;
+import com.econage.core.db.mybatis.util.MybatisStringUtils;
 
 import java.util.Collection;
 import java.util.Map;
@@ -39,7 +39,7 @@ public class WhereLogicContext {
     public String parseCollection(String itemName, Collection<?> typeParams){
 
         return MybatisSqlUtils.formatCollection2ParameterMappings(
-                StringUtils.EMPTY,StringUtils.EMPTY,itemName,
+                MybatisStringUtils.EMPTY,MybatisStringUtils.EMPTY,itemName,
                 typeParams,
                 additionalMap
         );

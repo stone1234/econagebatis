@@ -1,6 +1,6 @@
 package com.econage.core.db.mybatis.wherelogic;
 
-import org.apache.commons.lang3.StringUtils;
+import com.econage.core.db.mybatis.util.MybatisStringUtils;
 import org.apache.ibatis.parsing.TokenHandler;
 
 /*
@@ -15,6 +15,6 @@ public class TokenReplaceHandler implements TokenHandler {
 
     @Override
     public String handleToken(String content) {
-        return "#{"+namespace +"."+ StringUtils.trim(content)+"}";
+        return "#{"+namespace +"."+ MybatisStringUtils.trim(content)+"}";
     }
 }

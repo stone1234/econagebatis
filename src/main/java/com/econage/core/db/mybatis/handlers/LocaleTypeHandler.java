@@ -1,7 +1,6 @@
 package com.econage.core.db.mybatis.handlers;
 
 import com.econage.core.db.mybatis.util.MybatisStringUtils;
-import org.apache.commons.lang3.LocaleUtils;
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
 
@@ -16,7 +15,7 @@ public class LocaleTypeHandler extends BaseTypeHandler<Locale> {
 
     @Override
     public void setNonNullParameter(PreparedStatement ps, int i, Locale parameter, JdbcType jdbcType) throws SQLException {
-        ps.setString(i,parameter.toString());
+        ps.setString(i,parameter.toLanguageTag());
     }
 
     @Override
@@ -42,7 +41,7 @@ public class LocaleTypeHandler extends BaseTypeHandler<Locale> {
             //如果本地语言为空，则处理为简体中文;
             return Locale.CHINA;
         }else{
-            return LocaleUtils.toLocale(localeStr);
+            return Locale.forLanguageTag(localeStr);
         }
     }
 

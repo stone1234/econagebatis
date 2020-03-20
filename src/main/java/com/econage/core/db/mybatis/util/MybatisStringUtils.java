@@ -48,6 +48,7 @@ public class MybatisStringUtils {
     public static final String UNDERLINE_STR = "_";
 
     public static final char UNDERLINE = '_';
+    public static final int INDEX_NOT_FOUND = -1;
 
     /**
      * 占位符
@@ -59,6 +60,70 @@ public class MybatisStringUtils {
 
 
     private MybatisStringUtils() {
+    }
+
+    public static boolean equals(final CharSequence cs1, final CharSequence cs2) {
+        if (cs1 == cs2) {
+            return true;
+        }
+        if (cs1 == null || cs2 == null) {
+            return false;
+        }
+        if (cs1.length() != cs2.length()) {
+            return false;
+        }
+        if (cs1 instanceof String && cs2 instanceof String) {
+            return cs1.equals(cs2);
+        }
+        // Step-wise comparison
+        final int length = cs1.length();
+        for (int i = 0; i < length; i++) {
+            if (cs1.charAt(i) != cs2.charAt(i)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static String replace(final String text, final String searchString, final String replacement) {
+        return replace(text, searchString, replacement, -1);
+    }
+    public static String replace(final String text, final String searchString, final String replacement, final int max) {
+        return replace(text, searchString, replacement, max, false);
+    }
+    private static String replace(final String text, String searchString, final String replacement, int max, final boolean ignoreCase) {
+        if (isEmpty(text) || isEmpty(searchString) || replacement == null || max == 0) {
+            return text;
+        }
+        String searchText = text;
+        if (ignoreCase) {
+            searchText = text.toLowerCase();
+            searchString = searchString.toLowerCase();
+        }
+        int start = 0;
+        int end = searchText.indexOf(searchString, start);
+        if (end == INDEX_NOT_FOUND) {
+            return text;
+        }
+        final int replLength = searchString.length();
+        int increase = replacement.length() - replLength;
+        increase = increase < 0 ? 0 : increase;
+        increase *= max < 0 ? 16 : max > 64 ? 64 : max;
+        final StringBuilder buf = new StringBuilder(text.length() + increase);
+        while (end != INDEX_NOT_FOUND) {
+            buf.append(text, start, end).append(replacement);
+            start = end + replLength;
+            if (--max == 0) {
+                break;
+            }
+            end = searchText.indexOf(searchString, start);
+        }
+        buf.append(text, start, text.length());
+        return buf.toString();
+    }
+
+    public static String trim(final String str) {
+        return str == null ? null : str.trim();
     }
 
     /**

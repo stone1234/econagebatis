@@ -1,6 +1,6 @@
 package com.econage.core.db.mybatis.wherelogic;
 
-import org.apache.commons.lang3.StringUtils;
+import com.econage.core.db.mybatis.util.MybatisStringUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,18 +37,18 @@ public class WhereLogicInfo {
     }
 
     public String getFieldWhereLogic(String property){
-        if(StringUtils.isEmpty(property)){
-            return StringUtils.EMPTY;
+        if(MybatisStringUtils.isEmpty(property)){
+            return MybatisStringUtils.EMPTY;
         }
         WhereLogicFieldInfo formFieldInfo = propertyWhereMap.get(property);
         if(formFieldInfo==null){
-            return StringUtils.EMPTY;
+            return MybatisStringUtils.EMPTY;
         }
         return formFieldInfo.getWhereLogic();
     }
 
     public boolean isPrimitiveInProperty(String property){
-        if(StringUtils.isEmpty(property)){
+        if(MybatisStringUtils.isEmpty(property)){
             throw new IllegalArgumentException(" property is null! ");
         }
         WhereLogicFieldInfo formFieldInfo = propertyWhereMap.get(property);

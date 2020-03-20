@@ -5,9 +5,6 @@ import com.econage.core.db.mybatis.adaptation.MybatisGlobalAssistant;
 import com.econage.core.db.mybatis.annotations.WhereLogic;
 import com.econage.core.db.mybatis.annotations.WhereLogicField;
 import com.econage.core.db.mybatis.util.*;
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.parsing.GenericTokenParser;
@@ -118,7 +115,7 @@ public class MybatisWhereLogicHelper {
                     return;
                 }
 
-                wherePart.add(StringUtils.replace(
+                wherePart.add(MybatisStringUtils.replace(
                         whereLogicFieldInfo.getWhereLogic(),
                         MybatisStringUtils.WHERE_LOGIC_COLLECTION_REPLACE,
                         MybatisSqlUtils.formatCollection2ParameterMappings(property, collectionVal, additionMap)
@@ -130,7 +127,7 @@ public class MybatisWhereLogicHelper {
             * 如果字段是数字，则判断是否为空
             * */
             if(CharSequence.class.isAssignableFrom(whereLogicFieldInfo.getType())
-             &&StringUtils.isEmpty((CharSequence)propertyVal)){
+             &&MybatisStringUtils.isEmpty((CharSequence)propertyVal)){
                 return;
             }
 
@@ -146,12 +143,12 @@ public class MybatisWhereLogicHelper {
     /* 是否对应原型里的0值*/
     private static Character ZERO_CHAR = (char) 0;
     private static boolean isZero(Object propertyVal){
-        return Objects.equals(NumberUtils.LONG_ZERO,propertyVal)
-                ||Objects.equals(NumberUtils.INTEGER_ZERO,propertyVal)
-                ||Objects.equals(NumberUtils.SHORT_ZERO,propertyVal)
-                ||Objects.equals(NumberUtils.BYTE_ZERO,propertyVal)
-                ||Objects.equals(NumberUtils.FLOAT_ZERO,propertyVal)
-                ||Objects.equals(NumberUtils.DOUBLE_ZERO,propertyVal)
+        return Objects.equals(MybatisNumberUtils.LONG_ZERO,propertyVal)
+                ||Objects.equals(MybatisNumberUtils.INTEGER_ZERO,propertyVal)
+                ||Objects.equals(MybatisNumberUtils.SHORT_ZERO,propertyVal)
+                ||Objects.equals(MybatisNumberUtils.BYTE_ZERO,propertyVal)
+                ||Objects.equals(MybatisNumberUtils.FLOAT_ZERO,propertyVal)
+                ||Objects.equals(MybatisNumberUtils.DOUBLE_ZERO,propertyVal)
                 ||Objects.equals(Boolean.FALSE,propertyVal)
                 ||Objects.equals(ZERO_CHAR,propertyVal);
     }
@@ -163,21 +160,21 @@ public class MybatisWhereLogicHelper {
 
         Class<?> objCls = obj.getClass();
         if(objCls==long[].class){
-            return Arrays.asList( ArrayUtils.toObject( (long[])obj ));
+            return Arrays.asList( MybatisArrayUtils.toObject( (long[])obj ));
         }else if(objCls==int[].class){
-            return Arrays.asList( ArrayUtils.toObject( (int[])obj ));
+            return Arrays.asList( MybatisArrayUtils.toObject( (int[])obj ));
         }else if(objCls==short[].class){
-            return Arrays.asList( ArrayUtils.toObject( (short[])obj ));
+            return Arrays.asList( MybatisArrayUtils.toObject( (short[])obj ));
         }else if(objCls==byte[].class){
-            return Arrays.asList( ArrayUtils.toObject( (byte[])obj ));
+            return Arrays.asList( MybatisArrayUtils.toObject( (byte[])obj ));
         }else if(objCls==float[].class){
-            return Arrays.asList( ArrayUtils.toObject( (float[])obj ));
+            return Arrays.asList( MybatisArrayUtils.toObject( (float[])obj ));
         }else if(objCls==double[].class){
-            return Arrays.asList( ArrayUtils.toObject( (double[])obj ));
+            return Arrays.asList( MybatisArrayUtils.toObject( (double[])obj ));
         }else if(objCls==boolean[].class){
-            return Arrays.asList( ArrayUtils.toObject( (boolean[])obj ));
+            return Arrays.asList( MybatisArrayUtils.toObject( (boolean[])obj ));
         }else if(objCls==char[].class){
-            return Arrays.asList( ArrayUtils.toObject( (char[])obj ));
+            return Arrays.asList( MybatisArrayUtils.toObject( (char[])obj ));
         }else{
             return Arrays.asList( (Object[])obj );
             //throw new IllegalArgumentException("Not a array object");
@@ -208,7 +205,7 @@ public class MybatisWhereLogicHelper {
             //java中几类原型数据，默认是0值。0值很多时候数据库会有业务逻辑，此处通过注解控制，是否使用0
             whereLogicFieldInfo.setUsePrimitiveZero(whereLogicField.usePrimitiveZero());
         }
-        if(whereLogicField !=null&& StringUtils.isNotEmpty(whereLogicField.column())){
+        if(whereLogicField !=null&& MybatisStringUtils.isNotEmpty(whereLogicField.column())){
             whereLogicFieldInfo.setColumn(whereLogicField.column());
         }else{
             whereLogicFieldInfo.setColumn(globalAssistant.formatColumn(field.getName()));
@@ -218,14 +215,14 @@ public class MybatisWhereLogicHelper {
         /*
         * 整理where部分语句，如果是集合，则需要使用特殊替换另外处理，如果注解有自己的解析语句，则使用注解的信息
         * */
-        if(whereLogicField !=null&& StringUtils.isNotEmpty(whereLogicField.wherePart())){
+        if(whereLogicField !=null&& MybatisStringUtils.isNotEmpty(whereLogicField.wherePart())){
             //将语句中的替换符添加前缀
             whereLogicFieldInfo.setWhereLogic(WHERE_LOGIC_FIELD_TOKEN_PARSER.parse(whereLogicField.wherePart()));
         }else{
             if(whereLogicFieldInfo.isCollectionType()||whereLogicFieldInfo.isArrayType()){
                 whereLogicFieldInfo.setWhereLogic(whereLogicFieldInfo.getColumn()+" in ( "+ MybatisStringUtils.WHERE_LOGIC_COLLECTION_REPLACE+" )");
             }else{
-                whereLogicFieldInfo.setWhereLogic(whereLogicFieldInfo.getColumn()+"=#{"+ WHERE_LOGIC_PARAM_NAME+"."+StringUtils.trim(whereLogicFieldInfo.getProperty())+"}");
+                whereLogicFieldInfo.setWhereLogic(whereLogicFieldInfo.getColumn()+"=#{"+ WHERE_LOGIC_PARAM_NAME+"."+MybatisStringUtils.trim(whereLogicFieldInfo.getProperty())+"}");
             }
         }
 

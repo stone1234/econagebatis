@@ -18,15 +18,13 @@ package com.econage.core.db.mybatis.util;
 import com.econage.core.db.mybatis.MybatisPackageInfo;
 import com.econage.core.db.mybatis.mapper.BaseMapper;
 import com.econage.core.db.mybatis.mapper.ShardingMapper;
-import org.apache.commons.lang3.ClassUtils;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * ClassUtils
@@ -110,7 +108,7 @@ public class MybatisClassUtils {
             return null;
         }
 
-        List<Class<?>> allInterfaces =  ClassUtils.getAllInterfaces(mapperClsInService);
+        List<Class<?>> allInterfaces =  getAllInterfaces(mapperClsInService);
         for(Class<?> singleInterface : allInterfaces){
             /*
              * 接口继承了BaseMapper
@@ -129,6 +127,38 @@ public class MybatisClassUtils {
             }
         }
         return null;
+    }
+
+
+    public static List<Class<?>> getAllInterfaces(final Class<?> cls) {
+        if (cls == null) {
+            return null;
+        }
+
+        final LinkedHashSet<Class<?>> interfacesFound = new LinkedHashSet<>();
+        getAllInterfaces(cls, interfacesFound);
+
+        return new ArrayList<>(interfacesFound);
+    }
+
+    /**
+     * Get the interfaces for the specified class.
+     *
+     * @param cls  the class to look up, may be {@code null}
+     * @param interfacesFound the {@code Set} of interfaces for the class
+     */
+    private static void getAllInterfaces(Class<?> cls, final HashSet<Class<?>> interfacesFound) {
+        while (cls != null) {
+            final Class<?>[] interfaces = cls.getInterfaces();
+
+            for (final Class<?> i : interfaces) {
+                if (interfacesFound.add(i)) {
+                    getAllInterfaces(i, interfacesFound);
+                }
+            }
+
+            cls = cls.getSuperclass();
+        }
     }
 
     private static final Set<Class<?>> ALL_PRIMITIVE_WRAPPER_TYPES = MybatisPrimitives.allWrapperTypes();

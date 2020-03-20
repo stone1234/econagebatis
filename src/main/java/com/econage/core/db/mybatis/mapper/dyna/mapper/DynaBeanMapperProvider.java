@@ -6,7 +6,7 @@ import com.econage.core.db.mybatis.mapper.dyna.entity.DynaColumn;
 import com.econage.core.db.mybatis.mapper.dyna.wherelogic.DynaWhereLogic;
 import com.econage.core.db.mybatis.mapper.provider.MybatisProviderContext;
 import com.econage.core.db.mybatis.util.MybatisSqlUtils;
-import org.apache.commons.lang3.StringUtils;
+import com.econage.core.db.mybatis.util.MybatisStringUtils;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.builder.annotation.ProviderMethodResolver;
 import org.apache.ibatis.jdbc.SQL;
@@ -144,7 +144,7 @@ public class DynaBeanMapperProvider implements ProviderMethodResolver {
             String dynaColumnName = dynaColumn.getName();
             Object propertyVal = entity.get(dynaColumn.getName());
             String propertyInBoundSQL = formatPropertyInBoundSQL(dynaColumnName);
-            if(StringUtils.equals(idColumn,dynaColumnName)){
+            if(MybatisStringUtils.equals(idColumn,dynaColumnName)){
                 context.setAdditionalParam(propertyInBoundSQL,propertyVal);
                 sql.WHERE(dynaColumnName+"="+ MybatisSqlUtils.formatBoundParameter(propertyInBoundSQL));
             }else{
@@ -178,7 +178,7 @@ public class DynaBeanMapperProvider implements ProviderMethodResolver {
             String dynaColumnName = dynaColumn.getName();
             Object propertyVal = entity.get(dynaColumn.getName());
             String propertyInBoundSQL = formatPropertyInBoundSQL(dynaColumnName);
-            if(StringUtils.equals(idColumn,dynaColumnName)){
+            if(MybatisStringUtils.equals(idColumn,dynaColumnName)){
                 context.setAdditionalParam(propertyInBoundSQL,propertyVal);
                 sql.WHERE(dynaColumnName+"="+ MybatisSqlUtils.formatBoundParameter(propertyInBoundSQL));
             }else{
@@ -206,7 +206,7 @@ public class DynaBeanMapperProvider implements ProviderMethodResolver {
             String dynaColumnName = dynaColumn.getName();
             Object propertyVal = entity.get(dynaColumn.getName());
             String propertyInBoundSQL = formatPropertyInBoundSQL(dynaColumnName);
-            if(StringUtils.equals(idColumn,dynaColumnName)){
+            if(MybatisStringUtils.equals(idColumn,dynaColumnName)){
                 context.setAdditionalParam(propertyInBoundSQL,propertyVal);
                 sql.WHERE(dynaColumnName+"="+ MybatisSqlUtils.formatBoundParameter(propertyInBoundSQL));
             }else{
@@ -241,7 +241,7 @@ public class DynaBeanMapperProvider implements ProviderMethodResolver {
         for(DynaColumn dynaColumn : dynaClass.getDynaColumns()){
             String dynaColumnName = dynaColumn.getName();
             Object propertyVal = entity.get(dynaColumn.getName());
-            if(!StringUtils.equals(idColumn,dynaColumnName)&&propertyVal!=null){
+            if(!MybatisStringUtils.equals(idColumn,dynaColumnName)&&propertyVal!=null){
                 String propertyInBoundSQL = formatPropertyInBoundSQL(dynaColumnName);
                 context.setAdditionalParam(propertyInBoundSQL,propertyVal);
                 sql.SET(dynaColumnName+"="+ MybatisSqlUtils.formatBoundParameter(propertyInBoundSQL));
@@ -276,7 +276,7 @@ public class DynaBeanMapperProvider implements ProviderMethodResolver {
         for(DynaColumn dynaColumn : dynaClass.getDynaColumns()){
             String dynaColumnName = dynaColumn.getName();
             Object propertyVal = entity.get(dynaColumn.getName());
-            if(!StringUtils.equals(idColumn,dynaColumnName)){
+            if(!MybatisStringUtils.equals(idColumn,dynaColumnName)){
                 String propertyInBoundSQL = formatPropertyInBoundSQL(dynaColumnName);
                 context.setAdditionalParam(propertyInBoundSQL,propertyVal);
                 sql.SET(dynaColumnName+"="+ MybatisSqlUtils.formatBoundParameter(propertyInBoundSQL));
@@ -312,7 +312,7 @@ public class DynaBeanMapperProvider implements ProviderMethodResolver {
         for(DynaColumn dynaColumn : dynaClass.getDynaColumns()){
             String dynaColumnName = dynaColumn.getName();
             Object propertyVal = entity.get(dynaColumn.getName());
-            if(!StringUtils.equals(idColumn,dynaColumnName)&&propertyVal!=null&&propertyNameArray.contains(dynaColumnName)){
+            if(!MybatisStringUtils.equals(idColumn,dynaColumnName)&&propertyVal!=null&&propertyNameArray.contains(dynaColumnName)){
                 String propertyInBoundSQL = formatPropertyInBoundSQL(dynaColumnName);
                 context.setAdditionalParam(propertyInBoundSQL,propertyVal);
                 sql.SET(dynaColumnName+"="+ MybatisSqlUtils.formatBoundParameter(propertyInBoundSQL));

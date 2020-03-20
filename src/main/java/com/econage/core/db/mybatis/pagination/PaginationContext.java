@@ -16,9 +16,9 @@
 package com.econage.core.db.mybatis.pagination;
 
 import com.econage.core.db.mybatis.enums.DBType;
+import com.econage.core.db.mybatis.util.MybatisArrayUtils;
 import com.econage.core.db.mybatis.util.MybatisSqlUtils;
 import com.econage.core.db.mybatis.util.MybatisStringUtils;
-import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,12 +51,12 @@ public class PaginationContext {
         }
         String[] sortArray = pagination.getSortName();
         String[] orderArray = pagination.getSortOrder();
-        if(ArrayUtils.isEmpty(sortArray)){
+        if(MybatisArrayUtils.isEmpty(sortArray)){
             return MybatisStringUtils.EMPTY;
         }
         List<String> sortColumnWithOrder = new ArrayList<>(sortArray.length);
         for(int i=0,l=sortArray.length;i<l;i++){
-            if(ArrayUtils.isNotEmpty(orderArray)){
+            if(MybatisArrayUtils.isNotEmpty(orderArray)){
                 sortColumnWithOrder.add(sortArray[i]+" "+orderArray[i]);
             }else{
                 sortColumnWithOrder.add(sortArray[i]);
@@ -74,8 +74,8 @@ public class PaginationContext {
     }
 
     public boolean isSortNumConsistent(){
-        return ArrayUtils.isEmpty(pagination.getSortName())
-             ||ArrayUtils.isEmpty(pagination.getSortOrder())
+        return MybatisArrayUtils.isEmpty(pagination.getSortName())
+             ||MybatisArrayUtils.isEmpty(pagination.getSortOrder())
              ||pagination.getSortName().length==pagination.getSortOrder().length;
     }
 

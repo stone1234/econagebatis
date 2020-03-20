@@ -7,8 +7,8 @@ import com.econage.core.db.mybatis.mapper.dyna.entity.DynaClass;
 import com.econage.core.db.mybatis.pagination.DialectFactory;
 import com.econage.core.db.mybatis.pagination.Pagination;
 import com.econage.core.db.mybatis.pagination.PaginationContext;
+import com.econage.core.db.mybatis.util.MybatisArrayUtils;
 import com.econage.core.db.mybatis.util.MybatisStringUtils;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.ibatis.cache.CacheKey;
 import org.apache.ibatis.cursor.Cursor;
 import org.apache.ibatis.executor.BatchResult;
@@ -209,7 +209,7 @@ public class MybatisExecutorMaster implements Executor {
             Map<String, Object> params = (Map<String, Object>) parameter;
             if(params.containsKey(MapperConst.DYNA_CLASS_PARAM_NAME)){
                 DynaClass dynaClazzObj = (DynaClass)params.get(MapperConst.DYNA_CLASS_PARAM_NAME);
-                if(ArrayUtils.isEmpty(pagination.getSortName())){
+                if(MybatisArrayUtils.isEmpty(pagination.getSortName())){
                     pagination.setSortName( dynaClazzObj.getIdColumn() );
                 }
                 //如果是动态bean环境，则不再推测TableInfo
@@ -227,7 +227,7 @@ public class MybatisExecutorMaster implements Executor {
             return;
         }
         //尝试填充空白排序列的情况
-        if(ArrayUtils.isEmpty(pagination.getSortName())){
+        if(MybatisArrayUtils.isEmpty(pagination.getSortName())){
             //如果未设置排序列，则以主键为准
             pagination.setSortName(tableInfo.getKeyColumn());
             return;

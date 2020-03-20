@@ -15,8 +15,6 @@
  */
 package com.econage.core.db.mybatis.util;
 
-import org.apache.commons.lang3.StringUtils;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +34,7 @@ public class MybatisSqlUtils {
             Map<String,Object> additionalMap
     ){
         return formatCollection2ParameterMappings(
-                StringUtils.EMPTY,StringUtils.EMPTY,item,
+                MybatisStringUtils.EMPTY,MybatisStringUtils.EMPTY,item,
                 typeParams,
                 additionalMap
         );
@@ -88,7 +86,7 @@ public class MybatisSqlUtils {
         return " "+MybatisStringUtils.join(stringCollection," and ")+" ";
     }
     public static String wherePartJoin(String prefix,Collection<String> stringCollection){
-        return (prefix!=null?prefix:StringUtils.EMPTY)+" "+MybatisStringUtils.join(stringCollection," and ")+" ";
+        return (prefix!=null?prefix:MybatisStringUtils.EMPTY)+" "+MybatisStringUtils.join(stringCollection," and ")+" ";
     }
 
     /**

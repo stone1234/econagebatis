@@ -27,7 +27,6 @@ import com.econage.core.db.mybatis.util.MybatisPreconditions;
 import com.econage.core.db.mybatis.util.MybatisStringUtils;
 import com.econage.core.db.mybatis.wherelogic.MybatisWhereLogicHelper;
 import com.econage.core.db.mybatis.wherelogic.WhereLogicInfo;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
@@ -75,11 +74,6 @@ public class MybatisGlobalAssistant implements Serializable {
     /*已经解析过的搜索表单类，会存在whereLogicInfoMap和excludeWhereLogicType中*/
     private final ConcurrentHashMap<Class<?>, WhereLogicInfo> whereLogicInfoMap = new ConcurrentHashMap<>(5000);
     private final Set<String> excludeWhereLogicType = new ConcurrentSkipListSet<>();
-
-    //如果忽略类的package扫描信息，则判断类是否是内置的组件
-    //在ioc环境中，容器会接管mapper的创建工作，不再需要packageNames辅助判断组件是否在合理范围内
-    private boolean ignoreScanPackages;
-    private String[] packageNames;
 
     private boolean globalCacheEnabled;
 
@@ -228,25 +222,6 @@ public class MybatisGlobalAssistant implements Serializable {
         return false;
     }
 
-    public void ignoreScanPackage(){
-        this.ignoreScanPackages = true;
-    }
-
-    public void setScanPackages(Class<?>... cls){
-        if(ignoreScanPackages){
-            return;
-        }
-
-        if(ArrayUtils.isEmpty(cls)){
-            throw new IllegalArgumentException("class is null or empty!");
-        }
-        String[] packageNames = new String[cls.length];
-        for(int idx=0,len=cls.length;idx<len;idx++){
-            packageNames[idx]= MybatisClassUtils.getPackageName(cls[idx]);
-        }
-        this.packageNames = packageNames;
-    }
-
     public TableInfo saveAndGetTableInfoByMapper(Class<?> mapperClass) {
         if(!isMapperClass(mapperClass)){
             return null;
@@ -274,9 +249,6 @@ public class MybatisGlobalAssistant implements Serializable {
 
         if(modelTableInfoMap.containsKey(modelClass)){
             return modelTableInfoMap.get(modelClass);
-        }
-        if(!isModelClassInScanPackage(modelClass)){
-            return null;
         }
         TableInfo tableInfo = MybatisTableInfoHelper.parseTableInfo(this,modelClass);
         modelTableInfoMap.putIfAbsent(modelClass,tableInfo);
@@ -344,30 +316,6 @@ public class MybatisGlobalAssistant implements Serializable {
         if(properties!=null){
             disabledPropertyInDefaultUpdateMethod.addAll(properties);
         }
-    }
-
-    //处于业务程序的类，都可以视为有效的model类
-    private boolean isModelClassInScanPackage(Class<?> modelClazz){
-        MybatisPreconditions.checkNotNull(modelClazz,"class is null!");
-        //如果再例外包以外，则直接返回false
-        if(MybatisClassUtils.excludeClazzPrefix4ModelParseStatic(modelClazz)){
-            return false;
-        }
-        //如果忽略类的package扫描信息，则直接返回
-        if(ignoreScanPackages){
-            return true;
-        }
-        if(packageNames==null){
-            throw new IllegalStateException("not scan package!");
-        }
-        String modelName = modelClazz.getName();
-        for(String packageName:packageNames){
-            //框架类，不参与扫描
-            if(modelName.startsWith(packageName)){
-                return true;
-            }
-        }
-        return false;
     }
 
     public boolean isValidModel(Class<?> modelClass){
