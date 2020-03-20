@@ -1,4 +1,4 @@
-package com.econage.core.db.mybatis.mapper.base;
+package com.econage.core.db.mybatis.mapper.providerimpl;
 
 import com.econage.core.db.mybatis.MybatisException;
 import com.econage.core.db.mybatis.entity.TableInfo;
@@ -16,7 +16,7 @@ import static com.econage.core.db.mybatis.mapper.MapperConst.*;
 * SqlProvider已做增强
 * 不再使用MethodSqlSource，交由Mybatis解析sqlsource
 * */
-public class BaseSelectProvider implements ProviderMethodResolver {
+public class SelectProviderImpl implements ProviderMethodResolver {
 
     /*
      * --------------------------------基础方法
@@ -26,7 +26,7 @@ public class BaseSelectProvider implements ProviderMethodResolver {
     ){
         TableInfo tableInfo = context.getTableInfo();
         return "select " +tableInfo.getSelectColumns()+
-                " from " +tableInfo.getTableName()+
+                " from " +context.getRuntimeTableName()+
                 " where " +tableInfo.getKeyColumn()+"=#{" +ID_PARAM_NAME+ "}";
     }
     public static String selectListByIds(
@@ -37,7 +37,7 @@ public class BaseSelectProvider implements ProviderMethodResolver {
 
         StringBuilder sqlBuf = new StringBuilder()
                 .append("select ").append(tableInfo.getSelectColumns())
-                .append(" from ").append( tableInfo.getTableName());
+                .append(" from ").append( context.getRuntimeTableName() );
         if(MybatisCollectionUtils.isEmpty(idList)){
             //如果参数为空，则返回一个查不出任何结果的sql
             return sqlBuf.append(SqlProviderHelper.STATIC_FALSE_WHERE).toString();
@@ -50,7 +50,7 @@ public class BaseSelectProvider implements ProviderMethodResolver {
     ){
         TableInfo tableInfo = context.getTableInfo();
         return "select " + tableInfo.getSelectColumns() +
-                " from " + tableInfo.getTableName();
+                " from " + context.getRuntimeTableName();
     }
 
     public static String selectCountAll(
@@ -67,7 +67,7 @@ public class BaseSelectProvider implements ProviderMethodResolver {
         TableInfo tableInfo = context.getTableInfo();
         StringBuilder sqlBuf = new StringBuilder()
                 .append("select ").append(tableInfo.getSelectColumns())
-                .append(" from ").append( tableInfo.getTableName());
+                .append(" from ").append( context.getRuntimeTableName() );
 
         if(MybatisCollectionUtils.isEmpty(fkCollection)){
             //如果参数为空，则返回一个查不出任何结果的sql
@@ -116,7 +116,7 @@ public class BaseSelectProvider implements ProviderMethodResolver {
             String selectCols
     ){
         return " select " + selectCols +
-                " from " + context.getTableName() +
+                " from " + context.getRuntimeTableName() +
                 SqlProviderHelper.parseWhereLogic(context, whereLogic);
     }
     /*

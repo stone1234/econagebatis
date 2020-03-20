@@ -131,9 +131,7 @@ public class MybatisConfiguration extends Configuration {
             executor = new SimpleExecutor(this, transaction);
         }
 
-        if(globalAssistant.isPaginationEnabled()){
-            executor = new MybatisExecutorMaster(executor,this);
-        }
+        executor = new MybatisExecutorMaster(executor,this);
 
         executor = (Executor) interceptorChain.pluginAll(executor);
         return executor;

@@ -15,4 +15,6 @@ public interface MapperConst {
     String FK_COLLECTION_PARAM_NAME = "fks";
 
     String DYNA_BOUND_PARAM = "dbp";
+
+    String RUNTIME_TABLE_NAME = "_rt__Table___";
 }

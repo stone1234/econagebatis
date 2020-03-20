@@ -16,7 +16,7 @@
 package com.econage.core.db.mybatis.adaptation;
 
 import com.econage.core.db.mybatis.entity.TableInfo;
-import com.econage.core.db.mybatis.mapper.base.SqlProviderHelper;
+import com.econage.core.db.mybatis.mapper.providerimpl.SqlProviderHelper;
 import com.econage.core.db.mybatis.mapper.provider.MybatisProviderSqlSource;
 import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.annotations.ResultMap;

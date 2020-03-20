@@ -8,7 +8,7 @@
   <groupId>com.github.stone1234</groupId>
   <artifactId>econagebatis</artifactId>
   <packaging>jar</packaging>
-  <version>1.2.2</version>
+  <version>1.2.3</version>
   <name>${project.groupId}:${project.artifactId}</name>
   <description>Mybatis Enhancement</description>
   <url>https://github.com/stone1234/econagebatis</url>

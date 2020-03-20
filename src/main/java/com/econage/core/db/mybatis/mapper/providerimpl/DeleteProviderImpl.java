@@ -1,4 +1,4 @@
-package com.econage.core.db.mybatis.mapper.base;
+package com.econage.core.db.mybatis.mapper.providerimpl;
 
 import com.econage.core.db.mybatis.entity.TableInfo;
 import com.econage.core.db.mybatis.mapper.provider.MybatisProviderContext;
@@ -11,13 +11,13 @@ import java.util.Collection;
 
 import static com.econage.core.db.mybatis.mapper.MapperConst.*;
 
-public class BaseDeleteProvider implements ProviderMethodResolver {
+public class DeleteProviderImpl implements ProviderMethodResolver {
 
     public static String deleteById(
             MybatisProviderContext context
     ){
         TableInfo tableInfo = context.getTableInfo();
-        return "delete from " + tableInfo.getTableName()+
+        return "delete from " + context.getRuntimeTableName() +
                 " where " + tableInfo.getKeyColumn()+"=#{" + ID_PARAM_NAME +"}";
     }
 
@@ -28,7 +28,7 @@ public class BaseDeleteProvider implements ProviderMethodResolver {
         if(MybatisCollectionUtils.isEmpty(idList)){
             throw new IllegalArgumentException("parameter is empty!");
         }
-        return "delete from " +context.getTableName()+
+        return "delete from " +context.getRuntimeTableName()+
                 SqlProviderHelper.parseIdCollectionWherePart(context,idList);
     }
 
@@ -36,7 +36,7 @@ public class BaseDeleteProvider implements ProviderMethodResolver {
             MybatisProviderContext context
     ){
         TableInfo tableInfo = context.getTableInfo();
-        return "delete from " + tableInfo.getTableName()+
+        return "delete from " + context.getRuntimeTableName()+
                " where " + tableInfo.getFkColumn()+ "=#{" + FK_PARAM_NAME +"}";
     }
 
@@ -49,7 +49,7 @@ public class BaseDeleteProvider implements ProviderMethodResolver {
             @Param("param1") Object obj
     ){
         return "delete from "+
-                context.getTableName()+
+                context.getRuntimeTableName()+
                 SqlProviderHelper.parseWhereLogic(context, whereLogic);
     }
 }

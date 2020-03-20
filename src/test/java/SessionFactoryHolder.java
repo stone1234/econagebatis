@@ -4,6 +4,7 @@ import com.econage.core.db.mybatis.enums.DBType;
 import com.econage.core.db.mybatis.handlers.DefaultEnumTypeHandler;
 import com.econage.core.db.mybatis.handlers.LocaleTypeHandler;
 import entity.TestMapper;
+import entity.TestShardingMapper;
 import org.apache.ibatis.datasource.pooled.PooledDataSourceFactory;
 import org.apache.ibatis.logging.stdout.StdOutImpl;
 import org.apache.ibatis.mapping.Environment;
@@ -62,9 +63,9 @@ public class SessionFactoryHolder {
         globalAssistant.setDbType(DBType.MYSQL8);
         //spring环境忽略包扫描
         globalAssistant.ignoreScanPackage();
-        globalAssistant.setPaginationEnabled(true);
 
         configuration.addMapper(TestMapper.class);
+        configuration.addMapper(TestShardingMapper.class);
 
         return configuration;
     }

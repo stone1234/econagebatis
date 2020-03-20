@@ -17,6 +17,7 @@ package com.econage.core.db.mybatis.util;
 
 import com.econage.core.db.mybatis.MybatisPackageInfo;
 import com.econage.core.db.mybatis.mapper.BaseMapper;
+import com.econage.core.db.mybatis.mapper.ShardingMapper;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.logging.Log;
@@ -34,20 +35,30 @@ public class MybatisClassUtils {
 
     private static final Log logger = LogFactory.getLog(MybatisClassUtils.class);
 
+    public static boolean isTopMapperInterface(Class<?> clazz){
+        return BaseMapper.class==clazz||ShardingMapper.class==clazz;
+    }
+    public static boolean isAssignableFromTopMapperInterface(Class<?> clazz){
+        return BaseMapper.class.isAssignableFrom(clazz)
+                ||ShardingMapper.class.isAssignableFrom(clazz);
+    }
+
     public static Class<?> extractModelClass(Class<?> mapperClass) {
-        if (mapperClass == BaseMapper.class) {
-            logger.warn(" Current Class is BaseMapper ");
+        if (isTopMapperInterface(mapperClass)) {
+            logger.warn(" Current Class is BaseMapper or ShardingMapper");
             return null;
-        } else {
+        }else if(isAssignableFromTopMapperInterface(mapperClass)){
             Type[] types = mapperClass.getGenericInterfaces();
             ParameterizedType target = null;
             for (Type type : types) {
-                if (type instanceof ParameterizedType && BaseMapper.class.isAssignableFrom(mapperClass)) {
+                if (type instanceof ParameterizedType) {
                     target = (ParameterizedType) type;
                     break;
                 }
             }
             return target == null ? null : (Class<?>) target.getActualTypeArguments()[0];
+        } else {
+            return null;
         }
     }
 

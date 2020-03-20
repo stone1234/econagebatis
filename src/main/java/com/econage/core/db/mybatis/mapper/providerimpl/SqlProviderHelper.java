@@ -1,4 +1,4 @@
-package com.econage.core.db.mybatis.mapper.base;
+package com.econage.core.db.mybatis.mapper.providerimpl;
 
 import com.econage.core.db.mybatis.adaptation.MybatisConfiguration;
 import com.econage.core.db.mybatis.entity.TableFieldInfo;

@@ -1,9 +1,8 @@
-package com.econage.core.db.mybatis.mapper.base;
+package com.econage.core.db.mybatis.mapper.providerimpl;
 
 import com.econage.core.db.mybatis.MybatisException;
 import com.econage.core.db.mybatis.entity.TableFieldInfo;
 import com.econage.core.db.mybatis.entity.TableInfo;
-import com.econage.core.db.mybatis.mapper.base.SqlProviderHelper;
 import com.econage.core.db.mybatis.mapper.provider.MybatisProviderContext;
 import com.econage.core.db.mybatis.util.MybatisSqlUtils;
 import com.econage.core.db.mybatis.util.MybatisStringUtils;
@@ -18,7 +17,7 @@ import java.util.List;
 
 import static com.econage.core.db.mybatis.mapper.MapperConst.*;
 
-public class BaseUpdateProvider implements ProviderMethodResolver {
+public class UpdateProviderImpl implements ProviderMethodResolver {
 
     /*
      * -------------------------------------------基本方法
@@ -77,7 +76,7 @@ public class BaseUpdateProvider implements ProviderMethodResolver {
             wherePart = SqlProviderHelper.STATIC_WHERE_SQL_FRAGMENT+pkColWherePart;
         }
 
-        return " update " + context.getTableName() +
+        return " update " + context.getRuntimeTableName() +
                 " set " + MybatisSqlUtils.commaJoin(setParts)+
                 wherePart;
     }
@@ -150,7 +149,7 @@ public class BaseUpdateProvider implements ProviderMethodResolver {
         List<String> setParts = parseSqlSetPartByEntity(context.getTableInfo(),entityMetaObject,selective);
         handleVersion2SetOnBatch(context,entityMetaObject,setParts);
 
-        return " update " + context.getTableName() +
+        return " update " + context.getRuntimeTableName() +
                 " set " + MybatisSqlUtils.commaJoin(setParts)+
                 SqlProviderHelper.parseWhereLogic(context,whereLogic);
     }
@@ -165,7 +164,7 @@ public class BaseUpdateProvider implements ProviderMethodResolver {
         List<String> setParts = parseSqlSetPartByPartialCol(context.getTableInfo(),entityMetaObject,propertyNameArray);
         handleVersion2SetOnBatch(context,entityMetaObject,setParts);
 
-        return " update " + context.getTableName() +
+        return " update " + context.getRuntimeTableName() +
                 " set " + MybatisSqlUtils.commaJoin(setParts)+
                 SqlProviderHelper.parseWhereLogic(context,whereLogic);
     }

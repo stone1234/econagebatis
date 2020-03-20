@@ -3,7 +3,7 @@ import com.econage.core.db.mybatis.annotations.WhereLogicField;
 
 @WhereLogic
 public class TestWhereLogic {
-    @WhereLogicField(wherePart = "text1_ = #{ text1 }")
+    @WhereLogicField(wherePart = " text1_ like concat('%',#{text1},'%') ")
     private String text1;
 
     public String getText1() {

@@ -16,10 +16,10 @@
 package com.econage.core.db.mybatis.mapper;
 
 import com.econage.core.db.mybatis.entity.BasicEntity;
-import com.econage.core.db.mybatis.mapper.base.BaseDeleteProvider;
-import com.econage.core.db.mybatis.mapper.base.BaseInsertProvider;
-import com.econage.core.db.mybatis.mapper.base.BaseSelectProvider;
-import com.econage.core.db.mybatis.mapper.base.BaseUpdateProvider;
+import com.econage.core.db.mybatis.mapper.providerimpl.DeleteProviderImpl;
+import com.econage.core.db.mybatis.mapper.providerimpl.InsertProviderImpl;
+import com.econage.core.db.mybatis.mapper.providerimpl.SelectProviderImpl;
+import com.econage.core.db.mybatis.mapper.providerimpl.UpdateProviderImpl;
 import com.econage.core.db.mybatis.pagination.Pagination;
 import org.apache.ibatis.annotations.*;
 
@@ -41,7 +41,7 @@ public interface BaseMapper<T extends BasicEntity> {
      * @param entity 实体对象
      * @return int
      */
-    @InsertProvider(BaseInsertProvider.class)
+    @InsertProvider(InsertProviderImpl.class)
     Integer insert(@Param(ENTITY_PARAM_NAME) T entity);
 
     /**
@@ -52,7 +52,7 @@ public interface BaseMapper<T extends BasicEntity> {
      * @param entity 实体对象
      * @return int
      */
-    @InsertProvider(BaseInsertProvider.class)
+    @InsertProvider(InsertProviderImpl.class)
     Integer insertAllColumn(@Param(ENTITY_PARAM_NAME) T entity);
 
     /**
@@ -63,7 +63,7 @@ public interface BaseMapper<T extends BasicEntity> {
      * @param id 主键ID
      * @return int
      */
-    @DeleteProvider(BaseDeleteProvider.class)
+    @DeleteProvider(DeleteProviderImpl.class)
     Integer deleteById(@Param(ID_PARAM_NAME) Serializable id);
 
     /**
@@ -74,7 +74,7 @@ public interface BaseMapper<T extends BasicEntity> {
      * @param idList 主键ID列表
      * @return int
      */
-    @DeleteProvider(BaseDeleteProvider.class)
+    @DeleteProvider(DeleteProviderImpl.class)
     Integer deleteByIds(@Param(ID_COLLECTION_PARAM_NAME) Collection<? extends Serializable> idList);
 
     /**
@@ -85,7 +85,7 @@ public interface BaseMapper<T extends BasicEntity> {
      * @param fk 外键ID
      * @return int
      */
-    @DeleteProvider(BaseDeleteProvider.class)
+    @DeleteProvider(DeleteProviderImpl.class)
     Integer deleteByFk(@Param(FK_PARAM_NAME) Serializable fk);
 
     /**
@@ -96,7 +96,7 @@ public interface BaseMapper<T extends BasicEntity> {
      * @param whereLogic where逻辑
      * @return int
      */
-    @DeleteProvider(BaseDeleteProvider.class)
+    @DeleteProvider(DeleteProviderImpl.class)
     Integer deleteByWhereLogic(@Param(WHERE_LOGIC_PARAM_NAME) Object whereLogic);
 
     /**
@@ -107,7 +107,7 @@ public interface BaseMapper<T extends BasicEntity> {
      * @param entity 实体对象
      * @return int
      */
-    @UpdateProvider(BaseUpdateProvider.class)
+    @UpdateProvider(UpdateProviderImpl.class)
     Integer updateById(@Param(ENTITY_PARAM_NAME) T entity);
 
     /**
@@ -118,13 +118,13 @@ public interface BaseMapper<T extends BasicEntity> {
      * @param entity 实体对象
      * @return int
      */
-    @UpdateProvider(BaseUpdateProvider.class)
+    @UpdateProvider(UpdateProviderImpl.class)
     Integer updateAllColumnById(@Param(ENTITY_PARAM_NAME) T entity);
 
     /*
     * 根据id更新特定列
     * */
-    @UpdateProvider(BaseUpdateProvider.class)
+    @UpdateProvider(UpdateProviderImpl.class)
     Integer updatePartialColumnById(
             @Param(ENTITY_PARAM_NAME) T entity,
             @Param(PROPERTY_NAME_ARRAY_PARAM_NAME) Collection<String> propertyNameArray
@@ -141,7 +141,7 @@ public interface BaseMapper<T extends BasicEntity> {
      * @param whereLogic where逻辑
      * @return int
      */
-    @UpdateProvider(BaseUpdateProvider.class)
+    @UpdateProvider(UpdateProviderImpl.class)
     Integer updateBatchByWhereLogic(
             @Param(ENTITY_PARAM_NAME) T entity,
             @Param(WHERE_LOGIC_PARAM_NAME) Object whereLogic
@@ -159,7 +159,7 @@ public interface BaseMapper<T extends BasicEntity> {
      * @param whereLogic where逻辑
      * @return int
      */
-    @UpdateProvider(BaseUpdateProvider.class)
+    @UpdateProvider(UpdateProviderImpl.class)
     Integer updateBatchAllColumnByWhereLogic(
             @Param(ENTITY_PARAM_NAME) T entity,
             @Param(WHERE_LOGIC_PARAM_NAME) Object whereLogic
@@ -177,7 +177,7 @@ public interface BaseMapper<T extends BasicEntity> {
      * @param whereLogic where逻辑
      * @return int
      * */
-    @UpdateProvider(BaseUpdateProvider.class)
+    @UpdateProvider(UpdateProviderImpl.class)
     Integer updateBatchPartialColumnByWhereLogic(
             @Param(ENTITY_PARAM_NAME) T entity,
             @Param(PROPERTY_NAME_ARRAY_PARAM_NAME) Collection<String> propertyNameArray,
@@ -192,7 +192,7 @@ public interface BaseMapper<T extends BasicEntity> {
      * @param id 主键ID
      * @return T
      */
-    @SelectProvider(BaseSelectProvider.class)
+    @SelectProvider(SelectProviderImpl.class)
     T selectById(@Param(ID_PARAM_NAME) Serializable id);
 
     /**
@@ -203,37 +203,37 @@ public interface BaseMapper<T extends BasicEntity> {
      * @param idList 主键ID列表
      * @return List<T>
      */
-    @SelectProvider(BaseSelectProvider.class)
+    @SelectProvider(SelectProviderImpl.class)
     List<T> selectListByIds(@Param(ID_COLLECTION_PARAM_NAME) Collection<? extends Serializable> idList);
 
     /*
     * 按照主键分页显示，会自动侦测主键信息
     * */
-    @SelectProvider(BaseSelectProvider.class)
+    @SelectProvider(SelectProviderImpl.class)
     List<T> selectListByPage(Pagination pagination);
 
     /*
     * 获取总数
     * */
-    @SelectProvider(BaseSelectProvider.class)
+    @SelectProvider(SelectProviderImpl.class)
     Integer selectCountAll();
 
     /*
     *  按照外键信息，显示
     * */
-    @SelectProvider(BaseSelectProvider.class)
+    @SelectProvider(SelectProviderImpl.class)
     List<T> selectListByFk(@Param(ID_COLLECTION_PARAM_NAME) Collection<? extends Serializable> fkCollection,Pagination page);
 
     /*
     * 通用查询方法，可以做分页查询
     * */
-    @SelectProvider(BaseSelectProvider.class)
+    @SelectProvider(SelectProviderImpl.class)
     List<T> selectListByWhereLogic(@Param(WHERE_LOGIC_PARAM_NAME) Object whereLogic, Pagination page);
 
     /*
     * 通用计数方法
     * */
-    @SelectProvider(BaseSelectProvider.class)
+    @SelectProvider(SelectProviderImpl.class)
     Integer selectCountByWhereLogic(@Param(WHERE_LOGIC_PARAM_NAME) Object whereLogic);
 
 }

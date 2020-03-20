@@ -17,6 +17,7 @@ package com.econage.core.db.mybatis.mapper.provider;
 
 import com.econage.core.db.mybatis.adaptation.MybatisConfiguration;
 import com.econage.core.db.mybatis.entity.TableInfo;
+import com.econage.core.db.mybatis.mapper.ShardingMapper;
 import com.econage.core.db.mybatis.util.MybatisMapUtils;
 import org.apache.ibatis.annotations.Lang;
 import org.apache.ibatis.builder.BuilderException;
@@ -33,6 +34,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Map;
+
+import static com.econage.core.db.mybatis.mapper.MapperConst.RUNTIME_TABLE_NAME;
 
 public class MybatisProviderSqlSource implements SqlSource {
 
@@ -153,8 +156,7 @@ public class MybatisProviderSqlSource implements SqlSource {
 
   @Override
   public BoundSql getBoundSql(Object parameterObject) {
-    //todo 放了方便provider类中的方法，填充额外参数，每次调用时，复制一个MybatisProviderContext
-    MybatisProviderContext providerContext = providerContextTpl.clone();
+    MybatisProviderContext providerContext = newRuntimeProviderContext(parameterObject);
     //todo
     SqlSource sqlSource = createSqlSource(parameterObject,providerContext);
     BoundSql boundSql = sqlSource.getBoundSql(parameterObject);
@@ -165,6 +167,17 @@ public class MybatisProviderSqlSource implements SqlSource {
       }
     }
     return boundSql;
+  }
+
+  //todo
+  private MybatisProviderContext newRuntimeProviderContext(Object parameterObject){
+    //放了方便provider类中的方法，填充额外参数，每次调用时，复制一个MybatisProviderContext
+    MybatisProviderContext providerContext = providerContextTpl.clone();
+    //如果是分片mapper，并且包含运行时表名
+    if(ShardingMapper.class.isAssignableFrom(providerContext.getMapperType())&&parameterObject instanceof Map){
+      providerContext.setRuntimeTableName((String) ((Map) parameterObject).get(RUNTIME_TABLE_NAME));
+    }
+    return providerContext;
   }
 
   private SqlSource createSqlSource(

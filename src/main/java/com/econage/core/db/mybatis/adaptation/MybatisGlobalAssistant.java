@@ -20,7 +20,6 @@ import com.econage.core.db.mybatis.entity.TableInfo;
 import com.econage.core.db.mybatis.enums.DBType;
 import com.econage.core.db.mybatis.enums.FieldStrategy;
 import com.econage.core.db.mybatis.enums.IdType;
-import com.econage.core.db.mybatis.mapper.BaseMapper;
 import com.econage.core.db.mybatis.uid.dbincrementer.IKeyGenerator;
 import com.econage.core.db.mybatis.util.MybatisClassUtils;
 import com.econage.core.db.mybatis.util.MybatisJdbcUtils;
@@ -81,8 +80,6 @@ public class MybatisGlobalAssistant implements Serializable {
     //在ioc环境中，容器会接管mapper的创建工作，不再需要packageNames辅助判断组件是否在合理范围内
     private boolean ignoreScanPackages;
     private String[] packageNames;
-
-    private boolean paginationEnabled = true;
 
     private boolean globalCacheEnabled;
 
@@ -198,14 +195,6 @@ public class MybatisGlobalAssistant implements Serializable {
         this.globalCacheEnabled = globalCacheEnabled;
     }
 
-    public boolean isPaginationEnabled() {
-        return paginationEnabled;
-    }
-
-    public void setPaginationEnabled(boolean paginationEnabled) {
-        this.paginationEnabled = paginationEnabled;
-    }
-
     /*
     * todo 分布式缓存方案
     * */
@@ -229,9 +218,8 @@ public class MybatisGlobalAssistant implements Serializable {
 
     //仅处理接口，如果继承了BaseMapper或者有Mapper注解，则认为是一个mapper对象
     public boolean isMapperClass(Class<?> resolvedCls){
-        MybatisPreconditions.checkNotNull(resolvedCls,"mapper is null!");
-        if(resolvedCls.isInterface()&&BaseMapper.class!=resolvedCls){
-            if(BaseMapper.class.isAssignableFrom(resolvedCls)){
+        if(resolvedCls!=null&&resolvedCls.isInterface()&&!MybatisClassUtils.isTopMapperInterface(resolvedCls)){
+            if(MybatisClassUtils.isAssignableFromTopMapperInterface(resolvedCls)){
                 return true;
             }else if(resolvedCls.getAnnotation(Mapper.class)!=null){
                 return true;
@@ -260,7 +248,7 @@ public class MybatisGlobalAssistant implements Serializable {
     }
 
     public TableInfo saveAndGetTableInfoByMapper(Class<?> mapperClass) {
-        if(mapperClass==null||!BaseMapper.class.isAssignableFrom(mapperClass)){
+        if(!isMapperClass(mapperClass)){
             return null;
         }
         if(mapperTableInfoMap.containsKey(mapperClass)){

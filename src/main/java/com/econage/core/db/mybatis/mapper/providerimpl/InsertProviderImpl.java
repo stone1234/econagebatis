@@ -1,4 +1,4 @@
-package com.econage.core.db.mybatis.mapper.base;
+package com.econage.core.db.mybatis.mapper.providerimpl;
 
 import com.econage.core.db.mybatis.MybatisException;
 import com.econage.core.db.mybatis.entity.TableFieldInfo;
@@ -17,7 +17,7 @@ import java.util.List;
 
 import static com.econage.core.db.mybatis.mapper.MapperConst.ENTITY_PARAM_NAME;
 
-public class BaseInsertProvider implements ProviderMethodResolver {
+public class InsertProviderImpl implements ProviderMethodResolver {
 
 
     public static String insert(
@@ -72,7 +72,7 @@ public class BaseInsertProvider implements ProviderMethodResolver {
         }
 
 
-        return  "insert into " +tableInfo.getTableName()+
+        return  "insert into " +context.getRuntimeTableName()+
                 " ( " +MybatisSqlUtils.commaJoin(columns) +" ) " +
                 " values ( " +MybatisSqlUtils.commaJoin(parameterTokens)+" )";
     }

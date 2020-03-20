@@ -43,6 +43,8 @@ public final class MybatisProviderContext implements Cloneable {
   private final TableInfo tableInfo;
   /*todo */
   private Map<String,Object> additionalParam;
+  /*todo */
+  private String runtimeTableName;
 
   MybatisProviderContext(
           MybatisConfiguration configuration,
@@ -113,6 +115,17 @@ public final class MybatisProviderContext implements Cloneable {
     }else{
       return MybatisStringUtils.EMPTY;
     }
+  }
+
+  void setRuntimeTableName(String runtimeTableName) {
+    this.runtimeTableName = runtimeTableName;
+  }
+
+  public String getRuntimeTableName(){
+    if(MybatisStringUtils.isNotEmpty(runtimeTableName)){
+      return runtimeTableName;
+    }
+    return getTableName();
   }
 
   public TableInfo getTableInfo(){
