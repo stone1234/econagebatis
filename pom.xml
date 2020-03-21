@@ -5,13 +5,13 @@
 
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.github.stone1234</groupId>
+  <groupId>com.github.stoneforever</groupId>
   <artifactId>econagebatis</artifactId>
   <packaging>jar</packaging>
   <version>1.2.4</version>
   <name>${project.groupId}:${project.artifactId}</name>
   <description>Mybatis Enhancement</description>
-  <url>https://github.com/stone1234/econagebatis</url>
+  <url>https://github.com/stoneforever/econagebatis</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -36,9 +36,9 @@
     </developer>
   </developers>
   <scm>
-    <connection>scm:git:https://github.com/stone1234/econagebatis.git</connection>
-    <developerConnection>scm:git:https://github.com/stone1234/econagebatis.git</developerConnection>
-    <url>https://github.com/stone1234/econagebatis/tree/master</url>
+    <connection>scm:git:https://github.com/stoneforever/econagebatis.git</connection>
+    <developerConnection>scm:git:https://github.com/stoneforever/econagebatis.git</developerConnection>
+    <url>https://github.com/stoneforever/econagebatis/tree/master</url>
   </scm>
 
   <repositories>
