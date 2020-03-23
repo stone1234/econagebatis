@@ -1,5 +1,5 @@
-import com.econage.core.db.mybatis.wherelogic.WhereLogicContext;
-import com.econage.core.db.mybatis.wherelogic.WhereLogicParser;
+import com.flowyun.cornerstone.db.mybatis.wherelogic.WhereLogicContext;
+import com.flowyun.cornerstone.db.mybatis.wherelogic.WhereLogicParser;
 
 public class WhereLogicParser2 implements WhereLogicParser {
     @Override

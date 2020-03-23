@@ -1,5 +1,5 @@
-import com.econage.core.db.mybatis.annotations.WhereLogic;
-import com.econage.core.db.mybatis.annotations.WhereLogicField;
+import com.flowyun.cornerstone.db.mybatis.annotations.WhereLogic;
+import com.flowyun.cornerstone.db.mybatis.annotations.WhereLogicField;
 
 @WhereLogic
 public class TestWhereLogic {

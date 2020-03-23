@@ -1,8 +1,8 @@
-import com.econage.core.db.mybatis.adaptation.MybatisConfiguration;
-import com.econage.core.db.mybatis.adaptation.MybatisGlobalAssistant;
-import com.econage.core.db.mybatis.enums.DBType;
-import com.econage.core.db.mybatis.handlers.DefaultEnumTypeHandler;
-import com.econage.core.db.mybatis.handlers.LocaleTypeHandler;
+import com.flowyun.cornerstone.db.mybatis.adaptation.MybatisConfiguration;
+import com.flowyun.cornerstone.db.mybatis.adaptation.MybatisGlobalAssistant;
+import com.flowyun.cornerstone.db.mybatis.enums.DBType;
+import com.flowyun.cornerstone.db.mybatis.handlers.DefaultEnumTypeHandler;
+import com.flowyun.cornerstone.db.mybatis.handlers.LocaleTypeHandler;
 import entity.TestMapper;
 import entity.TestShardingMapper;
 import org.apache.ibatis.datasource.pooled.PooledDataSourceFactory;

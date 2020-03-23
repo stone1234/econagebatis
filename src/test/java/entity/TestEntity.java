@@ -1,8 +1,8 @@
 package entity;
 
-import com.econage.core.db.mybatis.annotations.TableDef;
-import com.econage.core.db.mybatis.annotations.TableField;
-import com.econage.core.db.mybatis.entity.BasicEntity;
+import com.flowyun.cornerstone.db.mybatis.annotations.TableDef;
+import com.flowyun.cornerstone.db.mybatis.annotations.TableField;
+import com.flowyun.cornerstone.db.mybatis.entity.BasicEntity;
 
 import java.util.Locale;
 

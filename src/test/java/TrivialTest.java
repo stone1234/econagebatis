@@ -1,6 +1,6 @@
-import com.econage.core.db.mybatis.mapper.DynaBeanMapper;
-import com.econage.core.db.mybatis.mapper.dyna.entity.DynaClass;
-import com.econage.core.db.mybatis.pagination.Pagination;
+import com.flowyun.cornerstone.db.mybatis.mapper.DynaBeanMapper;
+import com.flowyun.cornerstone.db.mybatis.mapper.dyna.entity.DynaClass;
+import com.flowyun.cornerstone.db.mybatis.pagination.Pagination;
 import entity.TestEntity;
 import entity.TestMapper;
 import entity.TestShardingMapper;
@@ -12,8 +12,9 @@ import org.junit.Test;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
+
+import static com.flowyun.cornerstone.db.mybatis.mapper.MapperConst.ENTITY_PARAM_NAME;
 
 public class TrivialTest {
     @Test
@@ -75,11 +76,18 @@ public class TrivialTest {
 
         TestMapper mapper = sqlSession.getMapper(TestMapper.class);
 
-        /*TestEntity entity = new TestEntity();
+        TestEntity entity = new TestEntity();
         entity.setFk("aa");
         entity.setText1("1");
         entity.setText2(null);
         entity.setText3(Locale.CHINA);
+        Map<String,Object> map = new HashMap<>();
+        map.put(ENTITY_PARAM_NAME,entity);
+
+
+        sqlSession.insert("entity.TestMapper.insert",map);
+
+        /*
 
         mapper.insert(entity);
 
