@@ -36,9 +36,9 @@
     </developer>
   </developers>
   <scm>
-    <connection>scm:git:https://github.com/stone1234/econagebatis.git</connection>
-    <developerConnection>scm:git:https://github.com/stone1234/econagebatis.git</developerConnection>
-    <url>https://github.com/stone1234/econagebatis/tree/master</url>
+    <connection>scm:git:https://github.com/stoneforever/econagebatis.git</connection>
+    <developerConnection>scm:git:https://github.com/stoneforever/econagebatis.git</developerConnection>
+    <url>https://github.com/stoneforever/econagebatis/tree/master</url>
   </scm>
 
   <repositories>
