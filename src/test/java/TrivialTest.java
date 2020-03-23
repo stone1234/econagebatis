@@ -1,7 +1,6 @@
 import com.flowyun.cornerstone.db.mybatis.mapper.DynaBeanMapper;
 import com.flowyun.cornerstone.db.mybatis.mapper.dyna.entity.DynaClass;
 import com.flowyun.cornerstone.db.mybatis.pagination.Pagination;
-import entity.TestEntity;
 import entity.TestMapper;
 import entity.TestShardingMapper;
 import org.apache.ibatis.reflection.TypeParameterResolver;
@@ -12,9 +11,8 @@ import org.junit.Test;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.*;
-
-import static com.flowyun.cornerstone.db.mybatis.mapper.MapperConst.ENTITY_PARAM_NAME;
+import java.util.Collection;
+import java.util.List;
 
 public class TrivialTest {
     @Test
@@ -61,11 +59,11 @@ public class TrivialTest {
         testWhereLogic.setText1("1");
         mapper.deleteByWhereLogic(rnTab,testWhereLogic);*/
 
-        TestEntity entity = new TestEntity();
+        /*TestEntity entity = new TestEntity();
         entity.setText1("eeeeeeee");
         TestWhereLogic whereLogic = new TestWhereLogic();
         whereLogic.setText1("aaaaaa");
-        mapper.updateBatchByWhereLogic(rnTab,entity,whereLogic);
+        mapper.updateBatchByWhereLogic(rnTab,entity,whereLogic);*/
 
         sqlSession.commit(true);
     }
@@ -76,7 +74,7 @@ public class TrivialTest {
 
         TestMapper mapper = sqlSession.getMapper(TestMapper.class);
 
-        TestEntity entity = new TestEntity();
+        /*TestEntity entity = new TestEntity();
         entity.setFk("aa");
         entity.setText1("1");
         entity.setText2(null);
@@ -85,7 +83,7 @@ public class TrivialTest {
         map.put(ENTITY_PARAM_NAME,entity);
 
 
-        sqlSession.insert("entity.TestMapper.insert",map);
+        sqlSession.insert("entity.TestMapper.insert",map);*/
 
         /*
 

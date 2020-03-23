@@ -188,8 +188,8 @@ public class TableInfo {
         TableFieldInfo tableFieldInfo = propertyFieldMap.get(property);
         if(tableFieldInfo!=null){
             return tableFieldInfo.getAutoMappingColumn();
-        }else if(keyProperty!=null&&keyProperty.equals(property)){
-            return keyColumn;
+        }else if(MybatisStringUtils.equals(property,keyProperty)){
+            return keyAutoMappingColumn;
         }else{
             return null;
         }

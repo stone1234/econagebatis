@@ -8,7 +8,7 @@
   <groupId>com.flowyun</groupId>
   <artifactId>econagebatis</artifactId>
   <packaging>jar</packaging>
-  <version>1.2.4</version>
+  <version>1.2.5</version>
   <name>${project.groupId}:${project.artifactId}</name>
   <description>Mybatis Enhancement</description>
   <url>https://github.com/stoneforever/econagebatis</url>

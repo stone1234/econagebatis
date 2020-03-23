@@ -217,9 +217,9 @@ public class MybatisExecutorMaster implements Executor {
             }
         }
 
-        parseByTableInfo(pagination,mappedStatement,parameter);
+        parseSortColByTableInfo(pagination,mappedStatement,parameter);
     }
-    private void parseByTableInfo(Pagination pagination, MappedStatement mappedStatement,Object parameter) throws ClassNotFoundException {
+    private void parseSortColByTableInfo(Pagination pagination, MappedStatement mappedStatement, Object parameter) throws ClassNotFoundException {
         //尝试获取全局助手，并找到相关的表信息，Pagination存储的排序列是属性名，转换为列名
         TableInfo tableInfo = detectTableInfo(mappedStatement,parameter);
         if(tableInfo==null){
@@ -229,7 +229,7 @@ public class MybatisExecutorMaster implements Executor {
         //尝试填充空白排序列的情况
         if(MybatisArrayUtils.isEmpty(pagination.getSortName())){
             //如果未设置排序列，则以主键为准
-            pagination.setSortName(tableInfo.getKeyColumn());
+            pagination.setSortName(tableInfo.getKeyAutoMappingColumn());
             return;
         }
 
