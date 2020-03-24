@@ -243,7 +243,8 @@ public class MybatisGlobalAssistant implements Serializable {
     }
 
     public TableInfo saveAndGetTableInfoByModel(Class<?> modelClass){
-        if(modelClass==null||modelClass.isInterface()){
+        //如果再例外包以外，则直接返回false
+        if(MybatisClassUtils.excludeClazzPrefix4ModelParseStatic(modelClass)){
             return null;
         }
 

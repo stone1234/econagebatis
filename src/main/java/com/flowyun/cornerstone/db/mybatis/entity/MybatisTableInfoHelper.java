@@ -54,6 +54,10 @@ public class MybatisTableInfoHelper {
             MybatisGlobalAssistant globalAssistant,
             Class<?> modelClass
     ) {
+        if(MybatisClassUtils.excludeClazzPrefix4ModelParseStatic(modelClass)){
+            return null;
+        }
+
         MybatisPreconditions.checkNotNull(modelClass,"model class is null!");
 
         TableInfo tableInfo = new TableInfo();

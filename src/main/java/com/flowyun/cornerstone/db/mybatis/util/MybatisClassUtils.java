@@ -178,6 +178,9 @@ public class MybatisClassUtils {
     };
     //是否排除在扫描外的类
     public static boolean excludeClazzPrefix4ModelParseStatic(Class<?> clazz){
+        if(clazz==null||clazz.isInterface()){
+            return true;
+        }
         String modelName = clazz.getName();
         for(String excludeClazzPrefix: EXCLUDE_CLAZZ_PREFIX_4_MODEL_PARSE_STATIC_ARRAY){
             if(modelName.startsWith(excludeClazzPrefix)){

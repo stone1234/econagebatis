@@ -8,7 +8,7 @@
   <groupId>com.flowyun</groupId>
   <artifactId>econagebatis</artifactId>
   <packaging>jar</packaging>
-  <version>1.2.5</version>
+  <version>1.2.6</version>
   <name>${project.groupId}:${project.artifactId}</name>
   <description>Mybatis Enhancement</description>
   <url>https://github.com/stoneforever/econagebatis</url>
@@ -170,18 +170,49 @@
           </plugin>
         </plugins>
       </build>
+      <distributionManagement>
+        <snapshotRepository>
+          <id>ossrh</id>
+          <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+          <id>ossrh</id>
+          <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+        </repository>
+      </distributionManagement>
+    </profile>
+    <profile>
+      <id>inner-public-maven</id>
+      <build>
+        <plugins>
+          <!-- Source -->
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <version>3.2.0</version>
+            <executions>
+              <execution>
+                <phase>package</phase>
+                <goals><goal>jar-no-fork</goal></goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+      <distributionManagement>
+        <repository>
+          <id>inner-public-maven</id>
+          <name>Nexus Release Repository</name>
+          <url>http://maven.econage.com:8081/repository/releases/</url>
+        </repository>
+        <snapshotRepository>
+          <id>inner-public-maven-snapshots</id>
+          <name>Nexus Snapshot Repository</name>
+          <url>http://maven.econage.com:8081/repository/snapshots/</url>
+        </snapshotRepository>
+      </distributionManagement>
     </profile>
   </profiles>
 
-  <distributionManagement>
-    <snapshotRepository>
-      <id>ossrh</id>
-      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-    </snapshotRepository>
-    <repository>
-      <id>ossrh</id>
-      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
-    </repository>
-  </distributionManagement>
 
 </project>
