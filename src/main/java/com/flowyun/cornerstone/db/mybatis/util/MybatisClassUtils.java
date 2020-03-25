@@ -33,7 +33,7 @@ public class MybatisClassUtils {
 
     private static final Log logger = LogFactory.getLog(MybatisClassUtils.class);
 
-    public static boolean isTopMapperInterface(Class<?> clazz){
+    public static boolean isMapperInterface(Class<?> clazz){
         return BaseMapper.class==clazz||ShardingMapper.class==clazz;
     }
     public static boolean isAssignableFromTopMapperInterface(Class<?> clazz){
@@ -42,7 +42,7 @@ public class MybatisClassUtils {
     }
 
     public static Class<?> extractModelClass(Class<?> mapperClass) {
-        if (isTopMapperInterface(mapperClass)) {
+        if (isMapperInterface(mapperClass)) {
             logger.warn(" Current Class is BaseMapper or ShardingMapper");
             return null;
         }else if(isAssignableFromTopMapperInterface(mapperClass)){
@@ -115,7 +115,7 @@ public class MybatisClassUtils {
              * */
             Class<?>[] parentInterfaceArray = singleInterface.getInterfaces();
             for(Class<?> i : parentInterfaceArray){
-                if(i == BaseMapper.class){
+                if(i == BaseMapper.class|| i==ShardingMapper.class){
                     return singleInterface;
                 }
             }

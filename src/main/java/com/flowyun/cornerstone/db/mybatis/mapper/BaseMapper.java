@@ -33,7 +33,7 @@ import static com.flowyun.cornerstone.db.mybatis.mapper.MapperConst.*;
  * Mapper 继承该接口后，无需编写 mapper.xml 文件，即可获得CRUD功能
  * 除了insert方法，需要额外处理主键插入问题，其他方法由静态provider类解析sql语句
  */
-public interface BaseMapper<T extends BasicEntity> {
+public interface BaseMapper<T extends BasicEntity> extends BasicMapper {
 
     /**
      * 插入一条记录

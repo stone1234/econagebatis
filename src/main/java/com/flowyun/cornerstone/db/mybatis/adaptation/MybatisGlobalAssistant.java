@@ -212,7 +212,7 @@ public class MybatisGlobalAssistant implements Serializable {
 
     //仅处理接口，如果继承了BaseMapper或者有Mapper注解，则认为是一个mapper对象
     public boolean isMapperClass(Class<?> resolvedCls){
-        if(resolvedCls!=null&&resolvedCls.isInterface()&&!MybatisClassUtils.isTopMapperInterface(resolvedCls)){
+        if(resolvedCls!=null&&resolvedCls.isInterface()&&!MybatisClassUtils.isMapperInterface(resolvedCls)){
             if(MybatisClassUtils.isAssignableFromTopMapperInterface(resolvedCls)){
                 return true;
             }else if(resolvedCls.getAnnotation(Mapper.class)!=null){

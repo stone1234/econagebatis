@@ -14,7 +14,7 @@ import java.util.List;
 
 import static com.flowyun.cornerstone.db.mybatis.mapper.MapperConst.*;
 
-public interface ShardingMapper<T extends BasicEntity> {
+public interface ShardingMapper<T extends BasicEntity> extends BasicMapper {
 
     /**
      * 插入一条记录
