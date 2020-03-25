@@ -9,6 +9,9 @@ public class DynaBean {
     protected HashMap<String, Object> values = new HashMap<String, Object>();
 
     public DynaBean(DynaClass dynaClass) {
+        if(dynaClass==null){
+            throw new IllegalArgumentException("dynaClass is null");
+        }
         this.dynaClass = dynaClass;
     }
 
@@ -20,8 +23,14 @@ public class DynaBean {
         return dynaClass;
     }
 
-    public Object get(String name){
+    public Object getPkValue(){
+        return get(dynaClass.getIdColumn());
+    }
+    public Object getFkValue(){
+        return get(dynaClass.getFkColumn());
+    }
 
+    public Object get(String name){
         // Return any non-null value for the specified property
         final Object value = values.get(name);
         if (value != null) {

@@ -1,6 +1,7 @@
 package com.flowyun.cornerstone.db.mybatis.mapper.dyna.entity;
 
 
+import com.flowyun.cornerstone.db.mybatis.util.MybatisAssert;
 import com.flowyun.cornerstone.db.mybatis.util.MybatisStringUtils;
 
 import java.io.Serializable;
@@ -8,9 +9,6 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 
 public class DynaClass implements Serializable {
-
-
-
     // ----------------------------------------------------- Instance Variables
     protected final String clsName;
 
@@ -20,7 +18,7 @@ public class DynaClass implements Serializable {
 
     protected final String fkColumn;
 
-    protected LinkedHashMap<String, DynaColumn> columnsMap = new LinkedHashMap<>();
+    protected LinkedHashMap<String, DynaColumn> columnsMap;
     // ------------------------------------------------------ DynaClass Methods
     public String getClsName() {
         return this.clsName;
@@ -45,14 +43,19 @@ public class DynaClass implements Serializable {
             final String tableDef,
             final Collection<DynaColumn> properties
     ) {
+        MybatisAssert.notEmpty(clsName,"clsName is empty");
+        MybatisAssert.notEmpty(idColumn,"idColumn is empty");
+        MybatisAssert.notEmpty(tableDef,"tableDef is empty");
+        MybatisAssert.notEmpty(properties,"properties is empty");
+
         this.clsName = clsName;
         this.idColumn = idColumn;
         this.fkColumn = fkColumn;
         this.tableDef = tableDef;
-        if (properties != null) {
-            for (DynaColumn property : properties) {
-                columnsMap.put(property.getName(), property);
-            }
+
+        columnsMap = new LinkedHashMap<>(properties.size());
+        for (DynaColumn property : properties) {
+            columnsMap.put(property.getName(), property);
         }
     }
 

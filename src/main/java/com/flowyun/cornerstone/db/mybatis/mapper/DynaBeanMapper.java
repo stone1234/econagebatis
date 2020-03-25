@@ -3,6 +3,7 @@ package com.flowyun.cornerstone.db.mybatis.mapper;
 import com.flowyun.cornerstone.db.mybatis.mapper.dyna.entity.DynaBean;
 import com.flowyun.cornerstone.db.mybatis.mapper.dyna.entity.DynaClass;
 import com.flowyun.cornerstone.db.mybatis.mapper.dyna.mapper.DynaBeanMapperProvider;
+import com.flowyun.cornerstone.db.mybatis.mapper.dyna.wherelogic.DynaWhereLogic;
 import com.flowyun.cornerstone.db.mybatis.pagination.Pagination;
 import org.apache.ibatis.annotations.*;
 
@@ -80,7 +81,7 @@ public interface DynaBeanMapper {
     @DeleteProvider(DynaBeanMapperProvider.class)
     Integer deleteByWhereLogic(
             @Param(DYNA_CLASS_PARAM_NAME) DynaClass dynaClass,
-            @Param(WHERE_LOGIC_PARAM_NAME) Object whereLogic
+            @Param(WHERE_LOGIC_PARAM_NAME) DynaWhereLogic whereLogic
     );
 
     /**
@@ -136,7 +137,7 @@ public interface DynaBeanMapper {
     Integer updateBatchByWhereLogic(
             @Param(DYNA_CLASS_PARAM_NAME) DynaClass dynaClass,
             @Param(DYNA_ENTITY_PARAM_NAME) DynaBean entity,
-            @Param(WHERE_LOGIC_PARAM_NAME) Object whereLogic
+            @Param(WHERE_LOGIC_PARAM_NAME) DynaWhereLogic whereLogic
     );
 
     /**
@@ -155,7 +156,7 @@ public interface DynaBeanMapper {
     Integer updateBatchAllColumnByWhereLogic(
             @Param(DYNA_CLASS_PARAM_NAME) DynaClass dynaClass,
             @Param(DYNA_ENTITY_PARAM_NAME) DynaBean entity,
-            @Param(WHERE_LOGIC_PARAM_NAME) Object whereLogic
+            @Param(WHERE_LOGIC_PARAM_NAME) DynaWhereLogic whereLogic
     );
 
     /*
@@ -175,7 +176,7 @@ public interface DynaBeanMapper {
             @Param(DYNA_CLASS_PARAM_NAME) DynaClass dynaClass,
             @Param(DYNA_ENTITY_PARAM_NAME) DynaBean entity,
             @Param(DYNA_COLUMN_NAME_ARRAY_PARAM_NAME) Collection<String> propertyNameArray,
-            @Param(WHERE_LOGIC_PARAM_NAME) Object whereLogic
+            @Param(WHERE_LOGIC_PARAM_NAME) DynaWhereLogic whereLogic
     );
 
     /**
@@ -239,7 +240,7 @@ public interface DynaBeanMapper {
     @SelectProvider(DynaBeanMapperProvider.class)
     List<DynaBean> selectListByWhereLogic(
             @Param(DYNA_CLASS_PARAM_NAME) DynaClass dynaClass,
-            @Param(WHERE_LOGIC_PARAM_NAME) Object whereLogic,
+            @Param(WHERE_LOGIC_PARAM_NAME) DynaWhereLogic whereLogic,
             Pagination page
     );
 
@@ -249,6 +250,6 @@ public interface DynaBeanMapper {
     @SelectProvider(DynaBeanMapperProvider.class)
     Integer selectCountByWhereLogic(
             @Param(DYNA_CLASS_PARAM_NAME) DynaClass dynaClass,
-            @Param(WHERE_LOGIC_PARAM_NAME) Object whereLogic
+            @Param(WHERE_LOGIC_PARAM_NAME) DynaWhereLogic whereLogic
     );
 }
