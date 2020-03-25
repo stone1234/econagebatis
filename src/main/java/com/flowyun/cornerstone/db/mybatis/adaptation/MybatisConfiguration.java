@@ -17,7 +17,7 @@ package com.flowyun.cornerstone.db.mybatis.adaptation;
 
 import com.flowyun.cornerstone.db.mybatis.MybatisException;
 import com.flowyun.cornerstone.db.mybatis.mapper.MapperConst;
-import com.flowyun.cornerstone.db.mybatis.mapper.dyna.adaptation.DynaBeanResultSetHandler;
+import com.flowyun.cornerstone.db.mybatis.mapper.dyna.DynaBeanResultSetHandler;
 import com.flowyun.cornerstone.db.mybatis.mapper.dyna.entity.DynaBean;
 import com.flowyun.cornerstone.db.mybatis.mapper.dyna.entity.DynaClass;
 import org.apache.ibatis.binding.MapperRegistry;

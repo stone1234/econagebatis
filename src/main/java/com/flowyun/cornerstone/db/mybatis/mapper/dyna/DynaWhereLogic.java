@@ -1,4 +1,4 @@
-package com.flowyun.cornerstone.db.mybatis.mapper.dyna.wherelogic;
+package com.flowyun.cornerstone.db.mybatis.mapper.dyna;
 
 import com.flowyun.cornerstone.db.mybatis.mapper.MapperConst;
 import com.flowyun.cornerstone.db.mybatis.util.MybatisArrayUtils;
@@ -41,14 +41,11 @@ public class DynaWhereLogic {
         boundSqlList.add(column+" in (" +MybatisSqlUtils.commaJoin(boundSqlParams)+") " );
     }
 
-    /*
-    * 字符串模糊搜索
-    * */
-    public void addColumnFuzzyStrLikeIntoWhere(String column,String object){
+    /*public void addColumnFuzzyStrLikeIntoWhere(String column,String object){
         String dynaBoundParamName = newDynaBoundSQLParamName();
         boundSqlList.add(column+" like CONCAT('%', " +MybatisSqlUtils.formatBoundParameter(dynaBoundParamName)+", '%') " );
         boundParams.put(dynaBoundParamName,object);
-    }
+    }*/
 
     /*
     * 自定义sql
@@ -66,16 +63,18 @@ public class DynaWhereLogic {
         }
     }
 
-
     public String formatWhere(){
         return MybatisSqlUtils.wherePartJoin(boundSqlList);
     }
+
     public List<String> getBoundSqlList(){
         return boundSqlList;
     }
+
     public String[] getBoundSqlArray(){
         return boundSqlList.toArray(MybatisArrayUtils.EMPTY_STRING_ARRAY);
     }
+
     public Map<String,Object> getBoundParams(){
         return boundParams;
     }

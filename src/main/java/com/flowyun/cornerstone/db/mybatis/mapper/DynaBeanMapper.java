@@ -2,8 +2,8 @@ package com.flowyun.cornerstone.db.mybatis.mapper;
 
 import com.flowyun.cornerstone.db.mybatis.mapper.dyna.entity.DynaBean;
 import com.flowyun.cornerstone.db.mybatis.mapper.dyna.entity.DynaClass;
-import com.flowyun.cornerstone.db.mybatis.mapper.dyna.mapper.DynaBeanMapperProvider;
-import com.flowyun.cornerstone.db.mybatis.mapper.dyna.wherelogic.DynaWhereLogic;
+import com.flowyun.cornerstone.db.mybatis.mapper.dyna.DynaBeanMapperProvider;
+import com.flowyun.cornerstone.db.mybatis.mapper.dyna.DynaWhereLogic;
 import com.flowyun.cornerstone.db.mybatis.pagination.Pagination;
 import org.apache.ibatis.annotations.*;
 

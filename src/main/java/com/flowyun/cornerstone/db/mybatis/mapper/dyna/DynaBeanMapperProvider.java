@@ -1,9 +1,8 @@
-package com.flowyun.cornerstone.db.mybatis.mapper.dyna.mapper;
+package com.flowyun.cornerstone.db.mybatis.mapper.dyna;
 
 import com.flowyun.cornerstone.db.mybatis.mapper.dyna.entity.DynaBean;
 import com.flowyun.cornerstone.db.mybatis.mapper.dyna.entity.DynaClass;
 import com.flowyun.cornerstone.db.mybatis.mapper.dyna.entity.DynaColumn;
-import com.flowyun.cornerstone.db.mybatis.mapper.dyna.wherelogic.DynaWhereLogic;
 import com.flowyun.cornerstone.db.mybatis.mapper.provider.MybatisProviderContext;
 import com.flowyun.cornerstone.db.mybatis.util.MybatisSqlUtils;
 import com.flowyun.cornerstone.db.mybatis.util.MybatisStringUtils;

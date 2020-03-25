@@ -1,4 +1,4 @@
-package com.flowyun.cornerstone.db.mybatis.mapper.dyna.adaptation;
+package com.flowyun.cornerstone.db.mybatis.mapper.dyna;
 
 import com.flowyun.cornerstone.db.mybatis.MybatisException;
 import com.flowyun.cornerstone.db.mybatis.mapper.dyna.entity.DynaBean;
