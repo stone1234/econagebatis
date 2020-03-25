@@ -1,7 +1,9 @@
 package com.flowyun.cornerstone.db.mybatis.mapper.dyna.entity;
 
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 
 public class DynaBean {
 
@@ -84,6 +86,9 @@ public class DynaBean {
 
     }
 
+    public Map<String, Object> getValues(){
+        return Collections.unmodifiableMap(values);
+    }
 
     protected DynaColumn getDynaProperty(final String name) {
 
