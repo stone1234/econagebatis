@@ -27,6 +27,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /*
 * 执行器包装类，解决分页问题
@@ -171,11 +172,12 @@ public class MybatisExecutorMaster implements Executor {
         return (Map<String, Object>)additionalParametersField.get(boundSql);
     }
 
+    private static final String paginationParamPrefix = "__pagination_";
+    private static AtomicInteger paginationIdWorker = new AtomicInteger(0);
     private ParameterMapping newPaginationParameterMappingByObject(Object paramObject){
-        //使用参数的hashcode作为属性，以保证不会出现属性名冲突
         ParameterMapping.Builder builder = new ParameterMapping.Builder(
                 configuration,
-                "pagination"+paramObject.hashCode(), paramObject.getClass()
+                paginationParamPrefix+paginationIdWorker.incrementAndGet(), paramObject.getClass()
         );
         return builder.build();
     }

@@ -1,5 +1,6 @@
 import com.flowyun.cornerstone.db.mybatis.mapper.DynaBeanMapper;
 import com.flowyun.cornerstone.db.mybatis.mapper.dyna.entity.DynaClass;
+import com.flowyun.cornerstone.db.mybatis.monitor.StatementStat;
 import com.flowyun.cornerstone.db.mybatis.pagination.Pagination;
 import entity.TestMapper;
 import entity.TestShardingMapper;
@@ -122,6 +123,8 @@ public class TrivialTest {
         /*TestWhereLogic whereLogic = new TestWhereLogic();
         whereLogic.setText1("eeeeeeee");
         mapper.selectCountByWhereLogic(whereLogic);*/
+
+        Collection<StatementStat> sss = SessionFactoryHolder.getInstance().monitor.getStatementStat();
 
         sqlSession.commit(true);
     }

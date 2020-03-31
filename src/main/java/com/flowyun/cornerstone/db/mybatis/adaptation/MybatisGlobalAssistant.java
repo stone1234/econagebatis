@@ -20,6 +20,7 @@ import com.flowyun.cornerstone.db.mybatis.entity.TableInfo;
 import com.flowyun.cornerstone.db.mybatis.enums.DBType;
 import com.flowyun.cornerstone.db.mybatis.enums.FieldStrategy;
 import com.flowyun.cornerstone.db.mybatis.enums.IdType;
+import com.flowyun.cornerstone.db.mybatis.monitor.StatementMonitor;
 import com.flowyun.cornerstone.db.mybatis.uid.dbincrementer.IKeyGenerator;
 import com.flowyun.cornerstone.db.mybatis.util.MybatisClassUtils;
 import com.flowyun.cornerstone.db.mybatis.util.MybatisJdbcUtils;
@@ -49,6 +50,7 @@ public class MybatisGlobalAssistant implements Serializable {
     //配置类，与助手类互相引用
     private final MybatisConfiguration configuration;
 
+
     // 数据库类型
     private DBType dbType;
     // 主键类型（默认 ID_WORKER）
@@ -74,6 +76,8 @@ public class MybatisGlobalAssistant implements Serializable {
     /*已经解析过的搜索表单类，会存在whereLogicInfoMap和excludeWhereLogicType中*/
     private final ConcurrentHashMap<Class<?>, WhereLogicInfo> whereLogicInfoMap = new ConcurrentHashMap<>(5000);
     private final Set<String> excludeWhereLogicType = new ConcurrentSkipListSet<>();
+
+    private StatementMonitor statementMonitor;
 
     private boolean globalCacheEnabled;
 
@@ -187,6 +191,14 @@ public class MybatisGlobalAssistant implements Serializable {
 
     public void setGlobalCacheEnabled(boolean globalCacheEnabled) {
         this.globalCacheEnabled = globalCacheEnabled;
+    }
+
+    public StatementMonitor getStatementMonitor() {
+        return statementMonitor;
+    }
+
+    public void setStatementMonitor(StatementMonitor statementMonitor) {
+        this.statementMonitor = statementMonitor;
     }
 
     /*

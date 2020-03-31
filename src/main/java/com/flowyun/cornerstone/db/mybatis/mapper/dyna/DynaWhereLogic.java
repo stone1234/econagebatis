@@ -3,7 +3,7 @@ package com.flowyun.cornerstone.db.mybatis.mapper.dyna;
 import com.flowyun.cornerstone.db.mybatis.mapper.MapperConst;
 import com.flowyun.cornerstone.db.mybatis.util.MybatisArrayUtils;
 import com.flowyun.cornerstone.db.mybatis.util.MybatisSqlUtils;
-import com.flowyun.cornerstone.db.mybatis.uuid.IdWorker;
+import com.flowyun.cornerstone.db.mybatis.uid.uuid.IdWorker;
 
 import java.util.*;
 

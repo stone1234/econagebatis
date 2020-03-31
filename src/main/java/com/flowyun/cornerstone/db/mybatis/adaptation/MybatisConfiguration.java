@@ -20,6 +20,7 @@ import com.flowyun.cornerstone.db.mybatis.mapper.MapperConst;
 import com.flowyun.cornerstone.db.mybatis.mapper.dyna.DynaBeanResultSetHandler;
 import com.flowyun.cornerstone.db.mybatis.mapper.dyna.entity.DynaBean;
 import com.flowyun.cornerstone.db.mybatis.mapper.dyna.entity.DynaClass;
+import com.flowyun.cornerstone.db.mybatis.monitor.StatementRoutingHandler;
 import org.apache.ibatis.binding.MapperRegistry;
 import org.apache.ibatis.executor.BatchExecutor;
 import org.apache.ibatis.executor.Executor;
@@ -27,6 +28,7 @@ import org.apache.ibatis.executor.ReuseExecutor;
 import org.apache.ibatis.executor.SimpleExecutor;
 import org.apache.ibatis.executor.parameter.ParameterHandler;
 import org.apache.ibatis.executor.resultset.ResultSetHandler;
+import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.mapping.BoundSql;
@@ -113,6 +115,7 @@ public class MybatisConfiguration extends Configuration {
         this.globalAssistant = globalAssistant;
     }
 
+
     /*
     todo 增加二级缓存,暂时禁用所有二级缓存
     if (globalAssistant.getMybatisCacheAssistant()!=null) {
@@ -179,4 +182,17 @@ public class MybatisConfiguration extends Configuration {
         }
     }
 
+    @Override
+    public StatementHandler newStatementHandler(Executor executor, MappedStatement mappedStatement, Object parameterObject, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) {
+       if(globalAssistant.getStatementMonitor()!=null){
+           StatementHandler statementHandler = new StatementRoutingHandler(
+                   globalAssistant.getStatementMonitor(),
+                   executor, mappedStatement, parameterObject, rowBounds, resultHandler, boundSql
+           );
+           statementHandler = (StatementHandler) interceptorChain.pluginAll(statementHandler);
+           return statementHandler;
+       }else{
+           return super.newStatementHandler(executor, mappedStatement, parameterObject, rowBounds, resultHandler, boundSql);
+       }
+    }
 }

@@ -3,6 +3,7 @@ import com.flowyun.cornerstone.db.mybatis.adaptation.MybatisGlobalAssistant;
 import com.flowyun.cornerstone.db.mybatis.enums.DBType;
 import com.flowyun.cornerstone.db.mybatis.handlers.DefaultEnumTypeHandler;
 import com.flowyun.cornerstone.db.mybatis.handlers.LocaleTypeHandler;
+import com.flowyun.cornerstone.db.mybatis.monitor.StatementMonitor;
 import entity.TestMapper;
 import entity.TestShardingMapper;
 import org.apache.ibatis.datasource.pooled.PooledDataSourceFactory;
@@ -15,6 +16,7 @@ import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 import org.apache.ibatis.type.JdbcType;
 
+import java.time.Duration;
 import java.util.Locale;
 import java.util.Properties;
 
@@ -25,13 +27,19 @@ public class SessionFactoryHolder {
     }
 
     private SqlSessionFactory sqlSessionFactory;
+    public StatementMonitor monitor = new StatementMonitor(Duration.ofMillis(1));
+
 
     public SessionFactoryHolder() {
         this.sqlSessionFactory = new SqlSessionFactoryBuilder().build(getConfiguration());
     }
     private Configuration getConfiguration(){
         MybatisConfiguration configuration = new MybatisConfiguration();
+
         MybatisGlobalAssistant globalAssistant = new MybatisGlobalAssistant(configuration);
+        globalAssistant.setDbType(DBType.MYSQL8);
+        globalAssistant.setStatementMonitor(monitor);
+
         configuration.setGlobalAssistant(globalAssistant);
 
         PooledDataSourceFactory pooledDataSourceFactory = new PooledDataSourceFactory();
@@ -60,7 +68,6 @@ public class SessionFactoryHolder {
         configuration.getTypeHandlerRegistry().register(Locale.class, JdbcType.VARCHAR,new LocaleTypeHandler());
         configuration.setLogImpl(StdOutImpl.class);
 
-        globalAssistant.setDbType(DBType.MYSQL8);
 
         configuration.addMapper(TestMapper.class);
         configuration.addMapper(TestShardingMapper.class);

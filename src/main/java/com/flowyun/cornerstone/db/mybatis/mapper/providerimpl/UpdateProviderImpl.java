@@ -6,7 +6,7 @@ import com.flowyun.cornerstone.db.mybatis.entity.TableInfo;
 import com.flowyun.cornerstone.db.mybatis.mapper.provider.MybatisProviderContext;
 import com.flowyun.cornerstone.db.mybatis.util.MybatisSqlUtils;
 import com.flowyun.cornerstone.db.mybatis.util.MybatisStringUtils;
-import com.flowyun.cornerstone.db.mybatis.uuid.IdWorker;
+import com.flowyun.cornerstone.db.mybatis.uid.uuid.IdWorker;
 import com.flowyun.cornerstone.db.mybatis.mapper.MapperConst;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.builder.annotation.ProviderMethodResolver;

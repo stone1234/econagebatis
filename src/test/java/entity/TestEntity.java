@@ -2,14 +2,12 @@ package entity;
 
 import com.flowyun.cornerstone.db.mybatis.annotations.TableDef;
 import com.flowyun.cornerstone.db.mybatis.annotations.TableField;
-import com.flowyun.cornerstone.db.mybatis.annotations.TableId;
 import com.flowyun.cornerstone.db.mybatis.entity.BasicEntity;
 
 import java.util.Locale;
 
 @TableDef("test2")
 public class TestEntity implements BasicEntity {
-    @TableId("ID")
     private String id;
     @TableField(isFk = true)
     private String fk;

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.flowyun.cornerstone.db.mybatis.uuid;
+package com.flowyun.cornerstone.db.mybatis.uid.uuid;
 
 import com.flowyun.cornerstone.db.mybatis.MybatisException;
 import com.flowyun.cornerstone.db.mybatis.util.MybatisStringUtils;

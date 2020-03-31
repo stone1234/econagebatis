@@ -7,7 +7,7 @@ import com.flowyun.cornerstone.db.mybatis.enums.IdType;
 import com.flowyun.cornerstone.db.mybatis.mapper.provider.MybatisProviderContext;
 import com.flowyun.cornerstone.db.mybatis.util.MybatisSqlUtils;
 import com.flowyun.cornerstone.db.mybatis.util.MybatisStringUtils;
-import com.flowyun.cornerstone.db.mybatis.uuid.IdWorker;
+import com.flowyun.cornerstone.db.mybatis.uid.uuid.IdWorker;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.builder.annotation.ProviderMethodResolver;
 import org.apache.ibatis.reflection.MetaObject;
