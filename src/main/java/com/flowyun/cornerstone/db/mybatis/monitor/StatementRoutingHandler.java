@@ -15,7 +15,6 @@ public class StatementRoutingHandler extends RoutingStatementHandler {
 
     private final StatementMonitor monitor;
     private final MappedStatement ms;
-    private final BoundSql boundSql;
 
     public StatementRoutingHandler(
             StatementMonitor monitor,
@@ -24,14 +23,13 @@ public class StatementRoutingHandler extends RoutingStatementHandler {
         super(executor, ms, parameter, rowBounds, resultHandler, boundSql);
         this.monitor = monitor;
         this.ms = ms;
-        this.boundSql = boundSql;
     }
 
     @Override
     public Statement prepare(Connection connection, Integer transactionTimeout) throws SQLException {
         return monitor.proxyStatement(
-                super.prepare(connection, transactionTimeout)
-                ,ms,boundSql
+                super.prepare(connection, transactionTimeout),
+                ms,getBoundSql()
         );
     }
 
